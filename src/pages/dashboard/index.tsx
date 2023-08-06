@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import React from "react";
 import { Layout } from "~/components/layout";
@@ -16,7 +16,7 @@ export default function Dashboard() {
       <Layout>
         Dashboard
         <p>Logged in as {session?.user?.email}</p>
-        <button>Sign Out</button>
+        <button onClick={() => signOut()}>Sign Out</button>
       </Layout>
     </>
   );
