@@ -6,8 +6,6 @@ import { Layout } from "~/components/layout";
 export default function Dashboard() {
   const { data: session } = useSession();
 
-  console.log(session);
-
   return (
     <>
       <Head>

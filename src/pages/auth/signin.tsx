@@ -36,6 +36,7 @@ export default function SignIn({
           />
         </label>
         <button type="submit">Sign in</button>
+        <p>New to PotatoCRM? <a href="/auth/signup">Create an account.</a></p>
       </form>
     </>
   );
