@@ -1,3 +1,6 @@
+// Custom Sign In Page
+// Reference: https://next-auth.js.org/configuration/pages
+
 import type {
   GetServerSidePropsContext,
   InferGetServerSidePropsType,
@@ -20,7 +23,7 @@ export default function SignIn({
             </button>
           </div>
         ))}
-      <form method="post" action="/api/auth/callback/credentials">
+      <form>
         <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
         <label>
           Username
