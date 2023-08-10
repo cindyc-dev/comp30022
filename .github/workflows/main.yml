@@ -34,6 +34,29 @@ jobs:
           echo DISCORD_CLIENT_SECRET=${{ secrets.DISCORD_CLIENT_SECRET }} >> .env.local
       - name: Build app
         run: npm run build
+  preview:
+     name: Preview Deployment
+     runs-on: ubuntu-latest
+     needs: [build]
+     if: ${{ github.base_ref == 'main' }}
+     env:
+       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+     environment:
+       name: Preview
+       url: ${{ steps.get-preview-url.outputs.url }}
+     steps:
+       - uses: actions/checkout@v3
+       - uses: actions/setup-node@v3
+         with:
+           node-version: 19
+       - name: Install Vercel CLI
+         run: npm install --global vercel@latest
+       - name: Pull Vercel Environment Information
+         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+       - name: Deploy Project Artifacts to Vercel
+         id: get-preview-url
+         run: echo "url=$(vercel --token=${{ secrets.VERCEL_TOKEN }})" >> "$GITHUB_OUTPUT"
 
   #  test:
   #    name: Unit Tests
@@ -49,26 +72,4 @@ jobs:
   #    - run: npm ci
   #    - name: Run approval tests
   #      run: npm test
-#  preview:
-#    name: Preview Deployment
-#    runs-on: ubuntu-latest
-#    needs: [build, test]
-#    if: ${{ github.base_ref == 'main' }}
-#    env:
-#      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-#      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-#    environment:
-#      name: Preview
-#      url: ${{ steps.get-preview-url.outputs.url }}
-#    steps:
-#      - uses: actions/checkout@v3
-#      - uses: actions/setup-node@v3
-#        with:
-#          node-version: 19
-#      - name: Install Vercel CLI
-#        run: npm install --global vercel@latest
-#      - name: Pull Vercel Environment Information
-#        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-#      - name: Deploy Project Artifacts to Vercel
-#        id: get-preview-url
-#        run: echo "url=$(vercel --token=${{ secrets.VERCEL_TOKEN }})" >> "$GITHUB_OUTPUT"
+   
