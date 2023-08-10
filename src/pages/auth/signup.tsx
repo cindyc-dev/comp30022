@@ -1,25 +1,27 @@
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
-
 import PasswordInput from "~/components/passwordInput";
-
+// Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
   ssr: false,
 });
-
-// TODO use React Hook Forms instead of this
+import { api } from "~/utils/api";
 
 export default function SignUp() {
-  const email = useRef<HTMLInputElement>(null);
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const mutation = api.user.register.useMutation();
+
+  const createUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const user = {
-      email: email.current?.value,
+      email: email,
       password: password,
     };
     console.log({ user: user });
+    mutation.mutate(user);
   };
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -35,7 +37,7 @@ export default function SignUp() {
         <div className="card w-full max-w-sm flex-shrink-0 bg-base-100 shadow-2xl">
           <div className="card-body">
             <h2 className="card-title m-auto">Sign Up!</h2>
-            <form onSubmit={(e) => handleSubmit(e)}>
+            <form onSubmit={(e) => createUser(e)}>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Email</span>
@@ -44,7 +46,8 @@ export default function SignUp() {
                   type="text"
                   placeholder="example@example.com"
                   className="input input-bordered"
-                  ref={email}
+                  name="email"
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
