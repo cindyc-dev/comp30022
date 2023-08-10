@@ -27,6 +27,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^13.4.13",
     "@types/bcrypt": "^5.0.0",
     "@types/eslint": "^8.37.0",
     "@types/node": "^18.16.0",

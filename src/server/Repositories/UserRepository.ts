@@ -26,7 +26,7 @@ export async function getUserWithEmail(email: string): Promise<UserInfoPayload |
       email: email
     },
     select: userInfoSelect
-  })
+  });
 
   if (!dbResult) {
     return null;
