@@ -24,7 +24,11 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2018",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
