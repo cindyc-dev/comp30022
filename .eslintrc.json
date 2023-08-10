@@ -19,7 +19,7 @@
     "rules": {
         "indent": [
             "error",
-            "space"
+            2
         ],
         "quotes": [
             "error",
