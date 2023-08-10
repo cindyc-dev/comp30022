@@ -1,6 +1,7 @@
 import { signIn } from "next-auth/react";
 import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
+import Link from "next/link";
+import { useState } from "react";
 import PasswordInput from "~/components/passwordInput";
 import Toast from "~/components/toastSection";
 // Dynamic import to prevent SSR error
@@ -113,9 +114,9 @@ export default function SignUp() {
             </form>
             <p className="text-sm">
               Already have an account?{" "}
-              <a className="link-primary link" href="/auth/signin">
+              <Link href="/auth/signin" className="link-primary link">
                 Log In.
-              </a>
+              </Link>
             </p>
           </div>
         </div>

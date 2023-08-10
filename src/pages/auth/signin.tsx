@@ -7,6 +7,7 @@ import type {
 } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken, getProviders, signIn } from "next-auth/react";
+import Link from "next/link";
 import { authOptions } from "~/server/auth";
 
 export default function SignIn({
@@ -39,7 +40,9 @@ export default function SignIn({
           />
         </label>
         <button type="submit">Sign in</button>
-        <p>New to PotatoCRM? <a href="/auth/signup">Create an account.</a></p>
+        <p>
+          New to PotatoCRM? <Link href="/auth/signup">Create an account.</Link>
+        </p>
       </form>
     </>
   );
