@@ -1,0 +1,25 @@
+name: "Deploy to Production"
+on:
+  workflow_dispatch:
+
+jobs:
+  production:
+    name: Production Deployment
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'main' }}
+    environment:
+      name: Production
+      url: ${{ steps.prod-url.outputs.url }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 19
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Deploy Project Artifacts to Vercel
+        id: prod-url
+        run: echo "url=$(vercel --prod -y --token=${{ secrets.VERCEL_TOKEN }})" >> "$GITHUB_OUTPUT"
