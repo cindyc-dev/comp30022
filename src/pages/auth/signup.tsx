@@ -1,3 +1,4 @@
+import { signIn } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import PasswordInput from "~/components/passwordInput";
@@ -21,8 +22,20 @@ export default function SignUp() {
       password: password,
     };
     console.log({ user: user });
-    mutation.mutate(user);
+    mutation.mutate(user, {
+      onSuccess: (data) => {
+        console.log({ data: data });
+        // Sign In and redirect to dashboard
+        signIn("credentials", {
+          email: email,
+          password: password,
+          redirect: true,
+          callbackUrl: "/dashboard",
+        });
+      },
+    });
   };
+
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col lg:flex-row-reverse">
