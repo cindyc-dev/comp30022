@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { AvatarImage } from "./common/avatarImage";
-import { useToast } from "./hooks/toastContext";
-import { useModal } from "./hooks/modalContext";
+import { AvatarImage } from "../../components/common/avatarImage";
+import { useToast } from "../../components/hooks/toastContext";
+import { useModal } from "../../components/hooks/modalContext";
 
 export const UploadImageModalContent = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -10,7 +10,7 @@ export const UploadImageModalContent = () => {
 
   const saveImage = () => {
     // TODO Save image to API
-    
+
     // Show success toast
     addToast({
       type: "success",
