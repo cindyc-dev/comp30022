@@ -1,11 +1,16 @@
 import { Layout } from "~/components/layout";
 import Image from "next/image";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
+import PasswordInput from "~/components/passwordInput";
 
 export default function Profile() {
   const [name, setName] = useState<string>("");
   const [contact, setContact] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+
+  const [currentPassword, setCurrentPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
 
   // TODO Fetch user data from API
 
@@ -20,9 +25,19 @@ export default function Profile() {
     // TODO Save user data to API
   };
 
+  const changePassword = () => {
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      console.log("Missing password details");
+      return;
+    }
+    console.log("Changing password");
+    console.log({ currentPassword, newPassword, confirmNewPassword });
+    // TODO Change password in API
+  };
+
   return (
     <Layout>
-      <div className="flex flex-col gap-3">
+      <div className="my-2 flex flex-col gap-3">
         <h1 className="my-2">Profile Settings</h1>
         <hr className="mb-2 mt-0" />
         <div className="flex flex-col justify-between align-middle md:flex-row md:gap-5">
@@ -56,21 +71,21 @@ export default function Profile() {
             <input
               type="text"
               placeholder="Name"
-              className="input input-bordered w-full max-w-xs"
+              className="input input-bordered w-full"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
             <input
               type="text"
               placeholder="Contact"
-              className="input input-bordered w-full max-w-xs"
+              className="input input-bordered w-full"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
             />
             <input
               type="email"
               placeholder="Email"
-              className="input input-bordered w-full max-w-xs"
+              className="input input-bordered w-full"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -82,18 +97,45 @@ export default function Profile() {
         >
           Save changes
         </button>
+
         <hr className="mb-2 mt-0" />
-        <div>
-          <h2>Change Password</h2>
-          <p>Enter your current password and new password</p>
+
+        <div className="flex flex-col justify-between align-middle md:flex-row md:gap-5">
           <div>
-            <p>Current password</p>
-            <div className="flex">
-              <p>New password</p>
-              <button className="btn btn-primary">Done</button>
+            <h2 className="m-0">Change Password</h2>
+            <p className="m-0 text-sm">
+              Enter your current password and new password
+            </p>
+          </div>
+          <button
+            className="btn btn-primary hidden md:block"
+            onClick={() => changePassword()}
+          >
+            Change Password
+          </button>
+        </div>
+        <div>
+          <div className="flex w-full flex-col items-center gap-2">
+            <div className="w-full">
+              <label className="label py-0">
+                <span className="label-text">Current Password</span>
+              </label>
+              <PasswordInput setValue={setCurrentPassword} isShowHide={false} />
+            </div>
+            <div className="w-full">
+              <label className="label py-0">
+                <span className="label-text">New Password</span>
+              </label>
+              <PasswordInput setValue={setNewPassword} isShowHide={false} />
             </div>
           </div>
         </div>
+        <button
+          className="btn btn-primary btn-block md:hidden"
+          onClick={() => changePassword()}
+        >
+          Change Password
+        </button>
       </div>
     </Layout>
   );

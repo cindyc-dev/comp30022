@@ -21,7 +21,7 @@ export default function PasswordInput({
   return (
     <>
       <input
-        className="input input-bordered"
+        className="input input-bordered w-full"
         name="confirmPassword"
         type={type}
         placeholder="*******"
