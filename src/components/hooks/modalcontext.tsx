@@ -2,10 +2,15 @@
 
 import { ReactNode, createContext, useContext, useState } from "react";
 
+interface ModalI {
+  id: string;
+  content: ReactNode;
+}
+
 interface ModalContextType {
-  isModalOpened: boolean;
-  openModal: () => void;
-  closeModal: () => void;
+  modals: ModalI[];
+  openModal: (content: ReactNode) => void;
+  closeModal: (id: string) => void;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
@@ -24,18 +29,25 @@ interface ModalProviderProps {
 }
 
 export const ModalProvider = ({ children }: ModalProviderProps) => {
-  const [isModalOpened, setIsModalOpened] = useState(false);
+  // Stores open modals
+  const [modals, setModals] = useState<ModalI[]>([]);
 
-  const openModal = () => {
-    setIsModalOpened(true);
+  const openModal = (content: ReactNode) => {
+    const id = Date.now().toString();
+    setModals((prevModals) => [...prevModals, { id, content }]);
   };
 
-  const closeModal = () => {
-    setIsModalOpened(false);
+  const closeModal = (id: string) => {
+    setModals((prevModals) => prevModals.filter((modal) => modal.id !== id));
+  };
+  const modalContextValue: ModalContextType = {
+    modals,
+    openModal,
+    closeModal,
   };
 
   return (
-    <ModalContext.Provider value={{ isModalOpened, openModal, closeModal }}>
+    <ModalContext.Provider value={modalContextValue}>
       {children}
     </ModalContext.Provider>
   );

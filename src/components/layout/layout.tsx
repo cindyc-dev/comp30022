@@ -1,8 +1,11 @@
 import React, { ReactNode } from "react";
 import { Navbar } from "./navbar";
 import { Footer } from "./footer";
+import { useModal } from "../hooks/modalcontext";
+import { Modal } from "../common/modal";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
+  const { modals, closeModal } = useModal();
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -10,6 +13,11 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         {children}
       </div>
       <Footer />
+      {modals.map((modal) => (
+        <Modal key={modal.id} closeModal={() => closeModal(modal.id)}>
+          {modal.content}
+        </Modal>
+      ))}
     </div>
   );
 };

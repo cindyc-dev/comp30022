@@ -4,7 +4,7 @@ import PasswordInput from "~/components/common/passwordInput";
 import { TextInput } from "~/components/common/textInput";
 import dynamic from "next/dynamic";
 import { useModal } from "~/components/hooks/modalcontext";
-import { UploadImageModal } from "~/components/uploadImageModal";
+import { UploadImageModalContent } from "~/components/uploadImageModalContent";
 import { AvatarImage } from "~/components/common/avatarImage";
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
@@ -49,7 +49,7 @@ export default function Profile() {
 
   const editPhoto = () => {
     console.log("Editing photo");
-    openModal();
+    openModal(<UploadImageModalContent />);
     // TODO Edit photo in API
   };
 
@@ -194,7 +194,6 @@ export default function Profile() {
           Change Password
         </button>
       </div>
-      <UploadImageModal />
     </Layout>
   );
 }
