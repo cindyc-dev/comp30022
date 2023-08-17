@@ -12,3 +12,17 @@ export async function accountExists(email: string): Promise<boolean> {
   const user = await getUserWithEmail(email);
   return user !== null;
 }
+
+export async function checkPassword(email: string, password:string) {
+
+  const user = await getUserWithEmail(email);
+
+  if (user === null) {
+    return false;
+  }
+
+  const userPassword = user.password;
+  const match = await bcrypt.compare(password, userPassword);
+
+  return match;
+}
