@@ -30,7 +30,7 @@ export const Footer = () => {
       <div>
         <div className="flex gap-4">
           <p>Made with Awesomeness 🤟 for COMP30022</p>
-          <Link href="https://github.com/chuahxinyu/comp30022">
+          <Link href="https://github.com/chuahxinyu/comp30022" target="_blank">
             <FaGithub className="text-xl" />
           </Link>
         </div>
