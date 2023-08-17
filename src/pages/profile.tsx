@@ -1,11 +1,11 @@
 import { Layout } from "~/components/layout/layout";
-import Image from "next/image";
 import { useState } from "react";
 import PasswordInput from "~/components/common/passwordInput";
 import { TextInput } from "~/components/common/textInput";
 import dynamic from "next/dynamic";
-import { ModalProvider, useModal } from "~/components/hooks/modalcontext";
+import { useModal } from "~/components/hooks/modalcontext";
 import { UploadImageModal } from "~/components/uploadImageModal";
+import { AvatarImage } from "~/components/common/avatarImage";
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
   ssr: false,
@@ -74,15 +74,11 @@ export default function Profile() {
         </div>
         <div className="flex flex-col items-center gap-4 align-middle md:flex-row md:justify-between">
           <div className="flex flex-col text-center">
-            <label className="h avatar btn btn-circle btn-ghost h-40 w-40">
-              <div className="rounded-full">
-                <Image
-                  src="https://wallpapers.com/images/hd/funny-profile-picture-ylwnnorvmvk2lna0.jpg"
-                  alt="profile picture"
-                  fill={true}
-                  className="m-0 rounded-full"
-                />
-              </div>
+            <label
+              className="avatar btn btn-circle btn-ghost h-40 w-40"
+              onClick={() => editPhoto()}
+            >
+              <AvatarImage src="https://wallpapers.com/images/hd/funny-profile-picture-ylwnnorvmvk2lna0.jpg" />
             </label>
             <p
               className="link cursor-pointer text-xs"

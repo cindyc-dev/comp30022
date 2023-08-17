@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { FaCalendarAlt } from "react-icons/fa";
 import { BsKanbanFill, BsFillPeopleFill } from "react-icons/bs";
 import Image from "next/image";
+import { AvatarImage } from "../common/avatarImage";
 
 const PAGES = [
   {
@@ -50,7 +51,7 @@ export const Navbar = () => {
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box menu-sm z-[1] mt-3 w-52 bg-base-100 p-2 shadow"
+            className="menu dropdown-content rounded-box menu-sm z-[1] mt-3 w-52 bg-base-100 p-2 shadow"
           >
             {PAGES.map(({ icon, path, name }) => (
               <li key={name}>
@@ -86,21 +87,15 @@ export const Navbar = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <div className="dropdown-end dropdown">
+        <div className="dropdown dropdown-end">
           <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
-            <div className="w-10 rounded-full">
-              <Image
-                src="https://wallpapers.com/images/hd/funny-profile-picture-ylwnnorvmvk2lna0.jpg"
-                alt="profile picture"
-                fill={true}
-                className="m-0 rounded-full"
-              />
-              ;
+            <div className="w-10">
+              <AvatarImage src="https://wallpapers.com/images/hd/funny-profile-picture-ylwnnorvmvk2lna0.jpg"  />
             </div>
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box menu-sm z-[1] mt-3 w-52 bg-base-100 p-2 shadow"
+            className="menu dropdown-content rounded-box menu-sm z-[1] mt-3 w-52 bg-base-100 p-2 shadow"
           >
             <li>
               <Link href="/profile">Profile</Link>

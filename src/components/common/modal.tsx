@@ -9,7 +9,6 @@ export const Modal = ({
   isModalOpened: boolean;
   closeModal: () => void;
 }) => {
-  console.log(isModalOpened);
   if (!isModalOpened) {
     return null;
   }
