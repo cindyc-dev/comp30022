@@ -1,8 +1,8 @@
-import { Layout } from "~/components/layout";
+import { Layout } from "~/components/layout/layout";
 import Image from "next/image";
 import { useState } from "react";
-import PasswordInput from "~/components/passwordInput";
-import { TextInput } from "~/components/textInput";
+import PasswordInput from "~/components/common/passwordInput";
+import { TextInput } from "~/components/common/textInput";
 import dynamic from "next/dynamic";
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
@@ -50,7 +50,7 @@ export default function Profile() {
 
   return (
     <Layout>
-      <div className="my-2 flex flex-col gap-3">
+      <div className="my-3 flex w-full flex-col gap-3 md:my-5">
         <h1 className="my-2">Profile Settings</h1>
         <hr className="mb-2 mt-0" />
         <div className="flex flex-col justify-between align-middle md:flex-row md:gap-5">

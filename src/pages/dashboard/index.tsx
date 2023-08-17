@@ -1,7 +1,7 @@
 import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import React from "react";
-import { Layout } from "~/components/layout";
+import { Layout } from "~/components/layout/layout";
 
 export default function Dashboard() {
   const { data: session } = useSession();

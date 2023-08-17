@@ -2,8 +2,8 @@ import { signIn } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useState } from "react";
-import PasswordInput from "~/components/passwordInput";
-import Toast from "~/components/toastSection";
+import PasswordInput from "~/components/common/passwordInput";
+import Toast from "~/components/common/toastSection";
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
   ssr: false,
