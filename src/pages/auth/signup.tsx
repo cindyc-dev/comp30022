@@ -14,11 +14,19 @@ export default function SignUp() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [passwordValid, setPasswordValid] = useState<boolean>(false);
 
   const mutation = api.user.register.useMutation();
 
   const createUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Check if password is valid
+    if (!passwordValid) {
+      console.log("Password is not valid");
+      return;
+    }
+
     const user = {
       email: email,
       password: password,
@@ -73,20 +81,15 @@ export default function SignUp() {
                 <label className="label">
                   <span className="label-text">Password</span>
                 </label>
-                <PasswordInput setValue={setPassword} />
+                <PasswordInput setValue={setPassword} isShowHide={true} />
               </div>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Confirm Password</span>
                 </label>
-                <input
-                  className="input input-bordered"
-                  name="confirmPassword"
-                  type="password"
-                  placeholder="*******"
-                  autoComplete="new-password"
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
+                <PasswordInput
+                  setValue={setConfirmPassword}
+                  isShowHide={false}
                 />
               </div>
               <div className="mt-2">
@@ -101,13 +104,18 @@ export default function SignUp() {
                   minLength={8}
                   value={password}
                   valueAgain={confirmPassword}
-                  onChange={(isValid) => console.log({ isValid })}
+                  onChange={(isValid) => setPasswordValid(isValid)}
                   className="text-xs"
                 />
               </div>
 
               <div className="form-control mt-6">
-                <button className="btn btn-primary" type="submit">
+                <button
+                  className={`btn btn-primary ${
+                    !passwordValid && "btn-disabled"
+                  }`}
+                  type="submit"
+                >
                   Sign Up
                 </button>
               </div>

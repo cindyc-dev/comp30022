@@ -3,9 +3,13 @@ import { FaEye, FaRegEyeSlash } from "react-icons/fa";
 
 interface PasswordInputProps {
   setValue: React.Dispatch<React.SetStateAction<string>>;
+  isShowHide: boolean;
 }
 
-export default function PasswordInput({ setValue }: PasswordInputProps) {
+export default function PasswordInput({
+  setValue,
+  isShowHide,
+}: PasswordInputProps) {
   const [isShow, setIsShow] = useState(false);
   const [type, setType] = useState("password");
 
@@ -26,13 +30,15 @@ export default function PasswordInput({ setValue }: PasswordInputProps) {
         required
       />
       <span className="flex justify-end">
-        <span className="mr-5 mt-[-2rem] cursor-pointer">
-          {isShow ? (
-            <FaEye onClick={() => toggleShow()} />
-          ) : (
-            <FaRegEyeSlash onClick={() => toggleShow()} />
-          )}
-        </span>
+        {isShowHide && (
+          <span className="mr-5 mt-[-2rem] cursor-pointer">
+            {isShow ? (
+              <FaEye onClick={() => toggleShow()} />
+            ) : (
+              <FaRegEyeSlash onClick={() => toggleShow()} />
+            )}
+          </span>
+        )}
       </span>
     </>
   );
