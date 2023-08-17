@@ -4,6 +4,8 @@ import { useState } from "react";
 import PasswordInput from "~/components/common/passwordInput";
 import { TextInput } from "~/components/common/textInput";
 import dynamic from "next/dynamic";
+import { ModalProvider, useModal } from "~/components/hooks/modalcontext";
+import { UploadImageModal } from "~/components/uploadImageModal";
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
   ssr: false,
@@ -18,6 +20,8 @@ export default function Profile() {
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
   const [passwordValid, setPasswordValid] = useState<boolean>(false);
+
+  const { openModal } = useModal();
 
   // TODO Fetch user data from API
 
@@ -45,6 +49,7 @@ export default function Profile() {
 
   const editPhoto = () => {
     console.log("Editing photo");
+    openModal();
     // TODO Edit photo in API
   };
 
@@ -79,7 +84,12 @@ export default function Profile() {
                 />
               </div>
             </label>
-            <p className="link cursor-pointer text-xs">Edit Photo</p>
+            <p
+              className="link cursor-pointer text-xs"
+              onClick={() => editPhoto()}
+            >
+              Edit Photo
+            </p>
           </div>
           <div className="flex w-full flex-col items-center gap-2">
             <TextInput
@@ -131,12 +141,12 @@ export default function Profile() {
             <div className="flex w-full flex-col">
               <PasswordInput
                 setValue={setCurrentPassword}
-                isShowHide={false}
+                isShowHide={true}
                 label="Current Password"
               />
               <PasswordInput
                 setValue={setNewPassword}
-                isShowHide={false}
+                isShowHide={true}
                 label="New Password"
               />
               <PasswordInput
@@ -188,6 +198,7 @@ export default function Profile() {
           Change Password
         </button>
       </div>
+      <UploadImageModal />
     </Layout>
   );
 }

@@ -4,6 +4,7 @@ import { AppProps } from "next/app";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { ReactNode } from "react";
+import { ModalProvider } from "~/components/hooks/modalcontext";
 
 const MyApp = ({
   Component,
@@ -14,20 +15,22 @@ const MyApp = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      {Component.auth ? (
-        <Auth>
+      <ModalProvider>
+        {Component.auth ? (
+          <Auth>
+            <Component {...pageProps} />
+          </Auth>
+        ) : (
           <Component {...pageProps} />
-        </Auth>
-      ) : (
-        <Component {...pageProps} />
-      )}
+        )}
+      </ModalProvider>
     </SessionProvider>
   );
 };
 
 /**
  * Checks if the user is logged in before rendering the component. If the user is not logged in, NextAuth will redirect to the login page.
- * 
+ *
  * Custom Client Session Handling. Reference: https://next-auth.js.org/getting-started/client#custom-client-session-handling
  */
 const Auth = ({ children }: { children: ReactNode }) => {

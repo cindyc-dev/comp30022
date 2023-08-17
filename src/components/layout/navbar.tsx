@@ -53,7 +53,7 @@ export const Navbar = () => {
             className="dropdown-content menu rounded-box menu-sm z-[1] mt-3 w-52 bg-base-100 p-2 shadow"
           >
             {PAGES.map(({ icon, path, name }) => (
-              <li>
+              <li key={name}>
                 <Link
                   href={path}
                   className={currentPage === path ? "focus" : ""}
@@ -76,7 +76,7 @@ export const Navbar = () => {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           {PAGES.map(({ icon, path, name }) => (
-            <li>
+            <li key={name}>
               <Link href={path} className={currentPage === path ? "focus" : ""}>
                 {icon}
                 {name}
