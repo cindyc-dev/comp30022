@@ -18,6 +18,9 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    domains: ["wallpapers.com", "images.unsplash.com"],
+  },
 };
 
 export default config;
