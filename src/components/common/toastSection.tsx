@@ -26,7 +26,9 @@ export default function ToastSection({
           {type === "success" && <FaCheckCircle />}
           {type === "warning" && <FaExclamationTriangle />}
           {type === "error" && <RxCrossCircled />}
-          <span>{message}.</span>
+          <div className="max-w-sm whitespace-normal lg:max-w-md">
+            {message}
+          </div>
         </div>
       ))}
     </div>
