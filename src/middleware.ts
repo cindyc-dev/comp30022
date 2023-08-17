@@ -8,4 +8,5 @@ export function middleware(request: NextRequest) {
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
+  return null;
 }

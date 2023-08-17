@@ -1,12 +1,12 @@
-import {prisma} from "~/server/db";
-import {Prisma} from "@prisma/client";
+import { prisma } from "~/server/db";
+import { Prisma } from "@prisma/client";
 
 export async function createUser(email: string, password: string) {
   await prisma.user.create({
     data: {
       email: email,
-      password: password
-    }
+      password: password,
+    },
   });
 }
 
@@ -20,13 +20,15 @@ const userInfoSelect = {
 
 type UserInfoPayload = Prisma.UserGetPayload<{ select: typeof userInfoSelect }>;
 
-export async function getUserWithEmail(email: string): Promise<UserInfoPayload | null> {
+export async function getUserWithEmail(
+  email: string
+): Promise<UserInfoPayload | null> {
   const dbResult = await prisma.user.findUnique({
     where: {
-      email: email
+      email: email,
     },
-    select: userInfoSelect
-  })
+    select: userInfoSelect,
+  });
 
   if (!dbResult) {
     return null;

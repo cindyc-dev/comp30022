@@ -1,6 +1,6 @@
 import { type Session } from "next-auth";
 import { SessionProvider, useSession } from "next-auth/react";
-import { AppProps, type AppType } from "next/app";
+import { AppProps } from "next/app";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { ReactNode } from "react";
