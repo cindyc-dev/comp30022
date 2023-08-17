@@ -4,11 +4,13 @@ import { FaEye, FaRegEyeSlash } from "react-icons/fa";
 interface PasswordInputProps {
   setValue: React.Dispatch<React.SetStateAction<string>>;
   isShowHide: boolean;
+  label: string;
 }
 
 export default function PasswordInput({
   setValue,
   isShowHide,
+  label
 }: PasswordInputProps) {
   const [isShow, setIsShow] = useState(false);
   const [type, setType] = useState("password");
@@ -19,10 +21,13 @@ export default function PasswordInput({
   };
 
   return (
-    <>
+    <div className="w-full">
+      <label className="label py-0">
+        <span className="label-text">{label}</span>
+      </label>
       <input
         className="input input-bordered w-full"
-        name="confirmPassword"
+        name={label}
         type={type}
         placeholder="*******"
         autoComplete="new-password"
@@ -40,6 +45,6 @@ export default function PasswordInput({
           </span>
         )}
       </span>
-    </>
+    </div>
   );
 }

@@ -78,18 +78,17 @@ export default function SignUp() {
                 />
               </div>
               <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Password</span>
-                </label>
-                <PasswordInput setValue={setPassword} isShowHide={true} />
+                <PasswordInput
+                  setValue={setPassword}
+                  isShowHide={true}
+                  label="Password"
+                />
               </div>
               <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Confirm Password</span>
-                </label>
                 <PasswordInput
                   setValue={setConfirmPassword}
                   isShowHide={false}
+                  label="Confirm Password"
                 />
               </div>
               <div className="mt-2">

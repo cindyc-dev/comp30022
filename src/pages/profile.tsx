@@ -1,6 +1,6 @@
 import { Layout } from "~/components/layout";
 import Image from "next/image";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import PasswordInput from "~/components/passwordInput";
 
 export default function Profile() {
@@ -116,18 +116,16 @@ export default function Profile() {
         </div>
         <div>
           <div className="flex w-full flex-col items-center gap-2">
-            <div className="w-full">
-              <label className="label py-0">
-                <span className="label-text">Current Password</span>
-              </label>
-              <PasswordInput setValue={setCurrentPassword} isShowHide={false} />
-            </div>
-            <div className="w-full">
-              <label className="label py-0">
-                <span className="label-text">New Password</span>
-              </label>
-              <PasswordInput setValue={setNewPassword} isShowHide={false} />
-            </div>
+            <PasswordInput
+              setValue={setCurrentPassword}
+              isShowHide={false}
+              label="Current Password"
+            />
+            <PasswordInput
+              setValue={setNewPassword}
+              isShowHide={false}
+              label="New Password"
+            />
           </div>
         </div>
         <button
