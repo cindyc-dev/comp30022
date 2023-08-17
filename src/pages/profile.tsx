@@ -2,6 +2,7 @@ import { Layout } from "~/components/layout";
 import Image from "next/image";
 import { useState } from "react";
 import PasswordInput from "~/components/passwordInput";
+import { TextInput } from "~/components/textInput";
 
 export default function Profile() {
   const [name, setName] = useState<string>("");
@@ -68,26 +69,24 @@ export default function Profile() {
             </label>
           </div>
           <div className="flex w-full flex-col items-center gap-2">
-            <input
-              type="text"
-              placeholder="Name"
-              className="input input-bordered w-full"
+            <TextInput
+              label="Name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              setValue={setName}
+              placeholder="John Green"
             />
-            <input
-              type="text"
-              placeholder="Contact"
-              className="input input-bordered w-full"
+            <TextInput
+              label="Contact"
               value={contact}
-              onChange={(e) => setContact(e.target.value)}
+              setValue={setContact}
+              placeholder="012-3456789"
             />
-            <input
-              type="email"
-              placeholder="Email"
-              className="input input-bordered w-full"
+            <TextInput
+              label="Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              setValue={setEmail}
+              placeholder="example@gmail.com"
+              type="email"
             />
           </div>
         </div>
