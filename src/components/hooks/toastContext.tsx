@@ -61,3 +61,5 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
     </ToastContext.Provider>
   );
 };
+
+export default ToastProvider;

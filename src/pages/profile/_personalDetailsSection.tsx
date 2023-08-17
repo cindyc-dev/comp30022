@@ -101,3 +101,5 @@ export const PersonalDetailsSection = () => {
     </>
   );
 };
+
+export default PersonalDetailsSection;

@@ -104,3 +104,5 @@ export const ChangePasswordSection = () => {
     </>
   );
 };
+
+export default ChangePasswordSection;

@@ -20,3 +20,5 @@ export const AvatarImage = ({
     </div>
   );
 };
+
+export default AvatarImage;

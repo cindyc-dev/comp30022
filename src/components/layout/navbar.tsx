@@ -74,7 +74,7 @@ export const Navbar = () => {
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
+        <ul className="menu menu-horizontal gap-2 px-1">
           {PAGES.map(({ icon, path, name }) => (
             <li key={name}>
               <Link href={path} className={currentPage === path ? "focus" : ""}>
@@ -108,3 +108,5 @@ export const Navbar = () => {
     </div>
   );
 };
+
+export default Navbar;

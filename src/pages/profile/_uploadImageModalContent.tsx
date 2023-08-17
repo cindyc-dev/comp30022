@@ -45,3 +45,5 @@ export const UploadImageModalContent = () => {
     </div>
   );
 };
+
+export default UploadImageModalContent;

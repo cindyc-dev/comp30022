@@ -51,3 +51,5 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
     </ModalContext.Provider>
   );
 };
+
+export default ModalProvider;
