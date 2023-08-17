@@ -1,6 +1,29 @@
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
 
+const GROUP_MEMBERS = [
+  {
+    name: "Ashley Teoh",
+    github: "https://github.com/ashleyteoh",
+  },
+  {
+    name: "Aurelia Iskandar",
+    github: "https://github.com/aiskd",
+  },
+  {
+    name: "Chuah Xin Yu (Cindy)",
+    github: "https://github.com/chuahxinyu",
+  },
+  {
+    name: "Daniel Chin Weng Jae",
+    github: "https://github.com/Jaee-C",
+  },
+  {
+    name: "Gan Yu Pin",
+    github: "https://github.com/Gyp1127",
+  },
+];
+
 export const Footer = () => {
   return (
     <footer className="footer footer-center w-full bg-primary py-2 text-primary-content">
@@ -12,25 +35,18 @@ export const Footer = () => {
           </Link>
         </div>
         <p>
-          <a className="link underline" href="">
-            Ashley Teoh
-          </a>
-          ,{" "}
-          <a className="link underline" href="">
-            Aurelia Iskandar
-          </a>
-          ,{" "}
-          <a className="link underline" href="">
-            Cindy Chuah Xin Yu
-          </a>
-          ,{" "}
-          <a className="link underline" href="">
-            Daniel Chin Weng Jae
-          </a>
-          ,{" "}
-          <a className="link underline" href="">
-            Gan Yu Pin
-          </a>
+          {GROUP_MEMBERS.map((member) => (
+            <span key={member.name}>
+              <a
+                className="link underline"
+                href={member.github}
+                target="_blank"
+              >
+                {member.name}
+              </a>
+              ,{" "}
+            </span>
+          ))}
         </p>
       </div>
     </footer>
