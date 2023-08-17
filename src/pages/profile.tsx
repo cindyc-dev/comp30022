@@ -127,24 +127,42 @@ export default function Profile() {
           </button>
         </div>
         <div>
-          <div className="flex w-full flex-col items-center gap-2">
-            <PasswordInput
-              setValue={setCurrentPassword}
-              isShowHide={false}
-              label="Current Password"
-            />
-            <PasswordInput
-              setValue={setNewPassword}
-              isShowHide={false}
-              label="New Password"
-            />
-            <PasswordInput
-              setValue={setConfirmNewPassword}
-              isShowHide={false}
-              label="Confirm New Password"
-            />
+          <div className="flex w-full flex-col items-center gap-2 md:flex-row md:gap-4">
+            <div className="flex w-full flex-col">
+              <PasswordInput
+                setValue={setCurrentPassword}
+                isShowHide={false}
+                label="Current Password"
+              />
+              <PasswordInput
+                setValue={setNewPassword}
+                isShowHide={false}
+                label="New Password"
+              />
+              <PasswordInput
+                setValue={setConfirmNewPassword}
+                isShowHide={false}
+                label="Confirm New Password"
+              />
+            </div>
+            <div className="mt-2 hidden w-1/2 md:block">
+              <PasswordChecklist
+                rules={[
+                  "minLength",
+                  "specialChar",
+                  "number",
+                  "capital",
+                  "match",
+                ]}
+                minLength={8}
+                value={newPassword}
+                valueAgain={confirmNewPassword}
+                onChange={(isValid) => setPasswordValid(isValid)}
+                className="text-xs"
+              />
+            </div>
             {newPassword && (
-              <div className="mt-2">
+              <div className="mt-2 md:hidden">
                 <PasswordChecklist
                   rules={[
                     "minLength",
