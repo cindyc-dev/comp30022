@@ -9,7 +9,7 @@ interface ModalI {
 
 interface ModalContextType {
   modals: ModalI[];
-  openModal: (content: ReactNode) => void;
+  openModal: ({ content, id }: { content: ReactNode; id: string }) => void;
   closeModal: (id: string) => void;
 }
 
@@ -32,8 +32,7 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
   // Stores open modals
   const [modals, setModals] = useState<ModalI[]>([]);
 
-  const openModal = (content: ReactNode) => {
-    const id = Date.now().toString();
+  const openModal = ({ content, id }: { content: ReactNode; id: string }) => {
     setModals((prevModals) => [...prevModals, { id, content }]);
   };
 

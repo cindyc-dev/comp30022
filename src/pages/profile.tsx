@@ -3,9 +3,10 @@ import { useState } from "react";
 import PasswordInput from "~/components/common/passwordInput";
 import { TextInput } from "~/components/common/textInput";
 import dynamic from "next/dynamic";
-import { useModal } from "~/components/hooks/modalcontext";
+import { useModal } from "~/components/hooks/modalContext";
 import { UploadImageModalContent } from "~/components/uploadImageModalContent";
 import { AvatarImage } from "~/components/common/avatarImage";
+import { useToast } from "~/components/hooks/toastContext";
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
   ssr: false,
@@ -22,35 +23,42 @@ export default function Profile() {
   const [passwordValid, setPasswordValid] = useState<boolean>(false);
 
   const { openModal } = useModal();
+  const { addToast } = useToast();
 
   // TODO Fetch user data from API
 
   const savePersonalDetails = () => {
     if (!name || !contact || !email) {
-      console.log("Missing personal details");
+      // Show error toast
+      addToast({
+        type: "error",
+        message: "All fields (Name, Contact and Email) are required.",
+      });
       return;
     }
 
-    console.log("Saving personal details");
-    console.log({ name, contact, email });
     // TODO Save user data to API
   };
 
   const changePassword = () => {
     if (!currentPassword || !passwordValid) {
-      console.log("Missing password details");
+      // Show error toast
+      addToast({
+        type: "error",
+        message:
+          "Both current and new passwords are required and must satisfy the password requirements.",
+      });
       return;
     }
 
-    console.log("Changing password");
-    console.log({ currentPassword, newPassword, confirmNewPassword });
     // TODO Change password in API
   };
 
   const editPhoto = () => {
-    console.log("Editing photo");
-    openModal(<UploadImageModalContent />);
-    // TODO Edit photo in API
+    openModal({
+      content: <UploadImageModalContent />,
+      id: "upload-image-modal",
+    });
   };
 
   return (

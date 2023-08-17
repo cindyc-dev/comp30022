@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useState } from "react";
 import PasswordInput from "~/components/common/passwordInput";
-import Toast from "~/components/common/toastSection";
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
   ssr: false,
@@ -48,9 +47,6 @@ export default function SignUp() {
 
   return (
     <div className="hero min-h-screen bg-base-200">
-      {mutation.error && (
-        <Toast toasts={[{ type: "error", message: mutation.error.message }]} />
-      )}
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="p-10 text-center lg:text-left">
           <h1 className="text-5xl font-bold">PotatoCRM</h1>

@@ -1,12 +1,22 @@
 import { useState } from "react";
 import { AvatarImage } from "./common/avatarImage";
+import { useToast } from "./hooks/toastContext";
+import { useModal } from "./hooks/modalContext";
 
 export const UploadImageModalContent = () => {
   const [image, setImage] = useState<File | null>(null);
+  const { addToast } = useToast();
+  const { closeModal } = useModal();
 
   const saveImage = () => {
-    console.log("Saving image");
-    console.log({ image: image });
+    // TODO Save image to API
+    
+    // Show success toast
+    addToast({
+      type: "success",
+      message: "Profile picture updated successfully!",
+    });
+    closeModal("upload-image-modal");
   };
 
   return (

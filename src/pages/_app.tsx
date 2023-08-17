@@ -4,7 +4,7 @@ import { AppProps } from "next/app";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { ReactNode } from "react";
-import { ModalProvider } from "~/components/hooks/modalcontext";
+import Providers from "~/components/hooks/providers";
 
 const MyApp = ({
   Component,
@@ -15,7 +15,7 @@ const MyApp = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <ModalProvider>
+      <Providers>
         {Component.auth ? (
           <Auth>
             <Component {...pageProps} />
@@ -23,7 +23,7 @@ const MyApp = ({
         ) : (
           <Component {...pageProps} />
         )}
-      </ModalProvider>
+      </Providers>
     </SessionProvider>
   );
 };
