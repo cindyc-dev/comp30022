@@ -3,6 +3,11 @@ import Image from "next/image";
 import { useState } from "react";
 import PasswordInput from "~/components/passwordInput";
 import { TextInput } from "~/components/textInput";
+import dynamic from "next/dynamic";
+// Dynamic import to prevent SSR error
+const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
+  ssr: false,
+});
 
 export default function Profile() {
   const [name, setName] = useState<string>("");
@@ -12,6 +17,7 @@ export default function Profile() {
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
+  const [passwordValid, setPasswordValid] = useState<boolean>(false);
 
   // TODO Fetch user data from API
 
@@ -27,13 +33,19 @@ export default function Profile() {
   };
 
   const changePassword = () => {
-    if (!currentPassword || !newPassword || !confirmNewPassword) {
+    if (!currentPassword || !passwordValid) {
       console.log("Missing password details");
       return;
     }
+
     console.log("Changing password");
     console.log({ currentPassword, newPassword, confirmNewPassword });
     // TODO Change password in API
+  };
+
+  const editPhoto = () => {
+    console.log("Editing photo");
+    // TODO Edit photo in API
   };
 
   return (
@@ -56,7 +68,7 @@ export default function Profile() {
           </button>
         </div>
         <div className="flex flex-col items-center gap-4 align-middle md:flex-row md:justify-between">
-          <div className="flex">
+          <div className="flex flex-col text-center">
             <label className="h avatar btn btn-circle btn-ghost h-40 w-40">
               <div className="rounded-full">
                 <Image
@@ -67,6 +79,7 @@ export default function Profile() {
                 />
               </div>
             </label>
+            <p className="link cursor-pointer text-xs">Edit Photo</p>
           </div>
           <div className="flex w-full flex-col items-center gap-2">
             <TextInput
@@ -125,6 +138,29 @@ export default function Profile() {
               isShowHide={false}
               label="New Password"
             />
+            <PasswordInput
+              setValue={setConfirmNewPassword}
+              isShowHide={false}
+              label="Confirm New Password"
+            />
+            {newPassword && (
+              <div className="mt-2">
+                <PasswordChecklist
+                  rules={[
+                    "minLength",
+                    "specialChar",
+                    "number",
+                    "capital",
+                    "match",
+                  ]}
+                  minLength={8}
+                  value={newPassword}
+                  valueAgain={confirmNewPassword}
+                  onChange={(isValid) => setPasswordValid(isValid)}
+                  className="text-xs"
+                />
+              </div>
+            )}
           </div>
         </div>
         <button
