@@ -3,8 +3,8 @@ import { getUserEmail } from "./UserDetails";
 const test_id = "cllhjbxsi0000uk6g3opkfwjf";
 
 async function testGetUserEmail() {
-    const email = await getUserEmail(test_id);
-    console.log(email);
+  const email = await getUserEmail(test_id);
+  console.log(email);
 }
 
 testGetUserEmail();

@@ -11,7 +11,7 @@ export async function hashText(Text: string): Promise<string> {
 
 export async function createAccount(email: string, password: string) {
   const hashedPassword = await hashText(password);
-  await createUser(email, hashedPassword);
+  return await createUser(email, hashedPassword); //
 }
 
 export async function accountExists(email: string): Promise<boolean> {
@@ -19,14 +19,17 @@ export async function accountExists(email: string): Promise<boolean> {
   return user !== null;
 }
 
-export async function comparePassword(id: string, currPassword: string): Promise<boolean> {
-  const dbPassword = await getUserPassword(id);
-  const hashedCurrPassword = await hashText(currPassword);
-  return (dbPassword == hashedCurrPassword);
-}
+// export async function comparePassword(id: string, currPassword: string): Promise<boolean> {
+//   const dbPassword = await getUserPassword(id);
+//   // const hashedCurrPassword = await hashText(currPassword);
+//   return (bcrypt.compare(currPassword, dbPassword));
+// }
 
 export async function updatePassword(id: string, currPassword: string, newPassword: string): Promise<boolean> {
-  if (await comparePassword(id, currPassword)) {
+  const dbPassword = await getUserPassword(id);
+  const passwordMatch = await bcrypt.compare(currPassword, dbPassword);
+
+  if (passwordMatch) {
     // Correct Password
     const hashedNewPassword = await hashText(newPassword);
     if (await UpdateUserPasswordWithId(id, hashedNewPassword)) {

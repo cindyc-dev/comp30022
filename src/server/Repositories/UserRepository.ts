@@ -2,12 +2,14 @@ import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
 
 export async function createUser(email: string, password: string) {
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       email: email,
       password: password,
     },
   });
+
+  return user; //
 }
 
 const userInfoSelect = {
@@ -64,7 +66,7 @@ export async function getUserInfoWithUserId(
 
 export async function UpdateUserPasswordWithId(
   userId: string, newPassword: string
-  ): Promise<boolean> {
+): Promise<boolean> {
   try {
     const updatedUser = await prisma.user.update({
       where: {
