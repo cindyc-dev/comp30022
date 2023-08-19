@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { createAccount, accountExists } from "~/server/Services/AuthService";
 import { TRPCError } from "@trpc/server";
 
@@ -17,4 +17,9 @@ export const authRouter = createTRPCRouter({
       }
       await createAccount(opts.input.email, opts.input.password);
     }),
+  profile: protectedProcedure
+    .query(async(opts) => {
+      const session = opts.ctx.session;
+      const userId = session.user.id;
+    })
 });
