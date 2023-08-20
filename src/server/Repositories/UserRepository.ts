@@ -41,27 +41,35 @@ export async function getUserWithEmail(
 export async function getUserInfoWithUserId(
   userId: string
 ): Promise<UserInfoPayload | null> {
-  const dbResult = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: userInfoSelect,
-  });
 
-  if (!dbResult) {
+  try {
+    const dbResult = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: userInfoSelect,
+    });
+  
+    if (!dbResult) {
+      throw new Error("User does not exist");
+    }
+  
+    // Transform result
+    const userInfo: UserInfoPayload = {
+      id: userId,
+      name: dbResult.name,
+      email: dbResult.email,
+      image: dbResult.image,
+      password: dbResult.password,
+    };
+  
+    return userInfo;
+
+  } catch (error) {
+    console.log("Error Retrieving Info from Database");
     return null;
   }
-
-  // Transform result
-  const userInfo: UserInfoPayload = {
-    id: userId,
-    name: dbResult.name,
-    email: dbResult.email,
-    image: dbResult.image,
-    password: dbResult.password,
-  };
-
-  return userInfo;
+  
 }
 
 export async function UpdateUserPasswordWithId(

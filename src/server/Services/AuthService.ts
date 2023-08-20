@@ -19,15 +19,11 @@ export async function accountExists(email: string): Promise<boolean> {
   return user !== null;
 }
 
-// export async function comparePassword(id: string, currPassword: string): Promise<boolean> {
-//   const dbPassword = await getUserPassword(id);
-//   // const hashedCurrPassword = await hashText(currPassword);
-//   return (bcrypt.compare(currPassword, dbPassword));
-// }
-
 export async function updatePassword(id: string, currPassword: string, newPassword: string): Promise<boolean> {
   const dbPassword = await getUserPassword(id);
   const passwordMatch = await bcrypt.compare(currPassword, dbPassword);
+
+  console.log(dbPassword);
 
   if (passwordMatch) {
     // Correct Password

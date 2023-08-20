@@ -14,7 +14,7 @@ export async function getUserEmail(id: string): Promise<string> {
 
 export async function getUserImage(id: string): Promise<string> {
   const user = await getUserInfoWithUserId(id);
-  const img = user?.name;
+  const img = user?.image;
   return (img ? img : "");
 }
 
