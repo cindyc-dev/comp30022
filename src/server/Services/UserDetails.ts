@@ -1,6 +1,6 @@
 import {updateUserImageWithId, getUserInfoWithUserId, updateUserDetailsWithId} from "~/server/Repositories/UserRepository";
 
-interface userDetail {name: string; contact: string; email: string};
+interface userDetail {name: string; contact: string; email: string}
 
 export async function getUserName(id: string): Promise<string> {
   const user = await getUserInfoWithUserId(id);
