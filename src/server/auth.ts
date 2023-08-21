@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        email: { label: "Email", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
@@ -73,12 +73,13 @@ export const authOptions: NextAuthOptions = {
         if (credentials === undefined) {
           return null;
         }
+        console.log("authorising...");
 
-        const user = await getUserWithEmail(credentials.username!);
+        const user = await getUserWithEmail(credentials.email);
 
         if (user) {
           // Any object returned will be saved in `user` property of the JWT
-          if (await checkPassword(credentials.username, credentials.password)) {
+          if (await checkPassword(credentials.email, credentials.password)) {
             return user;
           }
         }
