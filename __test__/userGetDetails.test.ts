@@ -11,6 +11,7 @@ const user = {
   emailVerified: null,
   password: alphaNumericPW,
   image: "https://i.redd.it/mf030h11if231.jpg",
+  contact: "+82 10-9482-0863",
 };
 
 test("Should create a new user", async() => {

@@ -23,8 +23,6 @@ export async function updatePassword(id: string, currPassword: string, newPasswo
   const dbPassword = await getUserPassword(id);
   const passwordMatch = await bcrypt.compare(currPassword, dbPassword);
 
-  console.log(dbPassword);
-
   if (passwordMatch) {
     // Correct Password
     const hashedNewPassword = await hashText(newPassword);

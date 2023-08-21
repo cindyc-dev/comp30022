@@ -91,3 +91,44 @@ export async function UpdateUserPasswordWithId(
   }
 
 }
+
+export async function updateUserImageWithId(
+  userId: string, newImage: string
+): Promise<boolean> {
+  try {
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        image: newImage,
+      },
+    });
+    return true;
+
+  } catch (error) {
+    return false;
+  }
+
+}
+
+export async function updateUserDetailsWithId(
+  userId: string, name: string, contact: string, email: string
+): Promise<boolean> {
+  try {
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        name: name,
+        contact: contact,
+        email: email,
+      },
+    });
+    return true;
+
+  } catch (error) {
+    return false;
+  }
+}

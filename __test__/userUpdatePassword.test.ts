@@ -1,4 +1,4 @@
-import {hashText, updatePassword } from "src/server/Services/AuthService";
+import {updatePassword } from "src/server/Services/AuthService";
 import { prismaMock } from "./singleton";
 import bcrypt from "bcrypt";
 import { UpdateUserPasswordWithId } from "~/server/Repositories/UserRepository";
@@ -8,14 +8,6 @@ const old_alphaNumericPW = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 const new_alphaNumericPW = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>?/`ABCDEFGHIJKLMNOPQRSTUVWXYZ;";
 const hashedOld_alphaNumericPW = bcrypt.hashSync(old_alphaNumericPW, 10);
 
-// hashedOld_alphaNumericPW
-//   .then((result) => {
-//     console.log(result);
-//   })
-//   .catch(((err) => {
-//     console.log(err);
-//   }));
-
 const old_user = {
   id: "@1#",
   name: "test",
@@ -23,6 +15,7 @@ const old_user = {
   emailVerified: null,
   password: hashedOld_alphaNumericPW,
   image: "https://i.redd.it/mf030h11if231.jpg",
+  contact: "+82 10-9482-0863",
 };
 const new_user = {
   id: "@1#",
@@ -31,10 +24,10 @@ const new_user = {
   emailVerified: null,
   password: new_alphaNumericPW,
   image: "https://i.redd.it/mf030h11if231.jpg",
+  contact: "+82 10-9482-0863",
 };
 
 test("Should update user password", async() => {
-  prismaMock.user.update.mockResolvedValue(new_user);
   expect(await UpdateUserPasswordWithId(old_user.id, new_alphaNumericPW)).toBe(true);
 });
 
