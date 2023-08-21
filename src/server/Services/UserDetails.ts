@@ -1,5 +1,7 @@
 import {updateUserImageWithId, getUserInfoWithUserId, updateUserDetailsWithId} from "~/server/Repositories/UserRepository";
 
+interface userDetail {name: string; contact: string; email: string};
+
 export async function getUserName(id: string): Promise<string> {
   const user = await getUserInfoWithUserId(id);
   const name = user?.name;
@@ -18,6 +20,12 @@ export async function getUserImage(id: string): Promise<string> {
   return (img ? img : "");
 }
 
+export async function getUserContact(id: string): Promise<string> {
+  const user = await getUserInfoWithUserId(id);
+  const contact = user?.contact;
+  return (contact ? contact : "");
+}
+
 export async function getUserPassword(id: string): Promise<string> {
   const user = await getUserInfoWithUserId(id);
   const pw = user?.password;
@@ -28,8 +36,21 @@ export async function setUserImage(id: string, newImage: string): Promise<boolea
   return (updateUserImageWithId(id, newImage));
 }
 
+export async function getUserDetails(id: string): Promise<{name: string, contact: string, email: string}> {
+
+  const detail: userDetail = {
+    name: await getUserName(id),
+    contact: await getUserContact(id),
+    email: await getUserEmail(id),
+  };
+
+  return detail;
+}
+
 export async function setUserDetails(id: string, name: string, contact: string, email: string): Promise<boolean> {
   return (updateUserDetailsWithId(id, name, contact, email));
 }
+
+
 
 

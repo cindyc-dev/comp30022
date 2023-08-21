@@ -1,4 +1,4 @@
-import { getUserEmail, getUserImage, getUserName, getUserPassword } from "src/server/Services/UserDetails";
+import { getUserContact, getUserDetails, getUserEmail, getUserImage, getUserName, getUserPassword } from "src/server/Services/UserDetails";
 import { createAccount } from "src/server/Services/AuthService";
 import { prismaMock } from "./singleton";
 
@@ -47,4 +47,18 @@ test("Should retrieve user image", async () => {
 test("Should retrieve user password", async () => {
   prismaMock.user.findUnique.mockResolvedValue(user);
   expect(await getUserPassword(user.id)).toBe(user.password);
+});
+
+test("Should retrieve user contact", async () => {
+  prismaMock.user.findUnique.mockResolvedValue(user);
+  expect(await getUserContact(user.id)).toBe(user.contact);
+});
+
+test("Should retrieve user details (name, contact, email) object", async () => {
+  prismaMock.user.findUnique.mockResolvedValue(user);
+  expect(await getUserDetails(user.id)).toMatchObject({
+    name: "test",
+    contact: "+82 10-9482-0863",
+    email: "test@gmail.com",
+  });
 });

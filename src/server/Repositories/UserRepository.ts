@@ -18,6 +18,7 @@ const userInfoSelect = {
   email: true,
   image: true,
   password: true,
+  contact: true,
 } satisfies Prisma.UserSelect;
 
 type UserInfoPayload = Prisma.UserGetPayload<{ select: typeof userInfoSelect }>;
@@ -61,6 +62,7 @@ export async function getUserInfoWithUserId(
       email: dbResult.email,
       image: dbResult.image,
       password: dbResult.password,
+      contact: dbResult.contact,
     };
   
     return userInfo;
