@@ -17,7 +17,7 @@ export async function checkPassword(email: string, password:string) {
 
   const user = await getUserWithEmail(email);
 
-  if (user === null) {
+  if (user === null || user.password == null) {
     return false;
   }
 
