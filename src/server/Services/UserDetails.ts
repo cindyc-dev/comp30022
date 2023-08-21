@@ -32,10 +32,12 @@ export async function getUserPassword(id: string): Promise<string> {
   return (pw ? pw : "");
 }
 
+// main function for setting user image
 export async function setUserImage(id: string, newImage: string): Promise<boolean> {
   return (updateUserImageWithId(id, newImage));
 }
 
+// main function for retrieving user details object
 export async function getUserDetails(id: string): Promise<{name: string, contact: string, email: string}> {
 
   const detail: userDetail = {
@@ -47,6 +49,7 @@ export async function getUserDetails(id: string): Promise<{name: string, contact
   return detail;
 }
 
+// main function for setting user details
 export async function setUserDetails(id: string, name: string, contact: string, email: string): Promise<boolean> {
   return (updateUserDetailsWithId(id, name, contact, email));
 }

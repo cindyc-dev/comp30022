@@ -78,7 +78,7 @@ export async function UpdateUserPasswordWithId(
   userId: string, newPassword: string
 ): Promise<boolean> {
   try {
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       where: {
         id: userId,
       },
@@ -98,7 +98,7 @@ export async function updateUserImageWithId(
   userId: string, newImage: string
 ): Promise<boolean> {
   try {
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       where: {
         id: userId,
       },
@@ -118,7 +118,7 @@ export async function updateUserDetailsWithId(
   userId: string, name: string, contact: string, email: string
 ): Promise<boolean> {
   try {
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       where: {
         id: userId,
       },
