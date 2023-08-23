@@ -3,11 +3,14 @@
 import { signIn } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
+import PasswordInput from "~/components/passwordInput";
 import Link from "next/link";
 
 export const SignInForm = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [formValues, setFormValues] = useState({
     username: "",
     password: "",
@@ -21,18 +24,17 @@ export const SignInForm = () => {
     e.preventDefault();
     try{
       setLoading(true);
-      setFormValues({ username: "", password: "" });
 
       const res = await signIn("credentials", {
         redirect: false,
-        username: formValues.username,
-        password: formValues.password,
+        username: username,
+        password: password,
         callbackUrl: "/dashboard/index.js",
       });
 
       setLoading(false);
 
-      console.log({ username: formValues.username, password: formValues.password });
+      console.log({ username: username, password: password });
 
       if (!res?.error) {
         router.push(callbackUrl);
@@ -46,8 +48,7 @@ export const SignInForm = () => {
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormValues({ ...formValues, [name]: value });
+    setUsername(e.target.value);
   };
 
   return (
@@ -63,19 +64,14 @@ export const SignInForm = () => {
           placeholder = "Type here" 
           className="input input-bordered w-full max-w-xs" 
           name="username" 
-          value={formValues.username} 
           onChange={handleChange} />
-        <label className = "label">
-          <span className = "label-text">Password</span>
-        </label>
-        <input
-          type="password"
-          placeholder="Type here"
-          className="input input-bordered w-full max-w-xs"
-          name="password"
-          value={formValues.password}
-          onChange={handleChange}
-        />
+        <div className =  "form-control">
+          <label className = "label">
+            <span className = "label-text">Password</span>
+          </label>
+          < PasswordInput setValue={setPassword} isShowHide={true} />
+        </div>
+        
         <button 
           type = "submit"
           className = "btn btn-primary w-full max-w-xs mt-6"
