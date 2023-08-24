@@ -1,36 +1,21 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useSearchParams, useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import PasswordInput from "~/components/passwordInput";
 import Link from "next/link";
 
 export const SignInForm = () => {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const res = await signIn("credentials", {
-      redirect: false,
-      username: username,
-      password: password,
-      callbackUrl: "/dashboard/index.js",
-    });
-
     setLoading(false);
 
     console.log({ username: username, password: password });
-
-    
 
   };
 
@@ -64,7 +49,7 @@ export const SignInForm = () => {
           className = "btn btn-primary w-full max-w-xs mt-6"
           disabled={loading}
         >
-            {loading ? "Loading..." : "Sign In"}
+          {loading ? "Loading..." : "Sign In"}
         </button>
       </form>
     </div>

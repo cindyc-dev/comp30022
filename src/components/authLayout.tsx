@@ -1,5 +1,3 @@
-import bg from "public/background.png";
-
 export default function AuthLayout({
   children,
 }: {
