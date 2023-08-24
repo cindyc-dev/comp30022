@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import bg from "public/background.png";
 
 export default function AuthLayout({
@@ -10,10 +9,9 @@ export default function AuthLayout({
     <div
       className="hero min-h-screen bg-base-200"
       style={{
-        backgroundImage: `url(${bg.src})`,
-        backgroundSize: 'cover', // Adjust as needed
-        backgroundPosition: 'center center', // Adjust as needed
-        // Other styles
+        backgroundImage: "url(${bg.src})",
+        backgroundSize: "cover", 
+        backgroundPosition: "center center", 
       }}
     >
       <div className="hero-content flex-col lg:flex-row-reverse">

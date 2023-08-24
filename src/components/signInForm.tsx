@@ -11,40 +11,27 @@ export const SignInForm = () => {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [formValues, setFormValues] = useState({
-    username: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try{
-      setLoading(true);
+    setLoading(true);
 
-      const res = await signIn("credentials", {
-        redirect: false,
-        username: username,
-        password: password,
-        callbackUrl: "/dashboard/index.js",
-      });
+    const res = await signIn("credentials", {
+      redirect: false,
+      username: username,
+      password: password,
+      callbackUrl: "/dashboard/index.js",
+    });
 
-      setLoading(false);
+    setLoading(false);
 
-      console.log({ username: username, password: password });
+    console.log({ username: username, password: password });
 
-      if (!res?.error) {
-        router.push(callbackUrl);
-      } else {
-        setError("Invalid username or password");
-      }
-    } catch (error: any){
-      setLoading(false);
-      setError(error);
-    }
+    
+
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
