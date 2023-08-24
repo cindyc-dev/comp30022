@@ -8,11 +8,11 @@ export default function AuthLayout({
       className="hero min-h-screen bg-base-200"
       style={{
         backgroundImage: "url(${bg.src})",
-        backgroundSize: "cover", 
-        backgroundPosition: "center center", 
+        backgroundSize: "cover",
+        backgroundPosition: "center center",
       }}
     >
-      <div className="hero-content flex-col lg:flex-row-reverse">
+      <div className="hero-content flex-col lg:flex-row">
         <div className="p-10 text-center lg:text-left">
           <h1 className="text-5xl font-bold">PotatoCRM</h1>
           <p className="py-6">
