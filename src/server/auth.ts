@@ -6,9 +6,11 @@ import {
   type DefaultSession,
 } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
-
+import { checkPassword } from "./Services/AuthService";
+import { getUserWithEmail } from "./Repositories/UserRepository";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -53,6 +55,36 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
+    }),
+    CredentialsProvider({
+      // The name to display on the sign in form (e.g. "Sign in with...")
+      name: "Credentials",
+      // `credentials` is used to generate a form on the sign in page.
+      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
+      // e.g. domain, username, password, 2FA token, etc.
+      // You can pass any HTML attribute to the <input> tag through the object.
+      credentials: {
+        email: { label: "Email", type: "text", placeholder: "jsmith" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        // Add logic here to look up the user from the credentials supplied
+        // const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
+        if (credentials === undefined) {
+          return null;
+        }
+        console.log("authorising...");
+
+        const user = await getUserWithEmail(credentials.email);
+
+        if (user) {
+          // Any object returned will be saved in `user` property of the JWT
+          if (await checkPassword(credentials.email, credentials.password)) {
+            return user;
+          }
+        }
+        return null;
+      }
     }),
     /**
      * ...add more providers here.
