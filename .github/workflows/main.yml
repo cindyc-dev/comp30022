@@ -58,18 +58,15 @@ jobs:
          id: get-preview-url
          run: echo "url=$(vercel --token=${{ secrets.VERCEL_TOKEN }})" >> "$GITHUB_OUTPUT"
 
-  #  test:
-  #    name: Unit Tests
-  #    runs-on: ubuntu-latest
-  #    defaults:
-  #      run:
-  #        working-directory: client
-  #    steps:
-  #    - uses: actions/checkout@v3
-  #    - uses: actions/setup-node@v3
-  #      with:
-  #        node-version: 19
-  #    - run: npm ci
-  #    - name: Run approval tests
-  #      run: npm test
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 19
+    - run: npm ci
+    - name: Run approval tests
+      run: npm test
    
