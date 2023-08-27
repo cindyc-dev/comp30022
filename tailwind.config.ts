@@ -7,7 +7,7 @@ export default {
       {
         potatotheme: {
           primary: "#626FB5",
-          secondary: "#44529B",
+          secondary: "#D8DEFF",
           accent: "#282B40",
           neutral: "#626FB5",
           "neutral-content": "#ffffff",

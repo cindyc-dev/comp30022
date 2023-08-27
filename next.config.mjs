@@ -19,7 +19,7 @@ const config = {
     defaultLocale: "en",
   },
   images: {
-    domains: ["wallpapers.com", "images.unsplash.com"],
+    domains: ["wallpapers.com", "images.unsplash.com", "xsgames.co"],
   },
 };
 
