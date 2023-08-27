@@ -33,4 +33,3 @@ export async function updatePassword(id: string, currPassword: string, newPasswo
     }
   }
   return false;
-}
