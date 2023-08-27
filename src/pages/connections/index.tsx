@@ -31,7 +31,6 @@ export default function Connections() {
     });
   };
   const handleAddConnection = (newConnection: ConnectionI) => {
-    
     setData((prev) => [...prev, newConnection]);
   };
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AvatarImage } from "~/components/common/avatarImage";
 import { TextInput } from "~/components/common/textInput";
 import { useModal } from "~/components/hooks/modalContext";
-import { UploadImageModalContent } from "./_uploadImageModalContent";
+import { UploadImageModal } from "../../components/common/uploadImageModal";
 import { useToast } from "~/components/hooks/toastContext";
 
 export const PersonalDetailsSection = () => {
@@ -32,7 +32,7 @@ export const PersonalDetailsSection = () => {
 
   const editPhoto = () => {
     openModal({
-      content: <UploadImageModalContent />,
+      content: <UploadImageModal />,
       id: "upload-image-modal",
     });
   };

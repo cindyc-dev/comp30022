@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { AvatarImage } from "../../components/common/avatarImage";
-import { useToast } from "../../components/hooks/toastContext";
-import { useModal } from "../../components/hooks/modalContext";
+import { AvatarImage } from "./avatarImage";
+import { useToast } from "../hooks/toastContext";
+import { useModal } from "../hooks/modalContext";
 
-export const UploadImageModalContent = () => {
+export const UploadImageModal = () => {
   const [image, setImage] = useState<File | null>(null);
   const { addToast } = useToast();
   const { closeModal } = useModal();
@@ -46,4 +46,4 @@ export const UploadImageModalContent = () => {
   );
 };
 
-export default UploadImageModalContent;
+export default UploadImageModal;

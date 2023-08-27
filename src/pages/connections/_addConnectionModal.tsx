@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { FaPaperPlane, FaPlus } from "react-icons/fa";
+import { FaPaperPlane } from "react-icons/fa";
 import AvatarImage from "~/components/common/avatarImage";
 import TextInput from "~/components/common/textInput";
 import { mockSearchResults } from "~/mockData/mockConnections";
 import { ConnectionI } from "~/types/ConnectionI";
+import UploadImageModal from "../../components/common/uploadImageModal";
+import { useModal } from "~/components/hooks/modalContext";
 
 const AddConnectionModal = ({
   handleCreateConnection,
@@ -27,7 +29,7 @@ const AddConnectionModal = ({
           Create
         </span>
       </div>
-      <div>
+      <div className="flex justify-center">
         {isSearch ? (
           <SearchTab />
         ) : (
@@ -86,33 +88,66 @@ const CreateTab = ({
   handleCreateConnection: (connection: ConnectionI) => void;
 }) => {
   const [connection, setConnection] = useState<ConnectionI>({} as ConnectionI);
+  const { openModal } = useModal();
+  const editPhoto = () => {
+    openModal({
+      content: <UploadImageModal />,
+      id: "upload-image-modal",
+    });
+  };
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col content-center items-center justify-center gap-4 md:w-4/5">
       <h1 className="my-0">Create a Connection</h1>
-      <TextInput
-        label="👋 Name"
-        placeholder="eg. Jane Green"
-        value={connection.name}
-        setValue={(v) => setConnection({ ...connection, name: v })}
-      />
-      <TextInput
-        label="📧 Email"
-        placeholder="eg. example@company.com"
-        value={connection.email}
-        setValue={(v) => setConnection({ ...connection, email: v })}
-      />
-      <TextInput
-        label="📞 Phone"
-        placeholder="eg. 123-456-7890"
-        value={connection.phone || ""}
-        setValue={(v) => setConnection({ ...connection, phone: v })}
-      />
-      <button
-        className="btn btn-primary"
-        onClick={() => handleCreateConnection(connection)}
-      >
-        Create
-      </button>
+      <div className="flex w-full flex-col items-center gap-4 align-middle md:flex-row md:justify-between">
+        <div className="flex flex-col text-center">
+          <label
+            className="avatar btn btn-circle btn-ghost h-40 w-40"
+            onClick={() => editPhoto()}
+          >
+            <AvatarImage src="https://wallpapers.com/images/hd/funny-profile-picture-ylwnnorvmvk2lna0.jpg" />
+          </label>
+          <p
+            className="link cursor-pointer text-xs"
+            onClick={() => editPhoto()}
+          >
+            Edit Photo
+          </p>
+        </div>
+        <div className="flex w-full flex-col items-center gap-2">
+          <TextInput
+            label="👋 Name"
+            placeholder="eg. Jane Green"
+            value={connection.name}
+            setValue={(v) => setConnection({ ...connection, name: v })}
+          />
+          <TextInput
+            label="📧 Email"
+            placeholder="eg. example@company.com"
+            value={connection.email}
+            setValue={(v) => setConnection({ ...connection, email: v })}
+          />
+          <TextInput
+            label="📞 Phone"
+            placeholder="eg. 123-456-7890"
+            value={connection.phone || ""}
+            setValue={(v) => setConnection({ ...connection, phone: v })}
+          />
+          <TextInput
+            label="🏷️ Tags"
+            placeholder="eg. #friend #colleague"
+            value={connection.tags?.join(" ") || ""}
+            setValue={(v) =>
+              setConnection({ ...connection, tags: v.split(" ") })
+            }
+          />
+          <button
+            className="btn btn-primary btn-wide"
+            onClick={() => handleCreateConnection(connection)}
+          >
+            Create
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
