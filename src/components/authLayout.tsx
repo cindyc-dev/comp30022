@@ -12,6 +12,7 @@ export default function AuthLayout({
         layout="fill"
         objectFit="cover"
         quality={100}
+        className="!fixed"
       />
       <div className="hero-content flex-col lg:flex-row">
         <div className="p-10 text-center text-base-100 lg:text-left">
