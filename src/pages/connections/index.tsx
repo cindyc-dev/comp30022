@@ -1,91 +1,117 @@
-import { useEffect, useState } from "react";
+import { HTMLProps, useEffect, useMemo, useRef, useState } from "react";
 import { Layout } from "~/components/layout/layout";
 import { ConnectionI } from "~/types/ConnectionI";
 import {
-  createColumnHelper,
+  ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { mockConnections } from "~/mockData/mockConnections";
+import { mockConnections, mockTags } from "~/mockData/mockConnections";
 import AvatarImage from "~/components/common/avatarImage";
 import { capitalise } from "~/components/utils/capitalise";
+import { FaFilter, FaPlus } from "react-icons/fa";
+import { useModal } from "~/components/hooks/modalContext";
+import AddConnectionModal from "./_addConnectionModal";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>(mockConnections);
-  const [tagColoursMap, setTagColoursMap] = useState<Record<string, string>>(
-    {}
-  );
+  const tagColoursMap: Record<string, string> = mockTags;
 
-  useEffect(() => {
-    // Check all tags, add to a list and assign colours alternating between [info, success, warning, error]
-    const tags = data.reduce((acc, curr) => {
-      curr.tags.forEach((tag) => {
-        if (!acc.includes(tag)) {
-          acc.push(tag);
-        }
-      });
-      return acc;
-    }, [] as string[]);
-    const tagColours = ["info", "success", "warning", "error"];
-    const tagColoursLength = tagColours.length;
-    const newTagColoursMap = tags.reduce((acc, curr, index) => {
-      acc[curr] = tagColours[index % tagColoursLength];
-      return acc;
-    }, {} as Record<string, string>);
-    setTagColoursMap(newTagColoursMap);
-  }, []);
+  // TODO fetch data and tagColoursMap from API
 
-  const columnHelper = createColumnHelper<ConnectionI>();
+  const { openModal } = useModal();
 
-  const columns = [
-    columnHelper.accessor("name", {
-      header: "NAME",
-      cell: (info) => (
-        <div className="flex items-center">
-          {info.row.original.photoUrl && (
-            <div className="avatar">
-              <div className="h-12 w-12 rounded-full">
-                <AvatarImage src={info.row.original.photoUrl} />
-              </div>
-            </div>
-          )}
-          <div className="ml-2">
-            <div>{info.getValue()}</div>
+  const addConnection = () => {
+    openModal({
+      content: (
+        <AddConnectionModal handleCreateConnection={handleAddConnection} />
+      ),
+      id: "add-connection-modal",
+    });
+  };
+  const handleAddConnection = (newConnection: ConnectionI) => {
+    
+    setData((prev) => [...prev, newConnection]);
+  };
+
+  const columns = useMemo<ColumnDef<ConnectionI>[]>(
+    () => [
+      {
+        id: "select",
+        header: ({ table }) => (
+          <IndeterminateCheckbox
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler(),
+            }}
+          />
+        ),
+        cell: ({ row }) => (
+          <div className="px-1">
+            <IndeterminateCheckbox
+              {...{
+                checked: row.getIsSelected(),
+                disabled: !row.getCanSelect(),
+                indeterminate: row.getIsSomeSelected(),
+                onChange: row.getToggleSelectedHandler(),
+              }}
+            />
           </div>
-        </div>
-      ),
-    }),
-    columnHelper.accessor("email", {
-      header: "EMAIL",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("phone", {
-      header: "PHONE",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("tags", {
-      header: "TAGS",
-      cell: (info) => (
-        <div className="flex flex-row flex-wrap gap-2">
-          {info.getValue().map((tag) => (
-            <div
-              key={tag}
-              className={`badge badge-${tagColoursMap[tag]} py-3 text-sm font-normal text-base-100`}
-            >
-              {capitalise(tag)}
+        ),
+      },
+      {
+        header: "NAME",
+        accessorKey: "name",
+        cell: ({ row }) => (
+          <div className="flex items-center">
+            {row.original.photoUrl && (
+              <div className="avatar">
+                <div className="h-12 w-12 rounded-full">
+                  <AvatarImage src={row.original.photoUrl} />
+                </div>
+              </div>
+            )}
+            <div className="ml-2">
+              <div>{row.original.name}</div>
             </div>
-          ))}
-        </div>
-      ),
-    }),
-    columnHelper.display({
-      header: "CONNECT",
-      cell: () => (
-        <button className="btn btn-secondary btn-sm">Connect Now</button>
-      ),
-    }),
-  ];
+          </div>
+        ),
+      },
+      {
+        header: "EMAIL",
+        accessorKey: "email",
+      },
+      {
+        header: "PHONE",
+        accessorKey: "phone",
+      },
+      {
+        header: "TAGS",
+        accessorKey: "tags",
+        cell: ({ row }) => (
+          <div className="flex flex-row flex-wrap gap-2">
+            {row.original.tags.map((tag) => (
+              <div
+                key={tag}
+                className={`${tagColoursMap[tag]} badge py-3 text-sm font-normal text-base-100`}
+              >
+                {capitalise(tag)}
+              </div>
+            ))}
+          </div>
+        ),
+      },
+      {
+        header: "CONNECT",
+        cell: () => (
+          <button className="btn btn-secondary btn-sm">Connect Now</button>
+        ),
+      },
+    ],
+    []
+  );
 
   const table = useReactTable({
     data,
@@ -96,10 +122,29 @@ export default function Connections() {
   return (
     <Layout>
       <div className="flex w-full flex-col items-start font-semibold">
-        <h2 className="mb-0 mt-4">{data.length} Contacts</h2>
-
-        <div className="w-full overflow-x-auto">
-          <table className="table">
+        <div className="my-5 flex w-full flex-row items-center justify-between">
+          <h1 className="mb-0 mt-4">{data.length} Contacts</h1>
+          <button
+            className="btn btn-primary text-base-100"
+            onClick={() => addConnection()}
+          >
+            <FaPlus /> New Connection
+          </button>
+        </div>
+        <div className="flex w-full flex-row justify-between rounded bg-[#EAECF6] p-3">
+          <input
+            type="text"
+            className="input input-sm"
+            placeholder="🔎 Search Connection"
+          />
+          <button className="btn btn-primary btn-sm text-base-100">
+            <FaFilter /> Filter
+          </button>
+        </div>
+        {/* Table */}
+        <div className="mt-0 w-full overflow-x-auto">
+          <table className="table mt-0">
+            {/* Header */}
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
@@ -108,14 +153,16 @@ export default function Connections() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </th>
                   ))}
                 </tr>
               ))}
             </thead>
+
+            {/* Body */}
             <tbody>
               {table.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="hover">
@@ -134,5 +181,27 @@ export default function Connections() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+function IndeterminateCheckbox({
+  indeterminate,
+  ...rest
+}: { indeterminate?: boolean } & HTMLProps<HTMLInputElement>) {
+  const ref = useRef<HTMLInputElement>(null!);
+
+  useEffect(() => {
+    if (typeof indeterminate === "boolean") {
+      ref.current.indeterminate = !rest.checked && indeterminate;
+    }
+  }, [ref, indeterminate]);
+
+  return (
+    <input
+      type="checkbox"
+      ref={ref}
+      className="checkbox-primary checkbox"
+      {...rest}
+    />
   );
 }

@@ -3,6 +3,6 @@ export interface ConnectionI {
     phone?: string;
     photoUrl?: string;
     email: string;
-    tags: TagI[];
+    tags: string[];
     notes?: string;
 }

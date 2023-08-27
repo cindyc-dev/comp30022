@@ -2,6 +2,11 @@ import { type Config } from "tailwindcss";
 
 export default {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  safelist: [
+    {
+      pattern: /badge-(info|success|warning|error|primary)/,
+    },
+  ],
   daisyui: {
     themes: [
       {

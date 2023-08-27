@@ -1,7 +1,29 @@
 import { ConnectionI } from "~/types/ConnectionI";
 
-// Random data generated using ChatGPT with appropriate prompts
+export const mockTags = {
+  friend: "badge-primary",
+  colleague: "badge-info",
+  family: "badge-success",
+  client: "badge-warning",
+  neighbor: "badge-error",
+};
 
+export const mockSearchResults: ConnectionI[] = [
+  {
+    name: "John Doe",
+    photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/23.jpg",
+    email: "john.doe@example.com",
+    tags: [],
+  },
+  {
+    name: "Jane Smith",
+    photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/15.jpg",
+    email: "jane.smith@gmail.com",
+    tags: [],
+  },
+];
+
+// Random data generated using ChatGPT with appropriate prompts
 export const mockConnections: ConnectionI[] = [
   {
     name: "John Doe",
