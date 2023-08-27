@@ -19,6 +19,18 @@ export async function accountExists(email: string): Promise<boolean> {
   return user !== null;
 }
 
+export async function checkPassword(email: string, password:string) {
+  const user = await getUserWithEmail(email);
+  if (user === null || user.password == null) {
+    return false;
+  }
+  const userPassword = user.password;
+  const match = await bcrypt.compare(password, userPassword);
+
+  return match;
+}
+
+
 // main function for checking & updating user password
 export async function updatePassword(id: string, currPassword: string, newPassword: string): Promise<boolean> {
   const dbPassword = await getUserPassword(id);
@@ -34,3 +46,4 @@ export async function updatePassword(id: string, currPassword: string, newPasswo
   }
   return false;
 }
+
