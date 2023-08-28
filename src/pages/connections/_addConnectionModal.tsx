@@ -6,10 +6,13 @@ import { mockSearchResults } from "~/sample_data/mockConnections";
 import { ConnectionI } from "~/types/ConnectionI";
 import UploadImageModal from "../../components/common/uploadImageModal";
 import { useModal } from "~/components/hooks/modalContext";
+import Tag from "./_tag";
 
 const AddConnectionModal = ({
+  tagColoursMap,
   handleCreateConnection,
 }: {
+  tagColoursMap: Record<string, string>;
   handleCreateConnection: (connection: ConnectionI) => void;
 }) => {
   const [isSearch, setIsSearch] = useState<boolean>(true);
@@ -33,7 +36,10 @@ const AddConnectionModal = ({
         {isSearch ? (
           <SearchTab />
         ) : (
-          <CreateTab handleCreateConnection={handleCreateConnection} />
+          <CreateTab
+            handleCreateConnection={handleCreateConnection}
+            tagColoursMap={tagColoursMap}
+          />
         )}
       </div>
     </div>
@@ -41,8 +47,9 @@ const AddConnectionModal = ({
 };
 
 const SearchTab = () => {
-  const [searchResults, setSearchResults] =
-    useState<ConnectionI[]>(mockSearchResults);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults] = useState<ConnectionI[]>(mockSearchResults);
+
   // TODO send query to API and set searchResults
 
   return (
@@ -52,6 +59,8 @@ const SearchTab = () => {
         type="text"
         className="input input-primary w-full"
         placeholder="🔎 Search Connection"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
         autoFocus
       />
 
@@ -83,11 +92,14 @@ const SearchTab = () => {
 };
 
 const CreateTab = ({
+  tagColoursMap,
   handleCreateConnection,
 }: {
+  tagColoursMap: Record<string, string>;
   handleCreateConnection: (connection: ConnectionI) => void;
 }) => {
   const [connection, setConnection] = useState<ConnectionI>({} as ConnectionI);
+  const [tagInput, setTagInput] = useState<string>("");
   const { openModal } = useModal();
   const editPhoto = () => {
     openModal({
@@ -133,13 +145,27 @@ const CreateTab = ({
             setValue={(v) => setConnection({ ...connection, phone: v })}
           />
           <TextInput
-            label="🏷️ Tags"
-            placeholder="eg. #friend #colleague"
-            value={connection.tags?.join(" ") || ""}
-            setValue={(v) =>
-              setConnection({ ...connection, tags: v.split(" ") })
-            }
+            label="🏷️ Tags (press Enter to add)"
+            placeholder="eg. friend, colleague"
+            value={tagInput}
+            setValue={(v) => setTagInput(v)}
+            props={{
+              onKeyDown: (e: { key: string }) => {
+                if (e.key === "Enter") {
+                  setConnection({
+                    ...connection,
+                    tags: [...(connection.tags || []), tagInput.toLowerCase()],
+                  });
+                  setTagInput("");
+                }
+              },
+            }}
           />
+          <div className="flex w-full flex-row flex-wrap gap-2">
+            {connection.tags?.map((tag) => (
+              <Tag key={tag} tag={tag} tagColoursMap={tagColoursMap} />
+            ))}
+          </div>
           <button
             className="btn btn-primary btn-wide"
             onClick={() => handleCreateConnection(connection)}

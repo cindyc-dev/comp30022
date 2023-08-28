@@ -5,16 +5,25 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import { mockConnections, mockTags } from "~/sample_data/mockConnections";
 import AvatarImage from "~/components/common/avatarImage";
 import { capitalise } from "~/components/utils/capitalise";
-import { FaFilter, FaPlus } from "react-icons/fa";
+import {
+  FaCaretDown,
+  FaCaretUp,
+  FaFilter,
+  FaPlus,
+  FaSort,
+} from "react-icons/fa";
 import { useModal } from "~/components/hooks/modalContext";
 import AddConnectionModal from "./_addConnectionModal";
 
 export default function Connections() {
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [data, setData] = useState<ConnectionI[]>(mockConnections);
   const tagColoursMap: Record<string, string> = mockTags;
 
@@ -25,7 +34,10 @@ export default function Connections() {
   const addConnection = () => {
     openModal({
       content: (
-        <AddConnectionModal handleCreateConnection={handleAddConnection} />
+        <AddConnectionModal
+          handleCreateConnection={handleAddConnection}
+          tagColoursMap={tagColoursMap}
+        />
       ),
       id: "add-connection-modal",
     });
@@ -115,7 +127,12 @@ export default function Connections() {
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
@@ -149,12 +166,26 @@ export default function Connections() {
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <th key={header.id} className="text-lg text-primary">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
+                      {header.isPlaceholder ? null : (
+                        <div
+                          {...{
+                            className: header.column.getCanSort()
+                              ? "cursor-pointer select-none flex items-center justify-between"
+                              : "",
+                            onClick: header.column.getToggleSortingHandler(),
+                          }}
+                        >
+                          {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
+                          {{
+                            asc: <FaCaretUp />,
+                            desc: <FaCaretDown />,
+                          }[header.column.getIsSorted() as string] ??
+                            (header.column.getCanSort() ? <FaSort /> : null)}
+                        </div>
+                      )}
                     </th>
                   ))}
                 </tr>

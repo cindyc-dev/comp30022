@@ -4,6 +4,7 @@ interface TextInputProps {
   setValue: (value: string) => void;
   placeholder: string;
   type?: string;
+  props?: object;
 }
 
 export const TextInput = ({
@@ -12,6 +13,7 @@ export const TextInput = ({
   setValue,
   placeholder,
   type = "text",
+  props
 }: TextInputProps) => (
   <div className="w-full">
     <label className="label py-0">
@@ -23,6 +25,7 @@ export const TextInput = ({
       className="input input-bordered w-full"
       value={value}
       onChange={(e) => setValue(e.target.value)}
+      {...props}
     />
   </div>
 );

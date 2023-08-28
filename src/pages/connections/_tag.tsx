@@ -9,9 +9,10 @@ const Tag = ({
 }) => {
   return (
     <>
-      
       <div
-        className={`${tagColoursMap[tag]} badge py-3 text-sm font-normal text-base-100`}
+        className={`${
+          tagColoursMap[tag] ?? "badge-accent"
+        } badge py-3 text-sm font-normal text-base-100`}
       >
         {capitalise(tag)}
       </div>
