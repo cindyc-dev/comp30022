@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { mockConnections, mockTags } from "~/mockData/mockConnections";
+import { mockConnections, mockTags } from "~/sample_data/mockConnections";
 import AvatarImage from "~/components/common/avatarImage";
 import { capitalise } from "~/components/utils/capitalise";
 import { FaFilter, FaPlus } from "react-icons/fa";
@@ -152,9 +152,9 @@ export default function Connections() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </th>
                   ))}
                 </tr>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import AvatarImage from "~/components/common/avatarImage";
 import TextInput from "~/components/common/textInput";
-import { mockSearchResults } from "~/mockData/mockConnections";
+import { mockSearchResults } from "~/sample_data/mockConnections";
 import { ConnectionI } from "~/types/ConnectionI";
 import UploadImageModal from "../../components/common/uploadImageModal";
 import { useModal } from "~/components/hooks/modalContext";
