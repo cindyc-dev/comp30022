@@ -75,19 +75,19 @@ export const PersonalDetailsSection = () => {
             label="Name"
             value={name}
             setValue={setName}
-            placeholder="John Green"
+            placeholder="eg. John Green"
           />
           <TextInput
             label="Contact"
             value={contact}
             setValue={setContact}
-            placeholder="012-3456789"
+            placeholder="eg. 012-3456789"
           />
           <TextInput
             label="Email"
             value={email}
             setValue={setEmail}
-            placeholder="example@gmail.com"
+            placeholder="eg. example@gmail.com"
             type="email"
           />
         </div>
