@@ -14,6 +14,7 @@ const userInfoSelect = {
   id: true,
   name: true,
   email: true,
+  contact: true,
   image: true,
   password: true,
 } satisfies Prisma.UserSelect;
