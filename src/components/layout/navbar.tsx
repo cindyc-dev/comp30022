@@ -105,9 +105,7 @@ export const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link href="/auth/logout" className="!text-neutral-content">
-                Log Out
-              </Link>
+              <a onClick={() => signOut()}>Logout</a>
             </li>
           </ul>
         </div>
