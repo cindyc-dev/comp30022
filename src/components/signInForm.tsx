@@ -13,7 +13,8 @@ export const SignInForm = () => {
     const res = await signIn("credentials", {
       email: email,
       password: password,
-      redirect: false,
+      redirect: true,
+      callbackUrl: "/dashboard",
     });
     console.log({ res: res });
   };
@@ -54,7 +55,7 @@ export const SignInForm = () => {
       <div>
         <button
           className="btn rounded-btn w-full"
-          onClick={() => signIn("discord")}
+          onClick={() => signIn("discord", { callbackUrl: "/dashboard" })}
         >
           <FaDiscord />
           Sign in with Discord

@@ -40,8 +40,8 @@ export const SignUpForm = () => {
         const res = await signIn("credentials", {
           email: email,
           password: password,
-          redirect: false,
-          // callbackUrl: "/dashboard",
+          redirect: true,
+          callbackUrl: "/dashboard",
         });
 
         console.log({ res: res });

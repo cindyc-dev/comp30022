@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { FaCalendarAlt } from "react-icons/fa";
 import { BsKanbanFill, BsFillPeopleFill } from "react-icons/bs";
@@ -100,7 +101,7 @@ export const Navbar = () => {
               <Link href="/profile">Profile</Link>
             </li>
             <li>
-              <a>Logout</a>
+              <a onClick={() => signOut()}>Logout</a>
             </li>
           </ul>
         </div>
