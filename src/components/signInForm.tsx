@@ -3,20 +3,38 @@ import PasswordInput from "./common/passwordInput";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { FaDiscord } from "react-icons/fa";
+import { useRouter } from "next/router";
+import { useToast } from "./hooks/toastContext";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const router = useRouter();
+  const { addToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const res = await signIn("credentials", {
       email: email,
       password: password,
-      redirect: true,
-      callbackUrl: "/dashboard",
+      redirect: false,
+      onSuccess: () => {
+        console.log("Success");
+        // redirect to dashboard
+        router.push("/dashboard");
+      },
     });
-    console.log({ res: res });
+    console.log(res);
+    // Show error toast if login failed
+    if (res?.error) {
+      console.log(res.error);
+
+      // Show error toast
+      addToast({
+        type: "error",
+        message: `${res.error}. Incorrect Email and/or Password. Please try again.`,
+      });
+    }
   };
 
   return (

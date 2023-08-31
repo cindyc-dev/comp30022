@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import PasswordInput from "./common/passwordInput";
 import { api } from "~/utils/api";
+import { useToast } from "./hooks/toastContext";
 
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
@@ -17,6 +18,8 @@ export const SignUpForm = () => {
   const [passwordValid, setPasswordValid] = useState<boolean>(false);
 
   const mutation = api.user.register.useMutation();
+
+  const { addToast } = useToast();
 
   const createUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,6 +48,15 @@ export const SignUpForm = () => {
         });
 
         console.log({ res: res });
+      },
+      onError: (error) => {
+        console.log({ error: error });
+
+        // Show error toast
+        addToast({
+          type: "error",
+          message: `${error}. Please try again.`,
+        });
       },
     });
   };

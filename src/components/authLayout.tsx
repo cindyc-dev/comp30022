@@ -1,9 +1,12 @@
 import Image from "next/image";
+import ToastSection from "./common/toastSection";
+import { useToast } from "./hooks/toastContext";
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { toasts, removeToast } = useToast();
   return (
     <div className="hero min-h-screen bg-base-200">
       <Image
@@ -28,6 +31,7 @@ export default function AuthLayout({
           {children}
         </div>
       </div>
+      <ToastSection toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }
