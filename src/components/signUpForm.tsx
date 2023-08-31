@@ -52,6 +52,12 @@ export const SignUpForm = () => {
   return (
     <div className="card-body">
       <h2 className="card-title m-auto">Sign Up!</h2>
+      <p className="text-sm">
+        Already have an account?{" "}
+        <Link href="/auth/signin" className="link-primary link">
+          Log In.
+        </Link>
+      </p>
       <form onSubmit={(e) => createUser(e)}>
         <div className="form-control">
           <label className="label">
@@ -96,12 +102,6 @@ export const SignUpForm = () => {
           </button>
         </div>
       </form>
-      <p className="text-sm">
-        Already have an account?{" "}
-        <Link href="/auth/signin" className="link-primary link">
-          Log In.
-        </Link>
-      </p>
     </div>
   );
 };

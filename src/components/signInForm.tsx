@@ -30,13 +30,12 @@ export const SignInForm = () => {
         </Link>
       </p>
       <form onSubmit={handleSubmit}>
-        {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
         <label className="label">
           <span className="label-text mt-6">Email</span>
         </label>
         <input
           type="email"
-          placeholder="example@email.com"
+          placeholder="eg. example@company.com"
           className="input input-bordered w-full max-w-xs"
           name="email"
           onChange={(e) => setEmail(e.target.value)}
@@ -45,7 +44,7 @@ export const SignInForm = () => {
         <PasswordInput
           setValue={setPassword}
           isShowHide={true}
-          label="password"
+          label="Password"
         />
         <button type="submit" className="btn btn-primary mt-6 w-full max-w-xs">
           Sign In
@@ -66,13 +65,3 @@ export const SignInForm = () => {
 };
 
 export default SignInForm;
-
-// export const getServerSideProps = async (
-//   context: GetServerSidePropsContext
-// ) => {
-//   return {
-//     props: {
-//       csrfToken: await getCsrfToken(context),
-//     },
-//   };
-// };

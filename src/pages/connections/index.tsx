@@ -7,3 +7,5 @@ export default function Connections() {
     </Layout>
   );
 }
+
+Connections.auth = true;

@@ -7,3 +7,5 @@ export default function Calendar() {
     </Layout>
   );
 }
+
+Calendar.auth = true;

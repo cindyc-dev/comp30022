@@ -4,6 +4,8 @@ import { TextInput } from "~/components/common/textInput";
 import { useModal } from "~/components/hooks/modalContext";
 import { UploadImageModalContent } from "./_uploadImageModalContent";
 import { useToast } from "~/components/hooks/toastContext";
+// import { useSession } from "next-auth/react";
+import { api } from "~/utils/api";
 
 export const PersonalDetailsSection = () => {
   const [name, setName] = useState<string>("");
@@ -13,21 +15,43 @@ export const PersonalDetailsSection = () => {
   const { openModal } = useModal();
   const { addToast } = useToast();
 
-  useEffect(() => {
-    // TODO Fetch user data from API
-  }, []);
+  const { data: profileDetails } = api.details.profile.useQuery();
 
+  useEffect(() => {
+    console.log(profileDetails);
+
+    if (profileDetails) {
+      setName(profileDetails.name);
+      setContact(profileDetails.contact);
+      setEmail(profileDetails.email);
+    }
+  }, [profileDetails]);
+
+  const mutation = api.details.setProfile.useMutation();
   const savePersonalDetails = () => {
-    if (!name || !contact || !email) {
+    if (!name || !email) {
       // Show error toast
       addToast({
         type: "error",
-        message: "All fields (Name, Contact and Email) are required.",
+        message: "Name and Email are required.",
       });
       return;
     }
 
-    // TODO Save user data to API
+    const profile = {
+      name: name,
+      contact: contact,
+      email: email,
+    };
+
+    mutation.mutate(profile, {
+      onSuccess: async () => {
+        addToast({
+          type: "success",
+          message: "Profile details saved successfully.",
+        });
+      },
+    });
   };
 
   const editPhoto = () => {
