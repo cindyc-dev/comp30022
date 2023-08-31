@@ -7,6 +7,13 @@ import {
 import { RxCrossCircled } from "react-icons/rx";
 import { ToastI } from "../hooks/toastContext";
 
+const alertStyleMap = {
+  info: "alert-info",
+  success: "alert-success",
+  warning: "alert-warning",
+  error: "alert-error",
+};
+
 export default function ToastSection({
   toasts,
   removeToast,
@@ -18,7 +25,7 @@ export default function ToastSection({
     <div className="toast z-50">
       {toasts.map(({ type, message }, i) => (
         <div
-          className={`alert alert-${type} cursor-pointer`}
+          className={`${alertStyleMap[type]} alert cursor-pointer`}
           key={i}
           onClick={() => removeToast(i)}
         >

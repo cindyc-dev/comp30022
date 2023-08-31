@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { FaBars, FaCalendarAlt } from "react-icons/fa";
 import { BsKanbanFill, BsFillPeopleFill } from "react-icons/bs";

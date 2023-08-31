@@ -7,6 +7,8 @@ jobs:
     name: Production Deployment
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'main' }}
+    outputs:
+      output1: ${{ steps.filter.outputs.database }}
     environment:
       name: Production
       url: ${{ steps.prod-url.outputs.url }}
@@ -18,8 +20,32 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 19
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            database:
+              - './prisma/**/*.*'
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Deploy Project Artifacts to Vercel
         id: prod-url
         run: echo "url=$(vercel --prod -y --token=${{ secrets.VERCEL_TOKEN }})" >> "$GITHUB_OUTPUT"
+  db:
+    name: Update Prod Db
+    runs-on: ubuntu-latest
+    needs: production
+    if: ${{ needs.production.outputs.output1 == 'true' }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 19
+      - name: Install
+        run: npm install
+      - name: Deploy db changes
+        run: npx prisma db push
+        env:
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+    
+    

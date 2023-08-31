@@ -1,4 +1,3 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
@@ -6,9 +5,10 @@ import {
   type DefaultSession,
 } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "~/env.mjs";
-import { prisma } from "~/server/db";
-
+import { checkPassword } from "./Services/AuthService";
+import { getUserWithEmail } from "./Repositories/UserRepository";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -30,6 +30,13 @@ declare module "next-auth" {
   // }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    name: string;
+  }
+}
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -37,15 +44,30 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    session: ({ session, token }) => {
+      const newsession = {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+        },
+      };
+      return newsession;
+    },
   },
-  adapter: PrismaAdapter(prisma),
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60,
+  },
+  session: {
+    strategy: "jwt",
+    maxAge: 3000,
+  },
   pages: {
     signIn: "/auth/signin",
   },
@@ -53,6 +75,36 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
+    }),
+    CredentialsProvider({
+      // The name to display on the sign in form (e.g. "Sign in with...")
+      name: "Credentials",
+      // `credentials` is used to generate a form on the sign in page.
+      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
+      // e.g. domain, username, password, 2FA token, etc.
+      // You can pass any HTML attribute to the <input> tag through the object.
+      credentials: {
+        email: { label: "Email", type: "text", placeholder: "jsmith" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        // Add logic here to look up the user from the credentials supplied
+        // const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
+        if (credentials === undefined) {
+          return null;
+        }
+        console.log("authorising...");
+
+        const user = await getUserWithEmail(credentials.email);
+
+        if (user) {
+          // Any object returned will be saved in `user` property of the JWT
+          if (await checkPassword(credentials.email, credentials.password)) {
+            return user;
+          }
+        }
+        return null;
+      }
     }),
     /**
      * ...add more providers here.
