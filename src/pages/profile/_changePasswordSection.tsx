@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import PasswordInput from "~/components/common/passwordInput";
 import { useToast } from "~/components/hooks/toastContext";
+import { api } from "~/utils/api";
 
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
@@ -16,6 +17,8 @@ export const ChangePasswordSection = () => {
 
   const { addToast } = useToast();
 
+  const mutation = api.user.setPassword.useMutation();
+
   const changePassword = () => {
     if (!currentPassword || !passwordValid) {
       // Show error toast
@@ -27,7 +30,37 @@ export const ChangePasswordSection = () => {
       return;
     }
 
-    // TODO Change password in API
+    const user = {
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    };
+
+    mutation.mutate(user, {
+      onSuccess: async (data) => {
+        console.log({ data: data });
+        if (!data) {
+          addToast({
+            type: "error",
+            message: "Incorrect current password.",
+          });
+          return;
+        }
+        addToast({
+          type: "success",
+          message: "Password successfully changed.",
+        });
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+      },
+      onError: async (error) => {
+        console.log({ error: error });
+        addToast({
+          type: "error",
+          message: error.message,
+        });
+      },
+    });
   };
 
   return (
@@ -53,16 +86,19 @@ export const ChangePasswordSection = () => {
               setValue={setCurrentPassword}
               isShowHide={true}
               label="Current Password"
+              value={currentPassword}
             />
             <PasswordInput
               setValue={setNewPassword}
               isShowHide={true}
               label="New Password"
+              value={newPassword}
             />
             <PasswordInput
               setValue={setConfirmNewPassword}
               isShowHide={false}
               label="Confirm New Password"
+              value={confirmNewPassword}
             />
           </div>
           <div className="mt-2 hidden w-1/2 md:block">

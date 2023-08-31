@@ -96,7 +96,7 @@ export const PersonalDetailsSection = () => {
         </div>
         <div className="flex w-full flex-col items-center gap-2">
           <TextInput
-            label="Name"
+            label="Name*"
             value={name}
             setValue={setName}
             placeholder="eg. John Green"
@@ -108,7 +108,7 @@ export const PersonalDetailsSection = () => {
             placeholder="eg. 012-3456789"
           />
           <TextInput
-            label="Email"
+            label="Email*"
             value={email}
             setValue={setEmail}
             placeholder="eg. example@gmail.com"

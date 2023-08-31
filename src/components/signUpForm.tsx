@@ -76,11 +76,13 @@ export const SignUpForm = () => {
           setValue={setPassword}
           isShowHide={true}
           label="Password"
+          value={password}
         />
         <PasswordInput
           setValue={setConfirmPassword}
           isShowHide={false}
           label="Confirm Password"
+          value={confirmPassword}
         />
         <div className="mt-2">
           <PasswordChecklist

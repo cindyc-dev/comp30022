@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import { FaEye, FaRegEyeSlash } from "react-icons/fa";
 
 interface PasswordInputProps {
+  value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   isShowHide: boolean;
   label: string;
 }
 
 export default function PasswordInput({
+  value,
   setValue,
   isShowHide,
-  label
+  label,
 }: PasswordInputProps) {
   const [isShow, setIsShow] = useState(false);
   const [type, setType] = useState("password");
@@ -32,6 +34,7 @@ export default function PasswordInput({
         placeholder="*******"
         autoComplete="new-password"
         onChange={(e) => setValue(e.target.value)}
+        value={value}
         required
       />
       <span className="flex justify-end">

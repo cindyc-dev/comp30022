@@ -45,6 +45,7 @@ export const SignInForm = () => {
           setValue={setPassword}
           isShowHide={true}
           label="Password"
+          value={password}
         />
         <button type="submit" className="btn btn-primary mt-6 w-full max-w-xs">
           Sign In
