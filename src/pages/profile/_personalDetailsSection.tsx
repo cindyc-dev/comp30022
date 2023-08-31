@@ -79,7 +79,7 @@ export const PersonalDetailsSection = () => {
             Personal details will appear as public on your account page.
           </p>
         </div>
-        <div className="flex flex-row gap-2">
+        <div className="hidden flex-row gap-2 md:flex">
           <button
             className="btn btn-square font-bold"
             onClick={() => {
@@ -89,7 +89,7 @@ export const PersonalDetailsSection = () => {
             <IoMdRefresh />
           </button>
           <button
-            className="btn btn-primary hidden md:block"
+            className="btn btn-primary"
             onClick={() => savePersonalDetails()}
           >
             Save changes

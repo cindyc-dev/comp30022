@@ -3,13 +3,7 @@ import {
   getUserInfoWithUserId,
   updateUserDetailsWithId,
 } from "~/server/Repositories/UserRepository";
-
-interface userDetail {
-  name: string;
-  contact: string;
-  email: string;
-  image: string;
-}
+import { UserI } from "~/types/UserI";
 
 export async function getUserName(id: string): Promise<string> {
   const user = await getUserInfoWithUserId(id);
@@ -50,25 +44,22 @@ export async function setUserImage(
 }
 
 // main function for retrieving user details object
-export async function getUserDetails(
-  id: string
-): Promise<{ name: string; contact: string; email: string; image: string }> {
-  const detail: userDetail = {
-    name: await getUserName(id),
-    contact: await getUserContact(id),
-    email: await getUserEmail(id),
-    image: await getUserImage(id),
+export async function getUserDetails(id: string): Promise<UserI> {
+  const user = await getUserInfoWithUserId(id);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const detail: UserI = {
+    name: user.name || "",
+    contact: user.contact || "",
+    email: user.email || "",
+    image: user.image || "",
   };
 
   return detail;
 }
 
 // main function for setting user details
-export async function setUserDetails(
-  id: string,
-  name: string,
-  contact: string,
-  email: string
-): Promise<boolean> {
-  return updateUserDetailsWithId(id, name, contact, email);
+export async function setUserDetails(user: UserI): Promise<boolean> {
+  return updateUserDetailsWithId(user);
 }

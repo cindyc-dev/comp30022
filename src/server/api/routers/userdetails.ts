@@ -24,12 +24,13 @@ export const detailsRouter = createTRPCRouter({
     .mutation(async (opts) => {
       const session = opts.ctx.session;
       const userId = session.user.id;
-      await setUserDetails(
-        userId,
-        opts.input.name,
-        opts.input.contact,
-        opts.input.email
-      );
+      await setUserDetails({
+        id: userId,
+        name: opts.input.name,
+        contact: opts.input.contact,
+        email: opts.input.email,
+        image: session.user.image,  // retain old image
+      });
     }),
 
   setImage: protectedProcedure

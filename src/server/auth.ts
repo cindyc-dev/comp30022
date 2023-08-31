@@ -97,7 +97,7 @@ export const authOptions: NextAuthOptions = {
         if (credentials === undefined) {
           return null;
         }
-        console.log("authorising...");
+        console.log("Authorising...");
 
         const user = await getUserWithEmail(credentials.email);
 
