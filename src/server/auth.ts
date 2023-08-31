@@ -1,4 +1,3 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
@@ -8,7 +7,6 @@ import {
 import DiscordProvider from "next-auth/providers/discord";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "~/env.mjs";
-import { prisma } from "~/server/db";
 import { checkPassword } from "./Services/AuthService";
 import { getUserWithEmail } from "./Repositories/UserRepository";
 /**
@@ -32,6 +30,13 @@ declare module "next-auth" {
   // }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    name: string;
+  }
+}
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -39,15 +44,30 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    session: ({ session, token }) => {
+      const newsession = {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+        },
+      };
+      return newsession;
+    },
   },
-  adapter: PrismaAdapter(prisma),
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60,
+  },
+  session: {
+    strategy: "jwt",
+    maxAge: 3000,
+  },
   pages: {
     signIn: "/auth/signin",
   },
