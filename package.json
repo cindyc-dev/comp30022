@@ -11,6 +11,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.11.2",
+    "@cloudinary/url-gen": "^1.11.2",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^5.0.0",
     "@t3-oss/env-nextjs": "^0.3.1",
