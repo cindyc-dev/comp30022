@@ -4,13 +4,12 @@ import Link from "next/link";
 import { useState } from "react";
 
 import PasswordInput from "./common/passwordInput";
+import { api } from "~/utils/api";
 
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
   ssr: false,
 });
-import { api } from "~/utils/api";
-
 export const SignUpForm = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -34,15 +33,18 @@ export const SignUpForm = () => {
     };
     console.log({ user: user });
     mutation.mutate(user, {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         console.log({ data: data });
+
         // Sign In and redirect to dashboard
-        signIn("credentials", {
+        const res = await signIn("credentials", {
           email: email,
           password: password,
-          redirect: true,
-          callbackUrl: "/dashboard",
+          redirect: false,
+          // callbackUrl: "/dashboard",
         });
+
+        console.log({ res: res });
       },
     });
   };
@@ -103,3 +105,5 @@ export const SignUpForm = () => {
     </div>
   );
 };
+
+export default SignUpForm;
