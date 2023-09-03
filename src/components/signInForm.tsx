@@ -18,15 +18,10 @@ export const SignInForm = () => {
       email: email,
       password: password,
       redirect: false,
-      onSuccess: () => {
-        console.log("Success");
-        // redirect to dashboard
-        router.push("/dashboard");
-      },
     });
     console.log(res);
     // Show error toast if login failed
-    if (res?.error) {
+    if (res?.error && !res?.ok) {
       console.log(res.error);
 
       // Show error toast
@@ -34,6 +29,18 @@ export const SignInForm = () => {
         type: "error",
         message: `${res.error}. Incorrect Email and/or Password. Please try again.`,
       });
+    }
+
+    // Show success toast and redirect to dashboard if login successful
+    if (res?.ok) {
+      // Show success toast
+      addToast({
+        type: "success",
+        message: "Login successful!",
+      });
+
+      // redirect to dashboard
+      router.push("/dashboard");
     }
   };
 

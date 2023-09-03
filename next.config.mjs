@@ -19,7 +19,12 @@ const config = {
     defaultLocale: "en",
   },
   images: {
-    domains: ["wallpapers.com", "images.unsplash.com", "res.cloudinary.com", "xsgames.co"],
+    domains: [
+      "wallpapers.com",
+      "images.unsplash.com",
+      "res.cloudinary.com",
+      "cdn.pixabay.com",
+    ],
   },
 };
 

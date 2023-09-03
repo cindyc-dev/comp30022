@@ -28,7 +28,9 @@ export const Navbar = () => {
   // Check current page to highlight the navbar link
   const router = useRouter();
   const currentPage = router.pathname;
-  const [profileImage, setProfileImage] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<string>(
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+  );
 
   // Get profileImage from sessionStorage
   useEffect(() => {
@@ -95,7 +97,7 @@ export const Navbar = () => {
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
             <div className="w-10">
-              <AvatarImage src={profileImage} />
+              {profileImage && <AvatarImage src={profileImage} />}
             </div>
           </label>
           <ul

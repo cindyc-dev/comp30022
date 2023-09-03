@@ -12,10 +12,10 @@ export default function AuthLayout({
       <Image
         src="/images/background.png"
         alt="background"
-        layout="fill"
-        objectFit="cover"
         quality={100}
-        className="!fixed"
+        width={1920}
+        height={1080}
+        className="!fixed h-full w-full object-cover"
       />
       <div className="hero-content flex-col lg:flex-row">
         <div className="p-10 text-center text-base-100 lg:text-left">
