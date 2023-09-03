@@ -7,3 +7,5 @@ export default function Trello() {
     </Layout>
   );
 }
+
+Trello.auth = true;

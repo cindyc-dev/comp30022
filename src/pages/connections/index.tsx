@@ -235,3 +235,5 @@ function IndeterminateCheckbox({
     />
   );
 }
+
+Connections.auth = true;

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { FaBars, FaCalendarAlt } from "react-icons/fa";
 import { BsKanbanFill, BsFillPeopleFill } from "react-icons/bs";
 import { AvatarImage } from "../common/avatarImage";
+import { useEffect, useState } from "react";
 
 const PAGES = [
   {
@@ -27,6 +28,15 @@ export const Navbar = () => {
   // Check current page to highlight the navbar link
   const router = useRouter();
   const currentPage = router.pathname;
+  const [profileImage, setProfileImage] = useState<string>("");
+
+  // Get profileImage from sessionStorage
+  useEffect(() => {
+    const profileImage = sessionStorage.getItem("profileImage");
+    if (profileImage) {
+      setProfileImage(profileImage);
+    }
+  }, []);
 
   return (
     <div className="navbar sticky top-0 z-50 bg-neutral text-neutral-content shadow">
@@ -85,7 +95,7 @@ export const Navbar = () => {
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
             <div className="w-10">
-              <AvatarImage src="https://wallpapers.com/images/hd/funny-profile-picture-ylwnnorvmvk2lna0.jpg" />
+              <AvatarImage src={profileImage} />
             </div>
           </label>
           <ul

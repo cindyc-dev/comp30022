@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import PasswordInput from "./common/passwordInput";
 import { api } from "~/utils/api";
+import { useToast } from "./hooks/toastContext";
 
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
@@ -17,6 +18,8 @@ export const SignUpForm = () => {
   const [passwordValid, setPasswordValid] = useState<boolean>(false);
 
   const mutation = api.user.register.useMutation();
+
+  const { addToast } = useToast();
 
   const createUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,12 +49,27 @@ export const SignUpForm = () => {
 
         console.log({ res: res });
       },
+      onError: (error) => {
+        console.log({ error: error });
+
+        // Show error toast
+        addToast({
+          type: "error",
+          message: `${error}. Please try again.`,
+        });
+      },
     });
   };
 
   return (
     <div className="card-body">
       <h2 className="card-title m-auto">Sign Up!</h2>
+      <p className="text-sm">
+        Already have an account?{" "}
+        <Link href="/auth/signin" className="link-primary link">
+          Log In.
+        </Link>
+      </p>
       <form onSubmit={(e) => createUser(e)}>
         <div className="form-control">
           <label className="label">
@@ -70,11 +88,13 @@ export const SignUpForm = () => {
           setValue={setPassword}
           isShowHide={true}
           label="Password"
+          value={password}
         />
         <PasswordInput
           setValue={setConfirmPassword}
           isShowHide={false}
           label="Confirm Password"
+          value={confirmPassword}
         />
         <div className="mt-2">
           <PasswordChecklist
@@ -96,12 +116,6 @@ export const SignUpForm = () => {
           </button>
         </div>
       </form>
-      <p className="text-sm">
-        Already have an account?{" "}
-        <Link href="/auth/signin" className="link-primary link">
-          Log In.
-        </Link>
-      </p>
     </div>
   );
 };

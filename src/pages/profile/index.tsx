@@ -13,3 +13,5 @@ export default function Profile() {
     </Layout>
   );
 }
+
+Profile.auth = true;

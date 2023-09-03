@@ -1,5 +1,6 @@
 import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
+import { UserI } from "~/types/UserI";
 
 export async function createUser(email: string, password: string) {
   const user = await prisma.user.create({
@@ -42,7 +43,6 @@ export async function getUserWithEmail(
 export async function getUserInfoWithUserId(
   userId: string
 ): Promise<UserInfoPayload | null> {
-
   try {
     const dbResult = await prisma.user.findUnique({
       where: {
@@ -50,11 +50,11 @@ export async function getUserInfoWithUserId(
       },
       select: userInfoSelect,
     });
-  
+
     if (!dbResult) {
       throw new Error("User does not exist");
     }
-  
+
     // Transform result
     const userInfo: UserInfoPayload = {
       id: userId,
@@ -64,18 +64,17 @@ export async function getUserInfoWithUserId(
       password: dbResult.password,
       contact: dbResult.contact,
     };
-  
-    return userInfo;
 
+    return userInfo;
   } catch (error) {
     console.log("Error Retrieving Info from Database");
     return null;
   }
-  
 }
 
 export async function UpdateUserPasswordWithId(
-  userId: string, newPassword: string
+  userId: string,
+  newPassword: string
 ): Promise<boolean> {
   try {
     await prisma.user.update({
@@ -87,15 +86,14 @@ export async function UpdateUserPasswordWithId(
       },
     });
     return true;
-
   } catch (error) {
-    return false;
+    throw new Error("Error updating user password");
   }
-
 }
 
 export async function updateUserImageWithId(
-  userId: string, newImage: string
+  userId: string,
+  newImage: string
 ): Promise<boolean> {
   try {
     await prisma.user.update({
@@ -107,30 +105,25 @@ export async function updateUserImageWithId(
       },
     });
     return true;
-
   } catch (error) {
-    return false;
+    throw new Error("Error updating user image");
   }
-
 }
 
-export async function updateUserDetailsWithId(
-  userId: string, name: string, contact: string, email: string
-): Promise<boolean> {
+export async function updateUserDetailsWithId(user: UserI): Promise<boolean> {
   try {
     await prisma.user.update({
       where: {
-        id: userId,
+        id: user.id,
       },
       data: {
-        name: name,
-        contact: contact,
-        email: email,
+        name: user.name,
+        contact: user.contact,
+        email: user.email,
       },
     });
     return true;
-
   } catch (error) {
-    return false;
+    throw new Error("Error updating user details");
   }
 }

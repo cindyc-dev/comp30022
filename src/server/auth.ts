@@ -19,6 +19,10 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: DefaultSession["user"] & {
       id: string;
+      name: string;
+      email: string;
+      image: string;
+      contact?: string;
       // ...other properties
       // role: UserRole;
     };
@@ -93,7 +97,7 @@ export const authOptions: NextAuthOptions = {
         if (credentials === undefined) {
           return null;
         }
-        console.log("authorising...");
+        console.log("Authorising...");
 
         const user = await getUserWithEmail(credentials.email);
 

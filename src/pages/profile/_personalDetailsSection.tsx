@@ -4,30 +4,61 @@ import { TextInput } from "~/components/common/textInput";
 import { useModal } from "~/components/hooks/modalContext";
 import { UploadImageModal } from "../../components/common/uploadImageModal";
 import { useToast } from "~/components/hooks/toastContext";
+import { api } from "~/utils/api";
+import { IoMdRefresh } from "react-icons/io";
 
 export const PersonalDetailsSection = () => {
   const [name, setName] = useState<string>("");
   const [contact, setContact] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<string>("");
 
   const { openModal } = useModal();
   const { addToast } = useToast();
 
-  useEffect(() => {
-    // TODO Fetch user data from API
-  }, []);
+  const { data: profileDetails, refetch } = api.details.profile.useQuery();
 
+  // Set profile image in sessionStorage
+  useEffect(() => {
+    if (profileImage) {
+      sessionStorage.setItem("profileImage", profileImage);
+    }
+  }, [profileImage]);
+
+  useEffect(() => {
+    if (profileDetails) {
+      setName(profileDetails.name);
+      profileDetails.contact && setContact(profileDetails.contact);
+      setEmail(profileDetails.email);
+      setProfileImage(profileDetails.image);
+    }
+  }, [profileDetails]);
+
+  const mutation = api.details.setProfile.useMutation();
   const savePersonalDetails = () => {
-    if (!name || !contact || !email) {
+    if (!name || !email) {
       // Show error toast
       addToast({
         type: "error",
-        message: "All fields (Name, Contact and Email) are required.",
+        message: "Name and Email are required.",
       });
       return;
     }
 
-    // TODO Save user data to API
+    const profile = {
+      name: name,
+      contact: contact,
+      email: email,
+    };
+
+    mutation.mutate(profile, {
+      onSuccess: async () => {
+        addToast({
+          type: "success",
+          message: "Profile details saved successfully.",
+        });
+      },
+    });
   };
 
   const editPhoto = () => {
@@ -48,12 +79,22 @@ export const PersonalDetailsSection = () => {
             Personal details will appear as public on your account page.
           </p>
         </div>
-        <button
-          className="btn btn-primary hidden md:block"
-          onClick={() => savePersonalDetails()}
-        >
-          Save changes
-        </button>
+        <div className="hidden flex-row gap-2 md:flex">
+          <button
+            className="btn btn-square font-bold"
+            onClick={() => {
+              refetch();
+            }}
+          >
+            <IoMdRefresh />
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => savePersonalDetails()}
+          >
+            Save changes
+          </button>
+        </div>
       </div>
       <div className="flex flex-col items-center gap-4 align-middle md:flex-row md:justify-between">
         <div className="flex flex-col text-center">
@@ -61,7 +102,7 @@ export const PersonalDetailsSection = () => {
             className="avatar btn btn-circle btn-ghost h-40 w-40"
             onClick={() => editPhoto()}
           >
-            <AvatarImage src="https://wallpapers.com/images/hd/funny-profile-picture-ylwnnorvmvk2lna0.jpg" />
+            {profileImage && <AvatarImage src={profileImage} />}
           </label>
           <p
             className="link cursor-pointer text-xs"
@@ -72,7 +113,7 @@ export const PersonalDetailsSection = () => {
         </div>
         <div className="flex w-full flex-col items-center gap-2">
           <TextInput
-            label="Name"
+            label="Name*"
             value={name}
             setValue={setName}
             placeholder="eg. John Green"
@@ -84,7 +125,7 @@ export const PersonalDetailsSection = () => {
             placeholder="eg. 012-3456789"
           />
           <TextInput
-            label="Email"
+            label="Email*"
             value={email}
             setValue={setEmail}
             placeholder="eg. example@gmail.com"
@@ -92,12 +133,22 @@ export const PersonalDetailsSection = () => {
           />
         </div>
       </div>
-      <button
-        className="btn btn-primary btn-block md:hidden"
-        onClick={() => savePersonalDetails()}
-      >
-        Save changes
-      </button>
+      <div className="flex flex-row gap-2">
+        <button
+          className="btn btn-square font-bold md:hidden"
+          onClick={() => {
+            refetch();
+          }}
+        >
+          <IoMdRefresh />
+        </button>
+        <button
+          className="btn btn-primary flex-grow md:hidden"
+          onClick={() => savePersonalDetails()}
+        >
+          Save changes
+        </button>
+      </div>
     </>
   );
 };

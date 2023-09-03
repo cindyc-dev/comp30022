@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { ReactNode } from "react";
 import Providers from "~/components/hooks/providers";
+import Script from "next/script";
 
 const MyApp = ({
   Component,
@@ -16,6 +17,7 @@ const MyApp = ({
   return (
     <SessionProvider session={session}>
       <Providers>
+        <Script src="https://upload-widget.cloudinary.com/global/all.js" />
         {Component.auth ? (
           <Auth>
             <Component {...pageProps} />

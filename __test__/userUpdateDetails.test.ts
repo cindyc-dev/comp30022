@@ -2,7 +2,8 @@ import { prismaMock } from "./singleton";
 import { setUserDetails } from "~/server/Services/UserDetails";
 
 // Generic User Data for Testing (Future ToDo: Cover more edge cases and malformed inputs)
-const alphaNumericPW = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>?/`";
+const alphaNumericPW =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>?/`";
 const old_user = {
   id: "@1#",
   name: "test",
@@ -25,15 +26,18 @@ const new_user = {
   contact: new_contact,
 };
 
-test("Should update the name, contact and email fields", async() => {
-
+test("Should update the name, contact and email fields", async () => {
   prismaMock.user.findUnique.mockResolvedValue(old_user);
   prismaMock.user.update.mockResolvedValue(new_user);
-  
-  // Test the updatePassword Function
-  const successful_update = await setUserDetails(old_user.id, new_name, new_contact, new_email);
-  
-  expect(successful_update).toBe(true);
-  
-});
 
+  // Test the updatePassword Function
+  const successful_update = await setUserDetails({
+    id: old_user.id,
+    name: new_name,
+    contact: new_contact,
+    email: new_email,
+    image: old_user.image,
+  });
+
+  expect(successful_update).toBe(true);
+});
