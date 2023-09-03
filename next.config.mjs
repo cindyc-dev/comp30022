@@ -24,6 +24,7 @@ const config = {
       "images.unsplash.com",
       "res.cloudinary.com",
       "cdn.pixabay.com",
+      "xsgames.co",
     ],
   },
 };

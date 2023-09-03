@@ -1,4 +1,11 @@
-import { HTMLProps, useEffect, useMemo, useRef, useState } from "react";
+import {
+  HTMLProps,
+  InputHTMLAttributes,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Layout } from "~/components/layout/layout";
 import { ConnectionI } from "~/types/ConnectionI";
 import {
@@ -6,8 +13,12 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  FilterFn,
+  SortingFn,
   SortingState,
   useReactTable,
+  sortingFns,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
 import { mockConnections, mockTags } from "~/sample_data/mockConnections";
 import AvatarImage from "~/components/common/avatarImage";
@@ -22,9 +33,53 @@ import {
 import { useModal } from "~/components/hooks/modalContext";
 import AddConnectionModal from "./_addConnectionModal";
 
+import {
+  RankingInfo,
+  rankItem,
+  compareItems,
+} from "@tanstack/match-sorter-utils";
+
+declare module "@tanstack/table-core" {
+  interface FilterFns {
+    fuzzy: FilterFn<unknown>;
+  }
+  interface FilterMeta {
+    itemRank: RankingInfo;
+  }
+}
+
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  // Rank the item
+  const itemRank = rankItem(row.getValue(columnId), value);
+
+  // Store the itemRank info
+  addMeta({
+    itemRank,
+  });
+
+  // Return if the item should be filtered in/out
+  return itemRank.passed;
+};
+
+const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
+  let dir = 0;
+
+  // Only sort by rank if the column has ranking information
+  if (rowA.columnFiltersMeta[columnId]) {
+    dir = compareItems(
+      rowA.columnFiltersMeta[columnId]?.itemRank,
+      rowB.columnFiltersMeta[columnId]?.itemRank
+    );
+  }
+
+  // Provide an alphanumeric fallback for when the item ranks are equal
+  return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
+};
+
 export default function Connections() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [data, setData] = useState<ConnectionI[]>(mockConnections);
+  const [globalFilter, setGlobalFilter] = useState<string>("");
   const tagColoursMap: Record<string, string> = mockTags;
 
   // TODO fetch data and tagColoursMap from API
@@ -89,6 +144,8 @@ export default function Connections() {
             </div>
           </div>
         ),
+        filterFn: "fuzzy",
+        sortFn: fuzzySort,
       },
       {
         header: "EMAIL",
@@ -129,10 +186,17 @@ export default function Connections() {
     columns,
     state: {
       sorting,
+      globalFilter,
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    globalFilterFn: fuzzyFilter,
+    onGlobalFilterChange: setGlobalFilter,
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   return (
@@ -148,10 +212,11 @@ export default function Connections() {
           </button>
         </div>
         <div className="flex w-full flex-row justify-between rounded bg-[#EAECF6] p-3">
-          <input
-            type="text"
-            className="input input-sm"
+          <DebouncedInput
+            value={globalFilter ?? ""}
+            onChange={(value) => setGlobalFilter(String(value))}
             placeholder="🔎 Search Connection"
+            className="input input-sm"
           />
           <button className="btn btn-primary btn-sm text-base-100">
             <FaFilter /> Filter
@@ -232,6 +297,39 @@ function IndeterminateCheckbox({
       ref={ref}
       className="checkbox-primary checkbox"
       {...rest}
+    />
+  );
+}
+
+function DebouncedInput({
+  value: initialValue,
+  onChange,
+  debounce = 500,
+  ...props
+}: {
+  value: string | number;
+  onChange: (value: string | number) => void;
+  debounce?: number;
+} & Omit<InputHTMLAttributes<HTMLInputElement>, "onChange">) {
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onChange(value);
+    }, debounce);
+
+    return () => clearTimeout(timeout);
+  }, [value]);
+
+  return (
+    <input
+      {...props}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
     />
   );
 }
