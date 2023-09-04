@@ -1,5 +1,6 @@
 import { Layout } from "~/components/layout/layout";
 
+
 export default function Trello() {
   return (
     <Layout>
@@ -8,4 +9,4 @@ export default function Trello() {
   );
 }
 
-Trello.auth = true;
+Trello.auth = false;
