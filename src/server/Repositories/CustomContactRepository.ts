@@ -2,9 +2,6 @@ import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
 
 export async function createCustomContact(userId: string, name?: string, email?: string, contact?: string) {
-  name == undefined ? null : name;
-  email == undefined ? null : email;
-  contact == undefined ? null : contact;
   await prisma.customContact.create({
     data: {
       name: name,
