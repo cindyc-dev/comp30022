@@ -49,3 +49,11 @@ export async function checkCustomExists(
   }
   return dbResult;
 }
+
+export async function deleteCustomContact(userId: string) {
+  await prisma.customContact.delete({
+    where: {
+      id: userId,
+    }
+  });
+}
