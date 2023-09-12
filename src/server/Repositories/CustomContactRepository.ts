@@ -50,10 +50,10 @@ export async function checkCustomExists(
   return dbResult;
 }
 
-export async function deleteCustomContact(userId: string) {
+export async function deleteCustomContact(userId: string, contactId: string) {
   await prisma.customContact.delete({
     where: {
-      id: userId,
+      id: contactId,
     }
   });
 }
