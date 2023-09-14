@@ -5,8 +5,9 @@ import Board from "~/components/board";
 export default function Trello() {
   return (
     <Layout>
-      <h1>Trello</h1>
-      <Board/>
+      <div className="flex w-full flex-col ">
+        <Board />
+      </div>
     </Layout>
   );
 }
@@ -14,3 +15,5 @@ export default function Trello() {
 
 
 Trello.auth = false;
+
+
