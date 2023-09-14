@@ -56,7 +56,6 @@ model User {
   password      String?
   contact       String?
   image         String?
-  contact       String?
   accounts      Account[]
   sessions      Session[]
   CustomContact CustomContact[]
