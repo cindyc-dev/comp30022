@@ -1,17 +1,21 @@
 import Image from "next/image";
+import ToastSection from "./common/toastSection";
+import { useToast } from "./hooks/toastContext";
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { toasts, removeToast } = useToast();
   return (
     <div className="hero min-h-screen bg-base-200">
       <Image
         src="/images/background.png"
         alt="background"
-        layout="fill"
-        objectFit="cover"
         quality={100}
+        width={1920}
+        height={1080}
+        className="!fixed h-full w-full object-cover"
       />
       <div className="hero-content flex-col lg:flex-row">
         <div className="p-10 text-center text-base-100 lg:text-left">
@@ -27,6 +31,7 @@ export default function AuthLayout({
           {children}
         </div>
       </div>
+      <ToastSection toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }
