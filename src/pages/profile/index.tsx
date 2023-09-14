@@ -14,4 +14,4 @@ export default function Profile() {
   );
 }
 
-Profile.auth = false;
+Profile.auth = true;
