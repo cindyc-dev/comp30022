@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { getAllUserConnectionsDetails } from "~/server/Services/UserConnections";
 import {
   getUserDetails,
   setUserDetails,
@@ -40,4 +41,10 @@ export const detailsRouter = createTRPCRouter({
       const userId = session.user.id;
       await setUserImage(userId, opts.input.newImage);
     }),
+
+  getAllConnections: protectedProcedure.query(async (opts) => {
+    const session = opts.ctx.session;
+    const userId = session.user.id;
+    return await getAllUserConnectionsDetails(userId);
+  })
 });

@@ -49,3 +49,16 @@ export async function checkCustomExists(
   }
   return dbResult;
 }
+
+export async function getCustomConnection(id:string) {
+  const dbResult = await prisma.customContact.findMany({
+    where: {
+      userId: id,
+    },
+  });
+
+  if (!dbResult) {
+    return null;
+  }
+  return dbResult;
+}

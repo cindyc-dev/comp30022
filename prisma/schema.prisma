@@ -1,16 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider     = "mysql"
-  // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
@@ -21,19 +14,18 @@ model Example {
   updatedAt DateTime @updatedAt
 }
 
-// Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? // @db.Text
-  access_token      String? // @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? // @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -49,16 +41,18 @@ model Session {
 }
 
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String?         @unique
-  emailVerified DateTime?
-  password      String?
-  contact       String?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  CustomContact CustomContact[]
+  id             String           @id @default(cuid())
+  name           String?
+  email          String?          @unique
+  emailVerified  DateTime?
+  password       String?
+  image          String?
+  contact        String?
+  accounts       Account[]
+  sessions       Session[]
+  CustomContact  CustomContact[]
+  connector UserConnection[] @relation("connector")
+  connected  UserConnection[] @relation("connected")
 }
 
 model CustomContact {
@@ -68,6 +62,15 @@ model CustomContact {
   contact String?
   userId  String
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserConnection {
+  userId_1 String 
+  userId_2 String 
+  user1    User   @relation("connector", fields: [userId_1], references: [id], onDelete: Cascade)
+  user2    User   @relation("connected", fields: [userId_2], references: [id], onDelete: Cascade)
+
+  @@id([userId_1, userId_2])
 }
 
 model VerificationToken {
