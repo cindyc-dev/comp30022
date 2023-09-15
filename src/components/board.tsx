@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
+// Define the Task type with description and date fields
+type Task = {
+  title: string;
+  description: string;
+  date: string;
+};
+
 export const TrelloBoard = () => {
   const initialColumns = {
     todos: {
       title: 'Todo',
-      items: [] as string[],
+      items: [] as Task[],
     },
     inProgress: {
       title: 'In Progress',
-      items: [] as string[],
+      items: [] as Task[],
     },
     done: {
       title: 'Done',
-      items: [] as string[],
+      items: [] as Task[],
     },
   };
 
