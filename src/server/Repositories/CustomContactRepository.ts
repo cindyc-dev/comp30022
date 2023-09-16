@@ -62,3 +62,22 @@ export async function getCustomConnection(id:string) {
   }
   return dbResult;
 }
+
+export async function deleteCustomConnection(userId: string, email: string, contact: string) {
+  const deleted = await prisma.customContact.deleteMany({
+    where: {
+      userId: userId,
+      
+      OR: [
+        {
+          email: email,
+        },
+        {
+          contact: contact,
+        },
+      ]
+    },
+  });
+
+  return deleted;
+}

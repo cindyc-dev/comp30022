@@ -42,9 +42,5 @@ export const detailsRouter = createTRPCRouter({
       await setUserImage(userId, opts.input.newImage);
     }),
 
-  getAllConnections: protectedProcedure.query(async (opts) => {
-    const session = opts.ctx.session;
-    const userId = session.user.id;
-    return await getAllUserConnectionsDetails(userId);
-  })
+
 });

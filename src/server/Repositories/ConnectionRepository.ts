@@ -8,6 +8,7 @@ export async function createConnection(senderId: string, receiverId: string) {
       userId_1: senderId,
       userId_2: receiverId,
     },
+    
   });
 
   const connection2 = await prisma.userConnection.create({
@@ -27,7 +28,6 @@ const userInfoSelect = {
   contact: true,
   image: true,
   password: true,
-  contact: true,
 } satisfies Prisma.UserSelect;
 
 type UserInfoPayload = Prisma.UserGetPayload<{ select: typeof userInfoSelect }>;
