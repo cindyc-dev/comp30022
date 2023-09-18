@@ -20,7 +20,6 @@ const userInfoSelect = {
   contact: true,
   image: true,
   password: true,
-  contact: true,
 } satisfies Prisma.UserSelect;
 
 type UserInfoPayload = Prisma.UserGetPayload<{ select: typeof userInfoSelect }>;
