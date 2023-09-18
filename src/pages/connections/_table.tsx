@@ -19,6 +19,8 @@ import { fuzzyFilter } from "./_fuzzyFilter";
 import { fuzzySort } from "./_fuzzySort";
 
 import { RankingInfo } from "@tanstack/match-sorter-utils";
+import { useModal } from "~/components/hooks/modalContext";
+import ConnectionDetailsModal from "./_connectionDetailsModal";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -44,9 +46,11 @@ function Table({
   setGlobalFilter,
   tagColoursMap,
   rowSelection,
-  setRowSelection
+  setRowSelection,
 }: TableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
+
+  const { openModal } = useModal();
 
   const columns = useMemo<ColumnDef<ConnectionI>[]>(
     () => [
@@ -85,7 +89,22 @@ function Table({
               </div>
             </div>
             <div className="ml-2">
-              <div>{row.original.name}</div>
+              <div
+                className="link cursor-pointer text-primary"
+                onClick={() => {
+                  openModal({
+                    content: (
+                      <ConnectionDetailsModal
+                        connection={row.original}
+                        tagColoursMap={tagColoursMap}
+                      />
+                    ),
+                    id: "connection-details-modal",
+                  });
+                }}
+              >
+                {row.original.name}
+              </div>
             </div>
           </div>
         ),
@@ -132,7 +151,7 @@ function Table({
     state: {
       sorting,
       globalFilter,
-      rowSelection
+      rowSelection,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -185,7 +204,7 @@ function Table({
         {/* Body */}
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="hover">
+            <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

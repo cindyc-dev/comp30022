@@ -1,15 +1,14 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import AvatarImage from "~/components/common/avatarImage";
-import TextInput from "~/components/common/textInput";
 import {
   NEW_CONNECTION,
   sampleSearchResults,
 } from "~/sample_data/sampleConnections";
 import { ConnectionI } from "~/types/ConnectionI";
 import { useModal } from "~/components/hooks/modalContext";
-import Tag from "./_tag";
 import UploadImageModalContent from "~/components/common/uploadImageModalContent";
+import ConnectionDetailsInputs from "./_connectionDetailsInputs";
 
 export interface handleAddConnectionProps {
   newConnection: ConnectionI;
@@ -47,7 +46,7 @@ const AddConnectionModal = ({
         {isSearch ? (
           <SearchTab />
         ) : (
-          <CreateTab
+          <CustomTab
             handleCreateConnection={handleCreateConnection}
             tagColoursMap={tagColoursMap}
           />
@@ -102,7 +101,7 @@ const SearchTab = () => {
   );
 };
 
-const CreateTab = ({
+const CustomTab = ({
   tagColoursMap,
   handleCreateConnection,
 }: {
@@ -113,7 +112,6 @@ const CreateTab = ({
   }: handleAddConnectionProps) => void;
 }) => {
   const [connection, setConnection] = useState<ConnectionI>(NEW_CONNECTION);
-  const [tagInput, setTagInput] = useState<string>("");
   const { openModal } = useModal();
   const editPhoto = () => {
     openModal({
@@ -130,75 +128,23 @@ const CreateTab = ({
   return (
     <div className="flex flex-col content-center items-center justify-center gap-4 md:w-4/5">
       <h1 className="my-0">Create a Connection</h1>
-      <div className="flex w-full flex-col items-center gap-4 align-middle md:flex-row md:justify-between">
-        <div className="flex flex-col text-center">
-          <label
-            className="avatar btn btn-circle btn-ghost h-40 w-40"
-            onClick={() => editPhoto()}
-          >
-            <AvatarImage src={connection.photoUrl} />
-          </label>
-          <p
-            className="link cursor-pointer text-xs"
-            onClick={() => editPhoto()}
-          >
-            Edit Photo
-          </p>
-        </div>
-        <div className="flex w-full flex-col items-center gap-2">
-          <TextInput
-            label="👋 Name"
-            placeholder="eg. Jane Green"
-            value={connection.name}
-            setValue={(v) => setConnection({ ...connection, name: v })}
-          />
-          <TextInput
-            label="📧 Email"
-            placeholder="eg. example@company.com"
-            value={connection.email}
-            setValue={(v) => setConnection({ ...connection, email: v })}
-          />
-          <TextInput
-            label="📞 Phone"
-            placeholder="eg. 123-456-7890"
-            value={connection.phone || ""}
-            setValue={(v) => setConnection({ ...connection, phone: v })}
-          />
-          <TextInput
-            label="🏷️ Tags (press Enter to add)"
-            placeholder="eg. friend, colleague"
-            value={tagInput}
-            setValue={(v) => setTagInput(v)}
-            props={{
-              onKeyDown: (e: { key: string }) => {
-                if (e.key === "Enter") {
-                  setConnection({
-                    ...connection,
-                    tags: [...(connection.tags || []), tagInput.toLowerCase()],
-                  });
-                  setTagInput("");
-                }
-              },
-            }}
-          />
-          <div className="flex w-full flex-row flex-wrap gap-2">
-            {connection.tags?.map((tag) => (
-              <Tag key={tag} tag={tag} tagColoursMap={tagColoursMap} />
-            ))}
-          </div>
-          <button
-            className="btn btn-primary btn-wide"
-            onClick={() =>
-              handleCreateConnection({
-                newConnection: connection,
-                setConnection: setConnection,
-              })
-            }
-          >
-            Create
-          </button>
-        </div>
-      </div>
+      <ConnectionDetailsInputs
+        connection={connection}
+        setConnection={setConnection}
+        tagColoursMap={tagColoursMap}
+        editPhoto={editPhoto}
+      />
+      <button
+        className="btn btn-primary btn-wide"
+        onClick={() =>
+          handleCreateConnection({
+            newConnection: connection,
+            setConnection: setConnection,
+          })
+        }
+      >
+        Create
+      </button>
     </div>
   );
 };
