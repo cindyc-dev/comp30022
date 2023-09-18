@@ -126,7 +126,7 @@ const CustomTab = ({
     });
   };
   return (
-    <div className="flex flex-col content-center items-center justify-center gap-4 md:w-4/5">
+    <div className="flex flex-col content-center items-center justify-center md:w-4/5">
       <h1 className="my-0">Create a Connection</h1>
       <ConnectionDetailsInputs
         connection={connection}

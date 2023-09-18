@@ -8,8 +8,8 @@ export const Modal = ({
   closeModal: () => void;
 }) => {
   return (
-    <div className="prose modal modal-open z-40">
-      <div className="modal-box w-11/12 max-w-5xl">
+    <div className="prose modal modal-open z-40 ">
+      <div className="modal-box max-h-[80vh] w-11/12 max-w-5xl">
         <button
           className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
           onClick={() => closeModal()}
