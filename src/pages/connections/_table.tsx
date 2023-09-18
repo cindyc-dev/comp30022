@@ -9,6 +9,8 @@ import {
   SortingState,
   useReactTable,
   getFilteredRowModel,
+  RowSelectionState,
+  OnChangeFn,
 } from "@tanstack/react-table";
 import AvatarImage from "~/components/common/avatarImage";
 import { capitalise } from "~/components/utils/capitalise";
@@ -32,6 +34,8 @@ interface TableProps {
   globalFilter: string;
   setGlobalFilter: (value: string) => void;
   tagColoursMap: Record<string, string>;
+  rowSelection: RowSelectionState;
+  setRowSelection: OnChangeFn<RowSelectionState>;
 }
 
 function Table({
@@ -39,6 +43,8 @@ function Table({
   globalFilter,
   setGlobalFilter,
   tagColoursMap,
+  rowSelection,
+  setRowSelection
 }: TableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -126,7 +132,10 @@ function Table({
     state: {
       sorting,
       globalFilter,
+      rowSelection
     },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

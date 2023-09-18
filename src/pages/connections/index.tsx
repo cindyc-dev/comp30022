@@ -6,7 +6,7 @@ import {
   sampleConnections,
   sampleTags,
 } from "~/sample_data/sampleConnections";
-import { FaFilter, FaPlus } from "react-icons/fa";
+import { FaFilter, FaPlus, FaTrash } from "react-icons/fa";
 import { useModal } from "~/components/hooks/modalContext";
 import AddConnectionModal, {
   handleAddConnectionProps,
@@ -14,10 +14,12 @@ import AddConnectionModal, {
 import Table from "./_table";
 import { useToast } from "~/components/hooks/toastContext";
 import DebouncedInput from "./_debouncedInput";
+import { RowSelectionState } from "@tanstack/react-table";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>(sampleConnections);
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const tagColoursMap: Record<string, string> = sampleTags;
 
   // TODO fetch data and tagColoursMap from API
@@ -75,6 +77,26 @@ export default function Connections() {
     closeModal("add-connection-modal");
   };
 
+  const handleDeleteMultipleConnections = () => {
+    // TODO send rowSelection to API and get back success or error
+    // TODO remove deleted connections from data
+    const deletedConnections = Object.keys(rowSelection).map(
+      (id) => data[Number(id)]
+    );
+    setData((prev) =>
+      prev.filter((connection) => !deletedConnections.includes(connection))
+    );
+
+    // Show success toast
+    addToast({
+      type: "success",
+      message: "Connections deleted successfully.",
+    });
+
+    // Reset rowSelection
+    setRowSelection({});
+  };
+
   return (
     <Layout>
       <div className="flex w-full flex-col items-start font-semibold">
@@ -103,8 +125,23 @@ export default function Connections() {
           globalFilter={globalFilter}
           setGlobalFilter={setGlobalFilter}
           tagColoursMap={tagColoursMap}
+          rowSelection={rowSelection}
+          setRowSelection={setRowSelection}
         />
       </div>
+      {Object.keys(rowSelection).length > 0 && (
+        <div className="navbar fixed bottom-2 flex w-9/12 justify-between gap-2 rounded bg-primary px-10 shadow-md">
+          <div className="text-l text-base-300">
+            {Object.keys(rowSelection).length}/{data.length} Rows Selected
+          </div>
+          <button
+            className="btn btn-error"
+            onClick={handleDeleteMultipleConnections}
+          >
+            <FaTrash /> Delete
+          </button>
+        </div>
+      )}
     </Layout>
   );
 }
