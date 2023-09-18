@@ -1,90 +1,29 @@
-import {
-  HTMLProps,
-  InputHTMLAttributes,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useState } from "react";
 import { Layout } from "~/components/layout/layout";
 import { ConnectionI } from "~/types/ConnectionI";
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  FilterFn,
-  SortingFn,
-  SortingState,
-  useReactTable,
-  sortingFns,
-  getFilteredRowModel,
-} from "@tanstack/react-table";
-import { mockConnections, mockTags } from "~/sample_data/mockConnections";
-import AvatarImage from "~/components/common/avatarImage";
-import { capitalise } from "~/components/utils/capitalise";
-import {
-  FaCaretDown,
-  FaCaretUp,
-  FaFilter,
-  FaPlus,
-  FaSort,
-} from "react-icons/fa";
+  NEW_CONNECTION,
+  sampleConnections,
+  sampleTags,
+} from "~/sample_data/sampleConnections";
+import { FaFilter, FaPlus } from "react-icons/fa";
 import { useModal } from "~/components/hooks/modalContext";
-import AddConnectionModal from "./_addConnectionModal";
-
-import {
-  RankingInfo,
-  rankItem,
-  compareItems,
-} from "@tanstack/match-sorter-utils";
-
-declare module "@tanstack/table-core" {
-  interface FilterFns {
-    fuzzy: FilterFn<unknown>;
-  }
-  interface FilterMeta {
-    itemRank: RankingInfo;
-  }
-}
-
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value);
-
-  // Store the itemRank info
-  addMeta({
-    itemRank,
-  });
-
-  // Return if the item should be filtered in/out
-  return itemRank.passed;
-};
-
-const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
-  let dir = 0;
-
-  // Only sort by rank if the column has ranking information
-  if (rowA.columnFiltersMeta[columnId]) {
-    dir = compareItems(
-      rowA.columnFiltersMeta[columnId]?.itemRank,
-      rowB.columnFiltersMeta[columnId]?.itemRank
-    );
-  }
-
-  // Provide an alphanumeric fallback for when the item ranks are equal
-  return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
-};
+import AddConnectionModal, {
+  handleAddConnectionProps,
+} from "./_addConnectionModal";
+import Table from "./_table";
+import { useToast } from "~/components/hooks/toastContext";
+import DebouncedInput from "./_debouncedInput";
 
 export default function Connections() {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [data, setData] = useState<ConnectionI[]>(mockConnections);
+  const [data, setData] = useState<ConnectionI[]>(sampleConnections);
   const [globalFilter, setGlobalFilter] = useState<string>("");
-  const tagColoursMap: Record<string, string> = mockTags;
+  const tagColoursMap: Record<string, string> = sampleTags;
 
   // TODO fetch data and tagColoursMap from API
 
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
+  const { addToast } = useToast();
 
   const addConnection = () => {
     openModal({
@@ -97,107 +36,44 @@ export default function Connections() {
       id: "add-connection-modal",
     });
   };
-  const handleAddConnection = (newConnection: ConnectionI) => {
-    setData((prev) => [...prev, newConnection]);
+
+  const handleAddConnection = ({
+    newConnection,
+    setConnection,
+  }: handleAddConnectionProps) => {
+    // Validate that connection has name and email
+    if (!newConnection.name || !newConnection.email) {
+      // Show error toast
+      addToast({
+        type: "error",
+        message: "Name and Email are required.",
+      });
+      return;
+    }
+
+    // Validate that connection has a unique email
+    if (data.some((connection) => connection.email === newConnection.email)) {
+      // Show error toast
+      addToast({
+        type: "error",
+        message: "Email already exists.",
+      });
+      return;
+    }
+
+    // TODO send newConnection to API and get back newConnection with id
+    setData((prev) => [...prev, newConnection]); // To remove
+
+    // Show success toast
+    addToast({
+      type: "success",
+      message: "Connection added successfully.",
+    });
+
+    // Reset connection and close modal
+    setConnection(NEW_CONNECTION);
+    closeModal("add-connection-modal");
   };
-
-  const columns = useMemo<ColumnDef<ConnectionI>[]>(
-    () => [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler(),
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <div className="px-1">
-            <IndeterminateCheckbox
-              {...{
-                checked: row.getIsSelected(),
-                disabled: !row.getCanSelect(),
-                indeterminate: row.getIsSomeSelected(),
-                onChange: row.getToggleSelectedHandler(),
-              }}
-            />
-          </div>
-        ),
-      },
-      {
-        header: "NAME",
-        accessorKey: "name",
-        cell: ({ row }) => (
-          <div className="flex items-center">
-            {row.original.photoUrl && (
-              <div className="avatar">
-                <div className="h-12 w-12 rounded-full">
-                  <AvatarImage src={row.original.photoUrl} />
-                </div>
-              </div>
-            )}
-            <div className="ml-2">
-              <div>{row.original.name}</div>
-            </div>
-          </div>
-        ),
-        filterFn: "fuzzy",
-        sortFn: fuzzySort,
-      },
-      {
-        header: "EMAIL",
-        accessorKey: "email",
-      },
-      {
-        header: "PHONE",
-        accessorKey: "phone",
-      },
-      {
-        header: "TAGS",
-        accessorKey: "tags",
-        cell: ({ row }) => (
-          <div className="flex flex-row flex-wrap gap-2">
-            {row.original.tags.map((tag) => (
-              <div
-                key={tag}
-                className={`${tagColoursMap[tag]} badge py-3 text-sm font-normal text-base-100`}
-              >
-                {capitalise(tag)}
-              </div>
-            ))}
-          </div>
-        ),
-      },
-      {
-        header: "CONNECT",
-        cell: () => (
-          <button className="btn btn-secondary btn-sm">Connect Now</button>
-        ),
-      },
-    ],
-    []
-  );
-
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      sorting,
-      globalFilter,
-    },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
-    globalFilterFn: fuzzyFilter,
-    onGlobalFilterChange: setGlobalFilter,
-    getFilteredRowModel: getFilteredRowModel(),
-  });
 
   return (
     <Layout>
@@ -222,115 +98,14 @@ export default function Connections() {
             <FaFilter /> Filter
           </button>
         </div>
-        {/* Table */}
-        <div className="mt-0 w-full overflow-x-auto">
-          <table className="table mt-0">
-            {/* Header */}
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id} className="text-lg text-primary">
-                      {header.isPlaceholder ? null : (
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? "cursor-pointer select-none flex items-center justify-between"
-                              : "",
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {{
-                            asc: <FaCaretUp />,
-                            desc: <FaCaretDown />,
-                          }[header.column.getIsSorted() as string] ??
-                            (header.column.getCanSort() ? <FaSort /> : null)}
-                        </div>
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-
-            {/* Body */}
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table
+          data={data}
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
+          tagColoursMap={tagColoursMap}
+        />
       </div>
     </Layout>
-  );
-}
-
-function IndeterminateCheckbox({
-  indeterminate,
-  ...rest
-}: { indeterminate?: boolean } & HTMLProps<HTMLInputElement>) {
-  const ref = useRef<HTMLInputElement>(null!);
-
-  useEffect(() => {
-    if (typeof indeterminate === "boolean") {
-      ref.current.indeterminate = !rest.checked && indeterminate;
-    }
-  }, [ref, indeterminate]);
-
-  return (
-    <input
-      type="checkbox"
-      ref={ref}
-      className="checkbox-primary checkbox"
-      {...rest}
-    />
-  );
-}
-
-function DebouncedInput({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number;
-  onChange: (value: string | number) => void;
-  debounce?: number;
-} & Omit<InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-  const [value, setValue] = useState(initialValue);
-
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-  }, [value]);
-
-  return (
-    <input
-      {...props}
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-    />
   );
 }
 

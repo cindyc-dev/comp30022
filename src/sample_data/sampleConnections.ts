@@ -1,6 +1,15 @@
 import { ConnectionI } from "~/types/ConnectionI";
 
-export const mockTags = {
+export const DEFAULT_IMAGE_URL =
+  "https://i.pinimg.com/222x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg";
+
+export const NEW_CONNECTION: ConnectionI = {
+  name: "",
+  email: "",
+  tags: [],
+};
+
+export const sampleTags = {
   friend: "badge-primary",
   colleague: "badge-info",
   family: "badge-success",
@@ -8,7 +17,7 @@ export const mockTags = {
   neighbor: "badge-error",
 };
 
-export const mockSearchResults: ConnectionI[] = [
+export const sampleSearchResults: ConnectionI[] = [
   {
     name: "John Doe",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/23.jpg",
@@ -24,7 +33,7 @@ export const mockSearchResults: ConnectionI[] = [
 ];
 
 // Random data generated using ChatGPT with appropriate prompts
-export const mockConnections: ConnectionI[] = [
+export const sampleConnections: ConnectionI[] = [
   {
     name: "John Doe",
     phone: "555-1234",
@@ -35,17 +44,14 @@ export const mockConnections: ConnectionI[] = [
   },
   {
     name: "Jane Smith",
-    photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/15.jpg",
     email: "jane.smith@gmail.com",
     tags: ["family"],
     notes: "Cousin's birthday",
   },
   {
     name: "Robert Johnson",
-    phone: "555-9876",
-    photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/7.jpg",
     email: "robert.johnson@workplace.com",
-    tags: ["client"],
+    tags: [],
     notes: "Discuss upcoming project",
   },
   {
@@ -53,7 +59,7 @@ export const mockConnections: ConnectionI[] = [
     phone: "555-5678",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/38.jpg",
     email: "emily.brown@hotmail.com",
-    tags: ["friend"],
+    tags: [],
     notes: "Likes hiking",
   },
   {
@@ -66,7 +72,6 @@ export const mockConnections: ConnectionI[] = [
   {
     name: "Samantha Miller",
     phone: "555-2222",
-    photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/5.jpg",
     email: "samantha.miller@example.com",
     tags: ["friend"],
     notes: "Shared interest in painting",
@@ -84,11 +89,9 @@ export const mockConnections: ConnectionI[] = [
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/29.jpg",
     email: "jennifer.lee@workplace.com",
     tags: ["colleague"],
-    notes: "Attended the training together",
   },
   {
     name: "Richard Brown",
-    phone: "555-5555",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/42.jpg",
     email: "richard.brown@hotmail.com",
     tags: ["family"],
@@ -99,7 +102,6 @@ export const mockConnections: ConnectionI[] = [
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/7.jpg",
     email: "linda.davis@example.org",
     tags: ["friend"],
-    notes: "Travelling to Europe",
   },
   {
     name: "Daniel Martinez",
@@ -128,13 +130,11 @@ export const mockConnections: ConnectionI[] = [
     name: "Karen Clark",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/23.jpg",
     email: "karen.clark@example.org",
-    tags: ["neighbor"],
-    notes: "Borrowed lawnmower",
+    tags: [],
   },
   {
     name: "Matthew Turner",
     phone: "555-8888",
-    photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/14.jpg",
     email: "matthew.turner@gmail.com",
     tags: ["friend"],
     notes: "College roommate",

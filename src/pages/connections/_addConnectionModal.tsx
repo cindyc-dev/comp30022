@@ -1,19 +1,30 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import AvatarImage from "~/components/common/avatarImage";
 import TextInput from "~/components/common/textInput";
-import { mockSearchResults } from "~/sample_data/mockConnections";
+import {
+  NEW_CONNECTION,
+  sampleSearchResults,
+} from "~/sample_data/sampleConnections";
 import { ConnectionI } from "~/types/ConnectionI";
-import UploadImageModal from "../../components/common/uploadImageModal";
 import { useModal } from "~/components/hooks/modalContext";
 import Tag from "./_tag";
+import UploadImageModalContent from "~/components/common/uploadImageModalContent";
+
+export interface handleAddConnectionProps {
+  newConnection: ConnectionI;
+  setConnection: Dispatch<SetStateAction<ConnectionI>>;
+}
 
 const AddConnectionModal = ({
   tagColoursMap,
   handleCreateConnection,
 }: {
   tagColoursMap: Record<string, string>;
-  handleCreateConnection: (connection: ConnectionI) => void;
+  handleCreateConnection: ({
+    newConnection,
+    setConnection,
+  }: handleAddConnectionProps) => void;
 }) => {
   const [isSearch, setIsSearch] = useState<boolean>(true);
   return (
@@ -48,7 +59,7 @@ const AddConnectionModal = ({
 
 const SearchTab = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchResults] = useState<ConnectionI[]>(mockSearchResults);
+  const [searchResults] = useState<ConnectionI[]>(sampleSearchResults);
 
   // TODO send query to API and set searchResults
 
@@ -96,14 +107,23 @@ const CreateTab = ({
   handleCreateConnection,
 }: {
   tagColoursMap: Record<string, string>;
-  handleCreateConnection: (connection: ConnectionI) => void;
+  handleCreateConnection: ({
+    newConnection,
+    setConnection,
+  }: handleAddConnectionProps) => void;
 }) => {
-  const [connection, setConnection] = useState<ConnectionI>({} as ConnectionI);
+  const [connection, setConnection] = useState<ConnectionI>(NEW_CONNECTION);
   const [tagInput, setTagInput] = useState<string>("");
   const { openModal } = useModal();
   const editPhoto = () => {
     openModal({
-      content: <UploadImageModal />,
+      content: (
+        <UploadImageModalContent
+          onSaveImage={(imageUrl) => {
+            setConnection({ ...connection, photoUrl: imageUrl });
+          }}
+        />
+      ),
       id: "upload-image-modal",
     });
   };
@@ -116,7 +136,7 @@ const CreateTab = ({
             className="avatar btn btn-circle btn-ghost h-40 w-40"
             onClick={() => editPhoto()}
           >
-            <AvatarImage src="https://wallpapers.com/images/hd/funny-profile-picture-ylwnnorvmvk2lna0.jpg" />
+            <AvatarImage src={connection.photoUrl} />
           </label>
           <p
             className="link cursor-pointer text-xs"
@@ -168,7 +188,12 @@ const CreateTab = ({
           </div>
           <button
             className="btn btn-primary btn-wide"
-            onClick={() => handleCreateConnection(connection)}
+            onClick={() =>
+              handleCreateConnection({
+                newConnection: connection,
+                setConnection: setConnection,
+              })
+            }
           >
             Create
           </button>

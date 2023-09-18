@@ -25,6 +25,7 @@ const config = {
       "res.cloudinary.com",
       "cdn.pixabay.com",
       "xsgames.co",
+      "i.pinimg.com",
     ],
   },
 };

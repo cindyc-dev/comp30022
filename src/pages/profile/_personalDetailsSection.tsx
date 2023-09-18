@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { AvatarImage } from "~/components/common/avatarImage";
 import { TextInput } from "~/components/common/textInput";
 import { useModal } from "~/components/hooks/modalContext";
-import { UploadImageModal } from "../../components/common/uploadImageModal";
 import { useToast } from "~/components/hooks/toastContext";
 import { api } from "~/utils/api";
 import { IoMdRefresh } from "react-icons/io";
+import UploadImageModalContent from "~/components/common/uploadImageModalContent";
 
 export const PersonalDetailsSection = () => {
   const [name, setName] = useState<string>("");
@@ -61,9 +61,26 @@ export const PersonalDetailsSection = () => {
     });
   };
 
+  const imageMutation = api.details.setImage.useMutation();
   const editPhoto = () => {
     openModal({
-      content: <UploadImageModal />,
+      content: (
+        <UploadImageModalContent
+          onSaveImage={(imageUrl) => {
+            const image = {
+              newImage: imageUrl,
+            };
+            imageMutation.mutate(image, {
+              onSuccess: async () => {
+                addToast({
+                  type: "success",
+                  message: "Profile picture saved successfully.",
+                });
+              },
+            });
+          }}
+        />
+      ),
       id: "upload-image-modal",
     });
   };
