@@ -93,7 +93,7 @@ function ConnectionDetailsInputs({
       </div>
       <div className="w-full">
         <label className="label">
-          <span className="label-text">✏️ Notess</span>
+          <span className="label-text">✏️ Notes</span>
         </label>
         <textarea
           className="textarea textarea-bordered w-full"
