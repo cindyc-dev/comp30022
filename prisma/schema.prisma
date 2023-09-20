@@ -58,6 +58,7 @@ model User {
   contact       String?
   accounts      Account[]
   sessions      Session[]
+  tasks         Task[]
 }
 
 model VerificationToken {
@@ -66,4 +67,15 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Task {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  dueDate     DateTime?
+  createdBy   User      @relation(fields: [createdById], references: [id])
+  createdById String
+  status      String?
+  //connections User[]
 }
