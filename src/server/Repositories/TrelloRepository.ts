@@ -47,7 +47,7 @@ export async function updateTask(id: number, title: string, description: string,
   return update;
 }
 
-type TaskInfoPayload = Prisma.UserGetPayload<{ select: typeof taskSelect }>;
+export type TaskInfoPayload = Prisma.UserGetPayload<{ select: typeof taskSelect }>;
 
 export async function getTasks(
   createdById: string,

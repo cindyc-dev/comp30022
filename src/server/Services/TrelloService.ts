@@ -1,4 +1,5 @@
 import { createTask, deleteTask, getTasks } from "../Repositories/TrelloRepository";
+import { TaskInfoPayload } from "../Repositories/TrelloRepository.ts";
 
 
 export async function setTask(createdById: string, title: string, description: string, dueDate: string): Promise<boolean> {
@@ -16,7 +17,7 @@ export async function updateTask(id: number, title: string, description: string,
   return update ? true : false;
 }
 
-export async function fetchTasks(createdById: string): Promise<TaskInfoPayload> {
+export async function fetchTasks(createdById: string): Promise<TaskInfoPayload | null> {
   const tasks = await getTasks(createdById);
   return tasks;
 }

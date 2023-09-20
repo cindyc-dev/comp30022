@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTask, deleteTask } from "~/server/Repositories/TrelloRepository";
 import { setTask } from "~/server/Services/TrelloService";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
 export const trelloRouter = createTRPCRouter({
 
