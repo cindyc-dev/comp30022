@@ -81,18 +81,6 @@ export const Board = () => {
     });
   };
 
-  const addTask = () => {
-    if (newTask.trim() !== "") {
-      const newColumns = { ...columns };
-      newColumns.todos.items.push({
-        title: newTask,
-        status: "Todo",
-      });
-      setColumns({ ...newColumns });
-      setNewTask("");
-    }
-  };
-
   const deleteTask = (columnId: string, taskIndex: number) => {
     setColumns((prevColumns) => {
       const updatedColumn = { ...prevColumns[columnId] };
@@ -104,86 +92,74 @@ export const Board = () => {
     });
   };
 
-  const [newTask, setNewTask] = useState("");
 
   return (
-    <div className="my-10 flex flex-wrap justify-start gap-8">
+    <div className="flex w-full flex-col">
+      
       <button className="btn btn-primary" onClick={handleAddTask}>
         <FaPlusCircle />
-          Add Task
+        Add Task
       </button>
       
+
       
-      <DragDropContext onDragEnd={onDragEnd}>
-        {Object.keys(columns).map((columnId) => {
-          const column = columns[columnId];
-          return (
-            <div
-              key={columnId}
-              className="card w-96 flex-1 bg-gray-100 p-4 shadow"
-            >
-              <div className="card-body">
-                <h1>{column.title}</h1>
-                <Droppable droppableId={columnId}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className="task-boxes"
-                    >
-                      {column.items.map((task: TaskI, index: number) => (
-                        <Draggable
-                          key={task.title}
-                          draggableId={task.title}
-                          index={index}
-                        >
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className="card mb-2 bg-indigo-100 shadow"
-                            >
-                              <div className="card-body">
-                                <h2>{task.title}</h2>
-                                <button
-                                  className="btn-danger btn"
-                                  onClick={() => deleteTask(columnId, index)}
-                                >
-                                  Delete
-                                </button>
+      <div className="my-10  flex flex-wrap justify-start gap-8">
+        <DragDropContext onDragEnd={onDragEnd}>
+          {Object.keys(columns).map((columnId) => {
+            const column = columns[columnId];
+            return (
+              <div
+                key={columnId}
+                className="card w-96 flex-1 bg-gray-100 p-4 shadow"
+              >
+                <div className="card-body">
+                  <h1>{column.title}</h1>
+                  <Droppable droppableId={columnId}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className="task-boxes"
+                      >
+                        {column.items.map((task: TaskI, index: number) => (
+                          <Draggable
+                            key={task.title}
+                            draggableId={task.title}
+                            index={index}
+                          >
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className="card mb-2 bg-indigo-100 shadow"
+                              >
+                                <div className="card-body">
+                                  <h2>{task.title}</h2>
+                                  <button
+                                    className="btn-danger btn"
+                                    onClick={() => deleteTask(columnId, index)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
                               </div>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-                {column.title === "Todo" && (
-                  <div className="mb-2">
-                    <input
-                      type="text"
-                      placeholder="New Task"
-                      value={newTask}
-                      onChange={(e) => setNewTask(e.target.value)}
-                    />
-                  </div>
-                )}
-                {column.title === "Todo" && (
-                  <div className="card-actions justify-between">
-                    <button className="btn btn-primary" onClick={addTask}>
-                      Add
-                    </button>
-                  </div>
-                )}
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </DragDropContext>
+            );
+          })}
+        </DragDropContext>
+      </div>
+
     </div>
+      
   );
 };
 
