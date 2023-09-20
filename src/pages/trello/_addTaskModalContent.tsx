@@ -1,39 +1,56 @@
 import React, { useState } from "react";
 import { useToast } from "../../components/hooks/toastContext";
 import { useModal } from "../../components/hooks/modalContext";
+import { TaskI } from "~/types/TaskI";
 
-export const AddTaskModalContent = () => {
-  const [newTask, setNewTask] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+
+
+export const AddTaskModalContent = ({column,setColumns}) => {
+  const [newTask, setNewTask] = useState<TaskI>({ title: "", description: "", status: "" });
   const [date, setDate] = useState<string>("");
   const { addToast } = useToast();
   const { closeModal } = useModal();
 
+
   const handleAddTask = () => {
-    if (!newTask) {
-      // Show error toast if task name is empty
+    const newColumns = {...column};
+    if (!newTask.title) {
+      // Show error toast if task name or status is empty
       addToast({
         type: "error",
-        message: "Task name is required.",
+        message: "Task name and status are required.",
       });
       return;
     }
 
+    newColumns.todos.items.push(newTask);
+    setColumns({...newColumns});
+
+    // // Create a copy of the tasks array with the new task added
+    // const updatedTasks = [...tasks, newTask];
+
+    // // Update the tasks state with the updated array
+    // setTasks(updatedTasks);
+
     // Replace the following lines with your logic to add the task
-    console.log("Task Name:", newTask);
-    console.log("Description:", description);
+    console.log("Task Name:", newTask.title);
+    console.log("Description:", newTask.description);
     console.log("Date:", date);
 
+    addToast({
+      type: "success",
+      message: "Task added successfully.",
+    });
+
     // Optionally, you can reset the form fields here
-    setNewTask("");
-    setDescription("");
-    setDate("");
+    setNewTask({ title: "", description: "", status: "" });
 
     closeModal("add-task-modal");
   };
 
   return (
     <>
+    
       <div className="relative flex flex-col items-center gap-4">
         <h1 className="mt-0">Add Task</h1>
         <div>
@@ -41,16 +58,16 @@ export const AddTaskModalContent = () => {
           <input
             type="text"
             id="taskName"
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
+            value={newTask.title}
+            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
           />
         </div>
         <div>
           <label htmlFor="description">Description:</label>
           <textarea
             id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            value={newTask.description}
+            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
           />
         </div>
         <div>
@@ -69,5 +86,7 @@ export const AddTaskModalContent = () => {
     </>
   );
 };
+
+
 
 export default AddTaskModalContent;

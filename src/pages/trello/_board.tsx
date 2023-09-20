@@ -7,6 +7,9 @@ import {
 } from "react-beautiful-dnd";
 import { ColumnI } from "~/types/ColumnI";
 import { TaskI } from "~/types/TaskI";
+import { useModal } from "~/components/hooks/modalContext";
+import { AddTaskModalContent } from "./_addTaskModalContent";
+import { FaPlusCircle } from "react-icons/fa";
 
 export const Board = () => {
   const initialColumns: Record<string, ColumnI> = {
@@ -24,7 +27,17 @@ export const Board = () => {
     },
   };
 
+  const { openModal } = useModal();
   const [columns, setColumns] = useState(initialColumns);
+
+  const handleAddTask = () => {
+    openModal({
+      content: <AddTaskModalContent column={columns} setColumns={setColumns} />,
+      id: "add-task-modal",
+    });
+  };
+
+  
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
@@ -95,6 +108,11 @@ export const Board = () => {
 
   return (
     <div className="my-10 flex flex-wrap justify-start gap-8">
+      <button className="btn btn-primary" onClick={handleAddTask}>
+        <FaPlusCircle />
+          Add Task
+      </button>
+      
       
       <DragDropContext onDragEnd={onDragEnd}>
         {Object.keys(columns).map((columnId) => {
