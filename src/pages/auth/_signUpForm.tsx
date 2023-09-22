@@ -3,9 +3,9 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useState } from "react";
 
-import PasswordInput from "./common/passwordInput";
+import PasswordInput from "~/components/common/passwordInput";
 import { api } from "~/utils/api";
-import { useToast } from "./hooks/toastContext";
+import { useToast } from "~/components/hooks/toastContext";
 
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {

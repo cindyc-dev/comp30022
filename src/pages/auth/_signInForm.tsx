@@ -1,10 +1,10 @@
 import { useState } from "react";
-import PasswordInput from "./common/passwordInput";
+import PasswordInput from "../../components/common/passwordInput";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { FaDiscord } from "react-icons/fa";
+import { FaDiscord, FaGithub, FaGoogle } from "react-icons/fa";
 import { useRouter } from "next/router";
-import { useToast } from "./hooks/toastContext";
+import { useToast } from "../../components/hooks/toastContext";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState<string>("");
@@ -77,7 +77,7 @@ export const SignInForm = () => {
         </button>
       </form>
       <hr />
-      <div>
+      <div className="flex flex-col gap-2">
         <button
           className="btn rounded-btn w-full"
           onClick={() => signIn("discord", { callbackUrl: "/dashboard" })}
