@@ -24,13 +24,39 @@ const userInfoSelect = {
 
 type UserInfoPayload = Prisma.UserGetPayload<{ select: typeof userInfoSelect }>;
 
-export async function checkCustomExists(
+export async function checkExistingUserExists(
   email: string, contact: string
 ): Promise<UserInfoPayload | null> {
   
   if (email == undefined && contact == undefined) return null;
 
   const dbResult = await prisma.user.findFirst({
+    where: {
+      OR: [
+        {
+          email: email,
+        },
+        { 
+          contact: contact 
+        },
+      ],
+    },
+    select: userInfoSelect,
+  });
+
+  if (!dbResult) {
+    return null;
+  }
+  return dbResult;
+}
+
+export async function checkCustomExists(
+  email: string, contact: string
+): Promise<UserInfoPayload | null> {
+  
+  if (email == undefined && contact == undefined) return null;
+
+  const dbResult = await prisma.customContact.findFirst({
     where: {
       OR: [
         {
