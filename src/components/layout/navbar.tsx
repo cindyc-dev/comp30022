@@ -41,7 +41,7 @@ export const Navbar = () => {
   }, []);
 
   return (
-    <div className="navbar sticky top-0 z-50 bg-neutral text-neutral-content shadow">
+    <div className="navbar sticky top-0 z-50 bg-primary text-primary-content shadow">
       <div className="navbar-start">
         {/* Hamburger Dropdown for Smaller Phones */}
         <div className="dropdown">
@@ -50,7 +50,7 @@ export const Navbar = () => {
           </label>
           <ul
             tabIndex={0}
-            className="menu dropdown-content rounded-box menu-sm z-[1] mt-3 w-52 bg-neutral p-2 shadow"
+            className="menu dropdown-content rounded-box menu-sm z-[1] mt-3 w-52 bg-primary p-2 shadow"
           >
             {PAGES.map(({ icon, path, name }) => (
               <li key={name}>
@@ -58,8 +58,8 @@ export const Navbar = () => {
                   href={path}
                   className={
                     currentPage === path
-                      ? "bg-neutral-focus !text-neutral-content"
-                      : "!text-neutral-content"
+                      ? "bg-primary-focus !text-primary-content"
+                      : "!text-primary-content"
                   }
                 >
                   {icon}
@@ -82,8 +82,8 @@ export const Navbar = () => {
                 href={path}
                 className={
                   currentPage === path
-                    ? "bg-neutral-focus !text-neutral-content"
-                    : "!text-neutral-content"
+                    ? "bg-primary-focus !text-primary-content"
+                    : "!text-primary-content"
                 }
               >
                 {icon}
@@ -102,15 +102,15 @@ export const Navbar = () => {
           </label>
           <ul
             tabIndex={0}
-            className="menu dropdown-content rounded-box menu-sm z-[1] mt-3 w-52 bg-neutral p-2 shadow"
+            className="menu dropdown-content rounded-box menu-sm z-[1] mt-3 w-52 bg-primary p-2 shadow"
           >
             <li>
               <Link
                 href="/profile"
                 className={
                   currentPage === "/profile"
-                    ? "bg-neutral-focus !text-neutral-content"
-                    : "!text-neutral-content"
+                    ? "bg-primary-focus !text-primary-content"
+                    : "!text-primary-content"
                 }
               >
                 Profile

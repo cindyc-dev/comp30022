@@ -15,6 +15,8 @@ import Table from "./_table";
 import { useToast } from "~/components/hooks/toastContext";
 import DebouncedInput from "./_debouncedInput";
 import { RowSelectionState } from "@tanstack/react-table";
+import Link from "next/link";
+import { BiMailSend } from "react-icons/bi";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>(sampleConnections);
@@ -97,6 +99,12 @@ export default function Connections() {
     setRowSelection({});
   };
 
+  const getSelectedEmails = () => {
+    return Object.keys(rowSelection)
+      .map((id) => data[Number(id)].email)
+      .join(",");
+  };
+
   return (
     <Layout>
       <div className="flex w-full flex-col items-start font-semibold">
@@ -134,12 +142,21 @@ export default function Connections() {
           <div className="text-l text-base-300">
             {Object.keys(rowSelection).length}/{data.length} Rows Selected
           </div>
-          <button
-            className="btn btn-error"
-            onClick={handleDeleteMultipleConnections}
-          >
-            <FaTrash /> Delete
-          </button>
+          <div className="flex gap-2">
+            <Link
+              className="btn btn-secondary"
+              href={`mailto:${getSelectedEmails()}`}
+            >
+              <BiMailSend />
+              Connect Now
+            </Link>
+            <button
+              className="btn btn-error"
+              onClick={handleDeleteMultipleConnections}
+            >
+              <FaTrash /> Delete
+            </button>
+          </div>
         </div>
       )}
     </Layout>

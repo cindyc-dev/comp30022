@@ -11,10 +11,11 @@ export default {
     themes: [
       {
         potatotheme: {
-          primary: "#626FB5",
+          primary: "#423689",
+          "primary-content": "#ffffff",
           secondary: "#D8DEFF",
           accent: "#282B40",
-          neutral: "#626FB5",
+          neutral: "#423689",
           "neutral-content": "#ffffff",
           "neutral-focus": "#44529B",
           "base-100": "#ffffff",

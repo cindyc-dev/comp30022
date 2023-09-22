@@ -21,6 +21,9 @@ import { fuzzySort } from "./_fuzzySort";
 import { RankingInfo } from "@tanstack/match-sorter-utils";
 import { useModal } from "~/components/hooks/modalContext";
 import ConnectionDetailsModal from "./_connectionDetailsModal";
+import Link from "next/link";
+
+import { BiMailSend } from "react-icons/bi";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -137,8 +140,14 @@ function Table({
       },
       {
         header: "CONNECT",
-        cell: () => (
-          <button className="btn btn-secondary btn-sm">Connect Now</button>
+        cell: ({ row }) => (
+          <Link
+            className="btn btn-secondary btn-sm"
+            href={`mailto: ${row.original.email}`}
+          >
+            <BiMailSend />
+            Connect Now
+          </Link>
         ),
       },
     ],
