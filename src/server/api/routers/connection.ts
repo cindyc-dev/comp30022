@@ -1,10 +1,9 @@
-import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
+import {createTRPCRouter, protectedProcedure, publicProcedure} from "~/server/api/trpc";
 import {z} from "zod";
 import {checkCustomExists, checkExistingUserExists, createCustomContact, deleteCustomConnection} from "~/server/Repositories/CustomContactRepository";
 import { TRPCError } from "@trpc/server";
-import { createConnection, deleteConnection } from "~/server/Repositories/ConnectionRepository";
+import { createConnection, deleteAllExisting, deleteConnection } from "~/server/Repositories/ConnectionRepository";
 import { getAllUserConnectionsDetails } from "~/server/Services/UserConnections";
-import { getUserDetails } from "~/server/Services/UserDetails";
 
 export const connectionRouter = createTRPCRouter({
   createCustom: protectedProcedure
@@ -48,6 +47,14 @@ export const connectionRouter = createTRPCRouter({
 
       await deleteCustomConnection(userId, opts.input.email, opts.input.contact);
     }),
+  
+  deleteAllExisting: protectedProcedure
+  .input(z.object({
+    email: z.string().email(),
+  }))
+  .mutation(async (opts) => {
+      return await deleteAllExisting();
+  }),
 
   createExisting: protectedProcedure
     .input(z.object({

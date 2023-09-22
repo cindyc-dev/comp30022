@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { UserI } from "~/types/UserI";
 
 export async function createConnection(senderId: string, receiverId: string) {
+  if (receiverId == null) return false;
   const connection = await prisma.userConnection.create({
     data: {
       userId_1: senderId,
@@ -69,4 +70,8 @@ export async function deleteConnection(senderId: string, receiverId: string) {
   });
 
   return connection;
+}
+
+export async function deleteAllExisting() {
+  return await prisma.userConnection.deleteMany({})
 }
