@@ -19,10 +19,10 @@ export const connectionRouter = createTRPCRouter({
       if (opts.input.tags.length > 1) {
         console.log("Tags not supported yet.");
       }
-      if (await checkCustomExists(opts.input.email, opts.input.contactNumber)) {
+      if (await checkCustomExists(userId, opts.input.email, opts.input.contactNumber)) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Account already exists",
+          message: "Custom contact already exists",
         });
       }
 

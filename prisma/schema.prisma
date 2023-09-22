@@ -60,6 +60,7 @@ model CustomContact {
   name    String?
   email   String?
   contact String?
+  image   String?
   userId  String
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

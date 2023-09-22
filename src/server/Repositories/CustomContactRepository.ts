@@ -51,29 +51,35 @@ export async function checkExistingUserExists(
 }
 
 export async function checkCustomExists(
-  email: string, contact: string
-): Promise<UserInfoPayload | null> {
+  userId: string, email: string, contact: string
+): Promise<Boolean | null> {
   
   if (email == undefined && contact == undefined) return null;
 
   const dbResult = await prisma.customContact.findFirst({
     where: {
-      OR: [
+      AND: [
         {
-          email: email,
+          userId: userId,
         },
-        { 
-          contact: contact 
-        },
-      ],
+        {
+          OR: [
+            {
+              email: email,
+            },
+            { 
+              contact: contact 
+            },
+          ],
+        }
+      ]
     },
-    select: userInfoSelect,
   });
 
   if (!dbResult) {
     return null;
   }
-  return dbResult;
+  return true;
 }
 
 export async function getCustomConnection(id:string) {
@@ -90,20 +96,41 @@ export async function getCustomConnection(id:string) {
 }
 
 export async function deleteCustomConnection(userId: string, email: string, contact: string) {
-  const deleted = await prisma.customContact.deleteMany({
-    where: {
-      userId: userId,
-      
-      OR: [
-        {
-          email: email,
-        },
-        {
-          contact: contact,
-        },
-      ]
-    },
-  });
 
-  return deleted;
+  if (email != null && contact != null) {
+    const deleted = await prisma.customContact.deleteMany({
+      where: {
+        userId: userId,
+        
+        AND: [
+          {
+            email: email,
+          },
+          {
+            contact: contact,
+          },
+        ]
+      },
+    });
+  
+    return deleted;
+  }
+  else {
+    const deleted = await prisma.customContact.deleteMany({
+      where: {
+        userId: userId,
+        
+        OR: [
+          {
+            email: email,
+          },
+          {
+            contact: contact,
+          },
+        ]
+      },
+    });
+  
+    return deleted;
+  }
 }
