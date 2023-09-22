@@ -1,25 +1,41 @@
 import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
 import { UserI } from "~/types/UserI";
+import { TRPCClientError } from "@trpc/client";
+import { TRPCError } from "@trpc/server";
+import { getUserDetails } from "../Services/UserDetails";
 
 export async function createConnection(senderId: string, receiverId: string) {
-  if (receiverId == null) return false;
-  const connection = await prisma.userConnection.create({
-    data: {
-      userId_1: senderId,
-      userId_2: receiverId,
-    },
-    
-  });
+  if (senderId == null || receiverId == null || receiverId.length <= 0){
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Invalid User ID",
+    });
+  };
+  if (senderId == receiverId) {
+    throw new TRPCError ({
+      code: "BAD_REQUEST",
+      message: "Cannot form connection with self",
+    });
+  }
 
-  const connection2 = await prisma.userConnection.create({
-    data: {
-      userId_1: receiverId,
-      userId_2: senderId,
-    },
-  });
-
-  return connection && connection2; //
+  if (await getUserDetails(receiverId)) {
+    const connection = await prisma.userConnection.create({
+      data: {
+        userId_1: senderId,
+        userId_2: receiverId,
+      },
+    });
+  
+    const connection2 = await prisma.userConnection.create({
+      data: {
+        userId_1: receiverId,
+        userId_2: senderId,
+      },
+    });
+  
+    return connection && connection2; 
+  }
 }
 
 const userInfoSelect = {
@@ -54,22 +70,33 @@ export async function getUserConnections(
 
 
 export async function deleteConnection(senderId: string, receiverId: string) {
-  const connection = await prisma.userConnection.deleteMany({
+  const connection1 = await prisma.userConnection.deleteMany({
     where: {
       AND: [
         {
           userId_1: senderId,
-          userId_2: receiverId,
         },
         {
-          userId_1: receiverId,
-          userId_2: senderId,
-        }
-      ] 
+          userId_2: receiverId,
+        },
+      ],
     },
   });
 
-  return connection;
+  const connection2 = await prisma.userConnection.deleteMany({
+    where: {
+      AND: [
+        {
+          userId_1: receiverId,
+        },
+        {
+          userId_2: senderId,
+        },
+      ],
+    },
+  });
+
+  return connection1 && connection2;
 }
 
 export async function deleteAllExisting() {

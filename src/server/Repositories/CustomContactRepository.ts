@@ -1,5 +1,6 @@
 import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
+import { notEmpty } from "jest-mock-extended";
 
 export async function createCustomContact(userId: string, name?: string, email?: string, contact?: string) {
   await prisma.customContact.create({
@@ -37,7 +38,7 @@ export async function checkExistingUserExists(
           email: email,
         },
         { 
-          contact: contact 
+          contact: contact,
         },
       ],
     },
@@ -51,10 +52,10 @@ export async function checkExistingUserExists(
 }
 
 export async function checkCustomExists(
-  userId: string, email: string, contact: string
+  userId: string, email: string,
 ): Promise<Boolean | null> {
   
-  if (email == undefined && contact == undefined) return null;
+  if (email == undefined) return null;
 
   const dbResult = await prisma.customContact.findFirst({
     where: {
@@ -63,15 +64,8 @@ export async function checkCustomExists(
           userId: userId,
         },
         {
-          OR: [
-            {
-              email: email,
-            },
-            { 
-              contact: contact 
-            },
-          ],
-        }
+          email: email,
+        },
       ]
     },
   });
@@ -95,9 +89,10 @@ export async function getCustomConnection(id:string) {
   return dbResult;
 }
 
-export async function deleteCustomConnection(userId: string, email: string, contact: string) {
+export async function deleteCustomConnection(userId: string, email?: string, contact?: string) {
 
-  if (email != null && contact != null) {
+
+  if (email != undefined && contact != undefined) {
     const deleted = await prisma.customContact.deleteMany({
       where: {
         userId: userId,

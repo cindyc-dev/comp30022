@@ -10,9 +10,14 @@ export async function getAllUserConnectionsDetails(userId: string) {
     const connectionDetails = [];
     
     // existing users in the CRM
-    const userConnections = await getUserConnections(userId);
-    for (var connectionId in userConnections) {
-        connectionDetails.push(await getUserDetails(connectionId));
+    const userConnections = await getUserConnections(userId)
+    // console.log(userConnections[0]['userId_2']);
+    if (userConnections != null) {
+        for (var i = 0; i < userConnections.length; i++) {
+            console.log(userConnections[i]['userId_2']);
+            var connectionId = userConnections[i]['userId_2'];
+            connectionDetails.push(await getUserDetails(connectionId));
+        }
     }
 
     // custom contacts
