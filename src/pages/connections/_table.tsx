@@ -24,12 +24,10 @@ import ConnectionDetailsModal from "./_connectionDetailsModal";
 import Link from "next/link";
 
 import { BiMailSend } from "react-icons/bi";
-import { selectFilterFn } from "./_selectFilter";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
     fuzzy: FilterFn<unknown>;
-    select: FilterFn<unknown>;
   }
   interface FilterMeta {
     itemRank: RankingInfo;
@@ -139,7 +137,6 @@ function Table({
             ))}
           </div>
         ),
-        filterFn: "select",
       },
       {
         header: "CONNECT",
@@ -172,7 +169,6 @@ function Table({
     getSortedRowModel: getSortedRowModel(),
     filterFns: {
       fuzzy: fuzzyFilter,
-      select: selectFilterFn,
     },
     globalFilterFn: fuzzyFilter,
     onGlobalFilterChange: setGlobalFilter,
@@ -256,5 +252,3 @@ function IndeterminateCheckbox({
 }
 
 export default Table;
-
-
