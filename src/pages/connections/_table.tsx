@@ -24,10 +24,12 @@ import ConnectionDetailsModal from "./_connectionDetailsModal";
 import Link from "next/link";
 
 import { BiMailSend } from "react-icons/bi";
+import { selectFilterFn } from "./_selectFilter";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
     fuzzy: FilterFn<unknown>;
+    select: FilterFn<unknown>;
   }
   interface FilterMeta {
     itemRank: RankingInfo;
@@ -137,12 +139,13 @@ function Table({
             ))}
           </div>
         ),
+        filterFn: "select",
       },
       {
         header: "CONNECT",
         cell: ({ row }) => (
           <Link
-            className="btn btn-secondary btn-sm"
+            className="btn btn-secondary btn-sm h-fit py-1"
             href={`mailto: ${row.original.email}`}
           >
             <BiMailSend />
@@ -169,6 +172,7 @@ function Table({
     getSortedRowModel: getSortedRowModel(),
     filterFns: {
       fuzzy: fuzzyFilter,
+      select: selectFilterFn,
     },
     globalFilterFn: fuzzyFilter,
     onGlobalFilterChange: setGlobalFilter,
@@ -185,23 +189,25 @@ function Table({
               {headerGroup.headers.map((header) => (
                 <th key={header.id} className="text-lg text-primary">
                   {header.isPlaceholder ? null : (
-                    <div
-                      {...{
-                        className: header.column.getCanSort()
-                          ? "cursor-pointer select-none flex items-center justify-between"
-                          : "",
-                        onClick: header.column.getToggleSortingHandler(),
-                      }}
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                      {{
-                        asc: <FaCaretUp />,
-                        desc: <FaCaretDown />,
-                      }[header.column.getIsSorted() as string] ??
-                        (header.column.getCanSort() ? <FaSort /> : null)}
+                    <div className="flex w-full flex-col items-center">
+                      <div
+                        {...{
+                          className: header.column.getCanSort()
+                            ? "cursor-pointer select-none flex items-center justify-between w-full"
+                            : "",
+                          onClick: header.column.getToggleSortingHandler(),
+                        }}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {{
+                          asc: <FaCaretUp />,
+                          desc: <FaCaretDown />,
+                        }[header.column.getIsSorted() as string] ??
+                          (header.column.getCanSort() ? <FaSort /> : null)}
+                      </div>
                     </div>
                   )}
                 </th>
@@ -250,3 +256,5 @@ function IndeterminateCheckbox({
 }
 
 export default Table;
+
+

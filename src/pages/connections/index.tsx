@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Layout } from "~/components/layout/layout";
 import { ConnectionI } from "~/types/ConnectionI";
 import {
@@ -17,10 +17,13 @@ import DebouncedInput from "./_debouncedInput";
 import { RowSelectionState } from "@tanstack/react-table";
 import Link from "next/link";
 import { BiMailSend } from "react-icons/bi";
+import Tag from "./_tag";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>(sampleConnections);
+  const [filteredData, setFilteredData] = useState<ConnectionI[]>(data);
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const tagColoursMap: Record<string, string> = sampleTags;
 
@@ -105,6 +108,27 @@ export default function Connections() {
       .join(",");
   };
 
+  const getAllTags = () => {
+    // Gets all unique tags from filtered data
+    const tags = new Set<string>();
+    filteredData.forEach((connection) => {
+      connection.tags.forEach((tag) => tags.add(tag));
+    });
+    return Array.from(tags);
+  };
+
+  useEffect(() => {
+    // Filter data based on tags
+    if (selectedTags.length > 0) {
+      const filteredData = data.filter((connection) =>
+        selectedTags.every((tag) => connection.tags.includes(tag))
+      );
+      setFilteredData([...filteredData]);
+    } else {
+      setFilteredData(data);
+    }
+  }, [selectedTags]);
+
   return (
     <Layout>
       <div className="flex w-full flex-col items-start font-semibold">
@@ -117,6 +141,7 @@ export default function Connections() {
             <FaPlus /> New Connection
           </button>
         </div>
+        {/* Search Bar and Filter Button */}
         <div className="flex w-full flex-row justify-between rounded bg-[#EAECF6] p-3">
           <DebouncedInput
             value={globalFilter ?? ""}
@@ -124,12 +149,43 @@ export default function Connections() {
             placeholder="🔎 Search Connection"
             className="input input-sm"
           />
-          <button className="btn btn-primary btn-sm text-base-100">
-            <FaFilter /> Filter
-          </button>
+          <div className="dropdown dropdown-end">
+            <label
+              tabIndex={0}
+              className="btn btn-primary btn-sm text-base-100"
+            >
+              <FaFilter /> Filter
+            </label>
+            <ul
+              tabIndex={0}
+              className="menu dropdown-content rounded-box z-[1] bg-base-100 p-2 shadow"
+            >
+              {getAllTags().map((tag) => (
+                <li key={tag}>
+                  <label className="flex cursor-pointer items-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedTags.includes(tag)}
+                      className="checkbox checkbox-xs"
+                      onChange={() => {
+                        if (selectedTags.includes(tag)) {
+                          setSelectedTags((prev) =>
+                            prev.filter((prevTag) => prevTag !== tag)
+                          );
+                        } else {
+                          setSelectedTags((prev) => [...prev, tag]);
+                        }
+                      }}
+                    />
+                    <Tag tag={tag} tagColoursMap={tagColoursMap} />
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
         <Table
-          data={data}
+          data={filteredData}
           globalFilter={globalFilter}
           setGlobalFilter={setGlobalFilter}
           tagColoursMap={tagColoursMap}
