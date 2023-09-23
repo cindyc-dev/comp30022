@@ -33,6 +33,7 @@ export async function createConnection(senderId: string, receiverId: string) {
   
     return connection && connection2; 
   }
+  return null;
 }
 
 // const userInfoSelect = {
