@@ -1,7 +1,4 @@
 import { prisma } from "~/server/db";
-import { Prisma } from "@prisma/client";
-import { UserI } from "~/types/UserI";
-import { TRPCClientError } from "@trpc/client";
 import { TRPCError } from "@trpc/server";
 import { getUserDetails } from "../Services/UserDetails";
 
@@ -11,7 +8,7 @@ export async function createConnection(senderId: string, receiverId: string) {
       code: "BAD_REQUEST",
       message: "Invalid User ID",
     });
-  };
+  }
   if (senderId == receiverId) {
     throw new TRPCError ({
       code: "BAD_REQUEST",
@@ -38,16 +35,15 @@ export async function createConnection(senderId: string, receiverId: string) {
   }
 }
 
-const userInfoSelect = {
-  id: true,
-  name: true,
-  email: true,
-  contact: true,
-  image: true,
-  password: true,
-} satisfies Prisma.UserSelect;
+// const userInfoSelect = {
+//   id: true,
+//   name: true,
+//   email: true,
+//   contact: true,
+//   image: true,
+//   password: true,
+// } satisfies Prisma.UserSelect;
 
-type UserInfoPayload = Prisma.UserGetPayload<{ select: typeof userInfoSelect }>;
 
 
 export async function getUserConnections(
@@ -100,5 +96,5 @@ export async function deleteConnection(senderId: string, receiverId: string) {
 }
 
 export async function deleteAllExisting() {
-  return await prisma.userConnection.deleteMany({})
+  return await prisma.userConnection.deleteMany({});
 }

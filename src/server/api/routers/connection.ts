@@ -1,4 +1,4 @@
-import {createTRPCRouter, protectedProcedure, publicProcedure} from "~/server/api/trpc";
+import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {z} from "zod";
 import {checkCustomExists, checkExistingUserExists, createCustomContact, deleteCustomConnection} from "~/server/Repositories/CustomContactRepository";
 import { TRPCError } from "@trpc/server";
@@ -28,13 +28,13 @@ export const connectionRouter = createTRPCRouter({
       await createCustomContact(userId, opts.input.name, opts.input.email, opts.input.contactNumber);
     }),
 
-    checkExistingUser: protectedProcedure
+  checkExistingUser: protectedProcedure
     .input(z.object({
       email: z.string().email(),
       contactNumber: z.string(),
     }))
     .mutation(async (opts) => {
-        return await checkExistingUserExists(opts.input.email, opts.input.contactNumber);
+      return await checkExistingUserExists(opts.input.email, opts.input.contactNumber);
     }),
 
   deleteCustom: protectedProcedure
@@ -57,18 +57,18 @@ export const connectionRouter = createTRPCRouter({
     }),
   
   deleteExisting: protectedProcedure
-  .input(z.object({
-    connectionId: z.string(),
-  }))
-  .mutation(async (opts) => {
-    const userId = opts.ctx.session.user.id;
+    .input(z.object({
+      connectionId: z.string(),
+    }))
+    .mutation(async (opts) => {
+      const userId = opts.ctx.session.user.id;
 
-    await deleteConnection(userId, opts.input.connectionId);
-  }),
+      await deleteConnection(userId, opts.input.connectionId);
+    }),
 
-  deleteAllExisting: protectedProcedure.mutation(async (opts) => {
+  deleteAllExisting: protectedProcedure.mutation(async () => {
     return await deleteAllExisting();
-}),
+  }),
   
   getAllConnections: protectedProcedure.query(async (opts) => {
     const session = opts.ctx.session;

@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { getAllUserConnectionsDetails } from "~/server/Services/UserConnections";
 import {
   getUserDetails,
   setUserDetails,

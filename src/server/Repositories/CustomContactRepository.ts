@@ -1,6 +1,5 @@
 import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
-import { notEmpty } from "jest-mock-extended";
 
 export async function createCustomContact(userId: string, name?: string, email?: string, contact?: string) {
   await prisma.customContact.create({
@@ -53,7 +52,7 @@ export async function checkExistingUserExists(
 
 export async function checkCustomExists(
   userId: string, email: string,
-): Promise<Boolean | null> {
+): Promise<boolean | null> {
   
   if (email == undefined) return null;
 
