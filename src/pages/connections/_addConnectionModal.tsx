@@ -1,6 +1,4 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { FaPaperPlane } from "react-icons/fa";
-import AvatarImage from "~/components/common/avatarImage";
 import {
   NEW_CONNECTION,
   sampleSearchResults,
@@ -9,6 +7,7 @@ import { ConnectionI } from "~/types/ConnectionI";
 import { useModal } from "~/components/hooks/modalContext";
 import UploadImageModalContent from "~/components/common/uploadImageModalContent";
 import ConnectionDetailsInputs from "./_connectionDetailsInputs";
+import ConnectionCard from "./_connectionCard";
 
 export interface handleAddConnectionProps {
   newConnection: ConnectionI;
@@ -76,25 +75,7 @@ const SearchTab = () => {
 
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
         {searchResults.map((connection) => (
-          <div
-            key={connection.email}
-            className="flex w-full min-w-fit flex-col items-center justify-around gap-4 rounded-md border-2 border-solid p-3 sm:flex-row"
-          >
-            <div className="flex flex-row gap-4">
-              {connection.photoUrl && (
-                <div className="avatar h-12 w-12 rounded-full">
-                  <AvatarImage src={connection.photoUrl} />
-                </div>
-              )}
-              <div className="flex flex-col">
-                <span className="font-semibold">{connection.name}</span>
-                <span className="text-sm">{connection.email}</span>
-              </div>
-            </div>
-            <button className="btn btn-primary btn-sm text-base-100">
-              <FaPaperPlane /> Request
-            </button>
-          </div>
+          <ConnectionCard connection={connection} />
         ))}
       </div>
     </div>
@@ -125,6 +106,21 @@ const CustomTab = ({
       id: "upload-image-modal",
     });
   };
+
+  // Check if email is valid when connection.email changes after 2000ms of no change
+  // const [validateEmail] = useDebounce((email: string) => {
+  //   return validateEmail(email);
+  // }, 2000);
+
+  // useEffect(() => {
+  //   if (connection.email) {
+  //     const isValidEmail = validateEmail(connection.email);
+  //     if (!isValidEmail) {
+  //       setConnection({ ...connection, email: "" });
+  //     }
+  //   }
+  // }, [connection.email]);
+
   return (
     <div className="flex flex-col content-center items-center justify-center md:w-4/5">
       <h1 className="my-0">Create a Connection</h1>
@@ -135,7 +131,9 @@ const CustomTab = ({
         editPhoto={editPhoto}
       />
       <button
-        className="btn btn-primary btn-wide"
+        className={`btn btn-primary btn-wide ${
+          (!connection.name || !connection.email) && "btn-disabled"
+        }`}
         onClick={() =>
           handleCreateConnection({
             newConnection: connection,

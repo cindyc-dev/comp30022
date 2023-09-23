@@ -1,19 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PasswordInput from "../../components/common/passwordInput";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { FaDiscord, FaGithub, FaGoogle } from "react-icons/fa";
+import { FaDiscord } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { useToast } from "../../components/hooks/toastContext";
+import TextInput from "~/components/common/textInput";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [valid, setValid] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   const { addToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     const res = await signIn("credentials", {
       email: email,
       password: password,
@@ -41,8 +45,18 @@ export const SignInForm = () => {
 
       // redirect to dashboard
       router.push("/dashboard");
+    } else {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (email && password) {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
+  }, [email, password]);
 
   return (
     <div className="card-body">
@@ -55,31 +69,37 @@ export const SignInForm = () => {
         </Link>
       </p>
       <form onSubmit={handleSubmit}>
-        <label className="label">
-          <span className="label-text mt-6">Email</span>
-        </label>
-        <input
-          type="email"
+        <TextInput
+          label="Email"
           placeholder="eg. example@company.com"
-          className="input input-bordered w-full max-w-xs"
-          name="email"
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          value={email}
+          setValue={setEmail}
+          required={true}
         />
         <PasswordInput
           setValue={setPassword}
           isShowHide={true}
           label="Password"
           value={password}
+          required={true}
         />
-        <button type="submit" className="btn btn-primary mt-6 w-full max-w-xs">
-          Sign In
+        <button
+          type="submit"
+          className={`btn btn-primary ${
+            (!valid || isLoading) && "btn-disabled"
+          } btn-block my-2`}
+        >
+          {isLoading ? (
+            <span className="loading loading-spinner text-primary"></span>
+          ) : (
+            "Sign In"
+          )}
         </button>
       </form>
       <hr />
       <div className="flex flex-col gap-2">
         <button
-          className="btn rounded-btn w-full"
+          className="btn w-full"
           onClick={() => signIn("discord", { callbackUrl: "/dashboard" })}
         >
           <FaDiscord />

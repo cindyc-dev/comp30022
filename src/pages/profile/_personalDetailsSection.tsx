@@ -130,23 +130,25 @@ export const PersonalDetailsSection = () => {
         </div>
         <div className="flex w-full flex-col items-center gap-2">
           <TextInput
-            label="Name*"
+            label="Name"
             value={name}
             setValue={setName}
             placeholder="eg. John Green"
+            required={true}
+          />
+          <TextInput
+            label="Email"
+            value={email}
+            setValue={setEmail}
+            placeholder="eg. example@company.com"
+            type="email"
+            required={true}
           />
           <TextInput
             label="Contact"
             value={contact}
             setValue={setContact}
             placeholder="eg. 012-3456789"
-          />
-          <TextInput
-            label="Email*"
-            value={email}
-            setValue={setEmail}
-            placeholder="eg. example@gmail.com"
-            type="email"
           />
         </div>
       </div>

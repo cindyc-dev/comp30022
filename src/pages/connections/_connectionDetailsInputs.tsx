@@ -11,6 +11,7 @@ interface ConnectionDetailsInputsProps {
   setConnection: Dispatch<SetStateAction<ConnectionI>>;
   tagColoursMap: Record<string, string>;
   editPhoto: () => void;
+  debounceEmail?: boolean;
 }
 
 function ConnectionDetailsInputs({
@@ -18,6 +19,7 @@ function ConnectionDetailsInputs({
   setConnection,
   tagColoursMap,
   editPhoto,
+  debounceEmail = false,
 }: ConnectionDetailsInputsProps) {
   const [tagInput, setTagInput] = useState<string>("");
   return (
@@ -43,13 +45,20 @@ function ConnectionDetailsInputs({
             placeholder="eg. Jane Green"
             value={connection.name}
             setValue={(v) => setConnection({ ...connection, name: v })}
+            required={true}
           />
-          <TextInput
-            label="📧 Email"
-            placeholder="eg. example@company.com"
-            value={connection.email}
-            setValue={(v) => setConnection({ ...connection, email: v })}
-          />
+          {debounceEmail ? (
+            <></>
+          ) : (
+            <TextInput
+              label="📧 Email"
+              placeholder="eg. example@company.com"
+              type="email"
+              value={connection.email}
+              setValue={(v) => setConnection({ ...connection, email: v })}
+              required={true}
+            />
+          )}
           <TextInput
             label="📞 Phone"
             placeholder="eg. 123-456-7890"

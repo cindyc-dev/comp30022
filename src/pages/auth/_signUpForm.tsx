@@ -6,6 +6,7 @@ import { useState } from "react";
 import PasswordInput from "~/components/common/passwordInput";
 import { api } from "~/utils/api";
 import { useToast } from "~/components/hooks/toastContext";
+import TextInput from "~/components/common/textInput";
 
 // Dynamic import to prevent SSR error
 const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
@@ -72,16 +73,12 @@ export const SignUpForm = () => {
       </p>
       <form onSubmit={(e) => createUser(e)}>
         <div className="form-control">
-          <label className="label">
-            <span className="label-text">Email</span>
-          </label>
-          <input
-            type="text"
-            placeholder="example@example.com"
-            className="input input-bordered"
-            name="email"
-            onChange={(e) => setEmail(e.target.value)}
-            required
+          <TextInput
+            label="Name"
+            placeholder="eg. Jane Green"
+            value={email}
+            setValue={setEmail}
+            required={true}
           />
         </div>
         <PasswordInput
@@ -89,12 +86,14 @@ export const SignUpForm = () => {
           isShowHide={true}
           label="Password"
           value={password}
+          required={true}
         />
         <PasswordInput
           setValue={setConfirmPassword}
           isShowHide={false}
           label="Confirm Password"
           value={confirmPassword}
+          required={true}
         />
         <div className="mt-2">
           <PasswordChecklist

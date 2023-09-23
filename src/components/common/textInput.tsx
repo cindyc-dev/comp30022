@@ -1,3 +1,5 @@
+import RequiredStar from "./requiredStar";
+
 interface TextInputProps {
   label: string;
   value: string;
@@ -5,6 +7,7 @@ interface TextInputProps {
   placeholder: string;
   type?: string;
   props?: object;
+  required?: boolean;
 }
 
 export const TextInput = ({
@@ -13,11 +16,15 @@ export const TextInput = ({
   setValue,
   placeholder,
   type = "text",
-  props
+  props,
+  required = false,
 }: TextInputProps) => (
   <div className="w-full">
     <label className="label py-0">
-      <span className="label-text">{label}</span>
+      <span className="label-text">
+        {label}
+        {required && <RequiredStar />}
+      </span>
     </label>
     <input
       type={type}
@@ -25,6 +32,7 @@ export const TextInput = ({
       className="input input-bordered w-full"
       value={value}
       onChange={(e) => setValue(e.target.value)}
+      required={required}
       {...props}
     />
   </div>

@@ -150,10 +150,7 @@ export default function Connections() {
             className="input input-sm"
           />
           <div className="dropdown dropdown-end">
-            <label
-              tabIndex={0}
-              className="btn btn-primary btn-sm text-base-100"
-            >
+            <label tabIndex={0} className="btn btn-primary flex flex-nowrap">
               <FaFilter /> Filter
             </label>
             <ul

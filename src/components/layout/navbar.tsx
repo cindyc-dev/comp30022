@@ -5,6 +5,7 @@ import { FaBars, FaCalendarAlt } from "react-icons/fa";
 import { BsKanbanFill, BsFillPeopleFill } from "react-icons/bs";
 import { AvatarImage } from "../common/avatarImage";
 import { useEffect, useState } from "react";
+import { api } from "~/utils/api";
 
 const PAGES = [
   {
@@ -32,11 +33,12 @@ export const Navbar = () => {
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
   );
 
+  const { data: profileDetails } = api.details.profile.useQuery();
+
   // Get profileImage from sessionStorage
   useEffect(() => {
-    const profileImage = sessionStorage.getItem("profileImage");
-    if (profileImage) {
-      setProfileImage(profileImage);
+    if (profileDetails) {
+      setProfileImage(profileDetails.image);
     }
   }, []);
 
