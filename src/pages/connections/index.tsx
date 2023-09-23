@@ -127,7 +127,7 @@ export default function Connections() {
     } else {
       setFilteredData(data);
     }
-  }, [selectedTags]);
+  }, [selectedTags, data]);
 
   return (
     <Layout>
