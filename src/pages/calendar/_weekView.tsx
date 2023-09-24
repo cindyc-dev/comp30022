@@ -6,6 +6,15 @@ import { arrayRange } from "./_utils";
 const TIME_WIDTH = "3em";
 const TIME_GAP = "10px";
 const GRID_TEMPLATE_COLUMNS = `${TIME_WIDTH} 10px repeat(7, minmax(3rem, 1fr))`;
+const EVENT_COLOUR_MAP: Record<string, string> = {
+  red: "bg-red-100",
+  orange: "bg-orange-100",
+  blue: "bg-blue-100",
+  green: "bg-green-100",
+  yellow: "bg-yellow-100",
+  purple: "bg-purple-100",
+  pink: "bg-pink-100",
+};
 
 export default function WeekView({
   today,
@@ -56,7 +65,6 @@ export default function WeekView({
       }
     }
   });
-  console.log({ overnightAndMultiDayEvents: overnightAndMultiDayEvents });
 
   return (
     <div className=" w-full">
@@ -157,35 +165,24 @@ export default function WeekView({
           const col = event.startDateTime.getDay() + 3;
           const row = event.startDateTime.getHours() * 2 + 1;
           const duration =
-            moment(event.endDateTime).diff(event.startDateTime, "hours") * 2;
+            (moment(event.endDateTime).diff(event.startDateTime, "minutes") /
+              60) *
+            2;
           return (
             <div
               key={i}
-              className="m-1 rounded bg-red-100 px-1"
+              className={`m-1 rounded  px-1 ${EVENT_COLOUR_MAP[event.colour]}`}
               style={{
                 gridColumn: col,
                 gridRow: `${row}/span ${duration}`,
               }}
             >
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                {col}, {row}, {duration}
-                <br />
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm">
                 {event.title}
               </div>
             </div>
           );
         })}
-        <div
-          className="m-1 rounded bg-blue-100 px-1"
-          style={{
-            gridColumn: 5,
-            gridRow: "9 / span 9",
-          }}
-        >
-          <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-            Very long long long event name
-          </div>
-        </div>
       </div>
     </div>
   );

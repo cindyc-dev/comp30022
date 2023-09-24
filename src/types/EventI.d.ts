@@ -8,6 +8,7 @@ export interface EventI {
   location: string;
   notes: string;
   relatedConnections: ConnectionI[];
+  colour: string;
 }
 
 type CalendarViewType = "day" | "week" | "month";

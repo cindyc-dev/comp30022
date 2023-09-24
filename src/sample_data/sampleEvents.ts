@@ -17,6 +17,7 @@ export const sampleEvents: EventI[] = [
         tags: [],
       },
     ],
+    colour: "blue",
   },
   {
     id: "2",
@@ -26,6 +27,7 @@ export const sampleEvents: EventI[] = [
     location: "Gongcha",
     notes: "Get the milk tea with pearls",
     relatedConnections: [],
+    colour: "red",
   },
   {
     id: "3",
@@ -41,6 +43,7 @@ export const sampleEvents: EventI[] = [
         tags: [],
       },
     ],
+    colour: "green",
   },
   {
     id: "4",
@@ -50,6 +53,7 @@ export const sampleEvents: EventI[] = [
     location: "My House",
     notes: "Bring sleeping bag",
     relatedConnections: [],
+    colour: "purple",
   },
   {
     id: "5",
@@ -59,5 +63,26 @@ export const sampleEvents: EventI[] = [
     location: "My House",
     notes: "Bring sleeping bag",
     relatedConnections: [],
+    colour: "orange",
+  },
+  {
+    id: "6",
+    title: "Meeting with boss",
+    startDateTime: moment("2023-09-26 09:00:00").toDate(),
+    endDateTime: moment("2023-09-26 10:00:00").toDate(),
+    location: "Office",
+    notes: "Bring laptop",
+    relatedConnections: [],
+    colour: "blue",
+  },
+  {
+    id: "7",
+    title: "Standup meeting",
+    startDateTime: moment("2023-10-01 10:00:00").toDate(),
+    endDateTime: moment("2023-10-01 10:30:00").toDate(),
+    location: "Office",
+    notes: "Bring laptop",
+    relatedConnections: [],
+    colour: "blue",
   },
 ];
