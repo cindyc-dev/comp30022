@@ -5,8 +5,9 @@ import { sampleEvents } from "~/sample_data/sampleEvents";
 import { CalendarViewType, EventI } from "~/types/EventI";
 import AddEventModalContent from "./_addEventModalContent";
 import WeekView from "./_weekView";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Toolbar from "./_toolbar";
+import { getEventsInWeek } from "./_utils";
 
 export default function Calendar() {
   const [events, setEvents] = useState<EventI[]>(sampleEvents);
@@ -21,6 +22,28 @@ export default function Calendar() {
       id: "add-event-modal",
     });
   };
+
+  // Using arrow keys to navigate calendar
+  const handleKeyPress = useCallback((event: KeyboardEvent) => {
+    // Make sure we are not typing in an input field
+    if (event.target instanceof HTMLInputElement) {
+      return;
+    }
+    if (event.key === "ArrowLeft") {
+      setToday((prev) => prev.clone().subtract(1, view));
+    }
+    if (event.key === "ArrowRight") {
+      setToday((prev) => prev.clone().add(1, view));
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
   return (
     <Layout>
@@ -38,7 +61,7 @@ export default function Calendar() {
             today={today}
             setToday={setToday}
             setView={setView}
-            weekEvents={events}
+            weekEvents={getEventsInWeek(today, events)}
           />
         )}
         {view === "month" && <MonthView today={today} />}
@@ -49,7 +72,7 @@ export default function Calendar() {
 }
 
 function MonthView({ today }: { today: Moment }) {
-  return <div className="grid grid-cols-7 gap-1"></div>;
+  return <div className="grid grid-cols-7 gap-1">{today.format("")}</div>;
 }
 
 function DayView({ today }: { today: Moment }) {
