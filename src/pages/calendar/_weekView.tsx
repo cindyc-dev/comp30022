@@ -1,6 +1,6 @@
-import { Moment } from "moment";
+import moment, { Moment } from "moment";
 import { Dispatch, SetStateAction, useRef } from "react";
-import { CalendarViewType } from "~/types/EventI";
+import { CalendarViewType, EventI } from "~/types/EventI";
 import { arrayRange } from "./_utils";
 
 const TIME_WIDTH = "3em";
@@ -11,10 +11,12 @@ export default function WeekView({
   today,
   setToday,
   setView,
+  weekEvents,
 }: {
   today: Moment;
   setToday: Dispatch<SetStateAction<moment.Moment>>;
   setView: Dispatch<SetStateAction<CalendarViewType>>;
+  weekEvents: EventI[];
 }) {
   // Make the Header and Body scroll together
   const headerRef = useRef<HTMLDivElement>(null);
@@ -33,6 +35,28 @@ export default function WeekView({
       headerRef.current.scrollLeft = target.scrollLeft;
     }
   };
+
+  // Overnight/Multi-day events to be shown as extra events in UI
+  // Check if event goes over multiple days, if so, create events for each day
+  const overnightAndMultiDayEvents: EventI[] = [];
+  weekEvents.forEach((event) => {
+    const start = moment(event.startDateTime);
+    const end = moment(event.endDateTime);
+    const daysDiff = end
+      .clone()
+      .startOf("day")
+      .diff(start.clone().startOf("day"), "days");
+    if (daysDiff > 0) {
+      for (let i = 1; i <= daysDiff; i++) {
+        overnightAndMultiDayEvents.push({
+          ...event,
+          startDateTime: moment(start).add(i, "days").startOf("day").toDate(),
+          endDateTime: end.toDate(),
+        });
+      }
+    }
+  });
+  console.log({ overnightAndMultiDayEvents: overnightAndMultiDayEvents });
 
   return (
     <div className=" w-full">
@@ -76,7 +100,10 @@ export default function WeekView({
               </p>
               <button
                 className={`btn btn-circle btn-sm md:btn-md ${
-                  today.isSame(currDate) ? "btn-primary" : "btn-ghost"
+                  moment().format("YYYY-MM-DD") ===
+                  currDate.format("YYYY-MM-DD")
+                    ? "btn-primary"
+                    : "btn-ghost"
                 }`}
                 onClick={() => {
                   setView("day");
@@ -93,7 +120,7 @@ export default function WeekView({
         className="hide-scrollbar grid w-full overflow-x-scroll"
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
-          gridTemplateRows: "repeat(48, 2em)",
+          gridTemplateRows: "repeat(48, 2rem)",
         }}
         ref={bodyRef}
         onScroll={handleScrollBody}
@@ -109,21 +136,56 @@ export default function WeekView({
         ))}
         {/* Fill rows with borders */}
         {arrayRange(3, 9, 1).map((col) =>
-          arrayRange(1, 48, 2).map((row) => {
+          arrayRange(0, 48, 1).map((row) => {
             return (
               <div
-                className="row-span-2 border-b-2 border-l-2 border-base-200"
+                className={`border-l-2 border-base-200 ${
+                  row % 2 ? "border-b-2" : "border-b-[1px]"
+                }`}
                 style={{
                   gridColumn: col,
                   gridRowStart: row,
                   gridRowEnd: row + 2,
                 }}
-              >
-                {row}, {col}
-              </div>
+              ></div>
             );
           })
         )}
+
+        {/* Events */}
+        {[...overnightAndMultiDayEvents, ...weekEvents].map((event, i) => {
+          const col = event.startDateTime.getDay() + 3;
+          const row = event.startDateTime.getHours() * 2 + 1;
+          const duration =
+            moment(event.endDateTime).diff(event.startDateTime, "hours") * 2;
+          return (
+            <div
+              key={i}
+              className="m-1 rounded bg-red-100 px-1"
+              style={{
+                gridColumn: col,
+                gridRow: `${row}/span ${duration}`,
+              }}
+            >
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {col}, {row}, {duration}
+                <br />
+                {event.title}
+              </div>
+            </div>
+          );
+        })}
+        <div
+          className="m-1 rounded bg-blue-100 px-1"
+          style={{
+            gridColumn: 5,
+            gridRow: "9 / span 9",
+          }}
+        >
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+            Very long long long event name
+          </div>
+        </div>
       </div>
     </div>
   );

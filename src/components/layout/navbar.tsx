@@ -33,14 +33,14 @@ export const Navbar = () => {
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
   );
 
-  const { data: profileDetails } = api.details.profile.useQuery();
+  // const { data: profileDetails } = api.details.profile.useQuery();
 
   // Get profileImage from sessionStorage
-  useEffect(() => {
-    if (profileDetails) {
-      setProfileImage(profileDetails.image);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (profileDetails) {
+  //     setProfileImage(profileDetails.image);
+  //   }
+  // }, []);
 
   return (
     <div className="navbar sticky top-0 z-50 bg-primary text-primary-content shadow">

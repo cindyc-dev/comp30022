@@ -16,9 +16,8 @@ export default function Calendar() {
   const { openModal } = useModal();
 
   const openEventModal = () => {
-    console.log("Open Event Modal");
     openModal({
-      content: <AddEventModalContent />,
+      content: <AddEventModalContent setEvents={setEvents} />,
       id: "add-event-modal",
     });
   };
@@ -35,7 +34,12 @@ export default function Calendar() {
       {/* Calendar View */}
       <div className="m-2 w-full">
         {view === "week" && (
-          <WeekView today={today} setToday={setToday} setView={setView} />
+          <WeekView
+            today={today}
+            setToday={setToday}
+            setView={setView}
+            weekEvents={events}
+          />
         )}
         {view === "month" && <MonthView today={today} />}
         {view === "day" && <DayView today={today} />}

@@ -1,6 +1,7 @@
 import { ConnectionI } from "./ConnectionI";
 
 export interface EventI {
+  id: string;
   title: string;
   startDateTime: Date;
   endDateTime: Date;
