@@ -1,7 +1,11 @@
 import moment, { Moment } from "moment";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { CalendarViewType, EventI } from "~/types/EventI";
-import { arrayRange, handleScroll } from "./_utils";
+import { useEffect, useRef, useState } from "react";
+import { EventI } from "~/types/EventI";
+import {
+  arrayRange,
+  getOvernightAndMultiDayEvents,
+  handleScroll,
+} from "./_utils";
 import { BG_COLOUR_MAP } from "~/types/Colours";
 
 const TIME_WIDTH = "3em";
@@ -11,16 +15,17 @@ const GRID_TEMPLATE_COLUMNS = `${TIME_WIDTH} 10px repeat(7, minmax(3rem, 1fr))`;
 
 export default function WeekView({
   today,
-  setToday,
-  setView,
+  goToDay,
   weekEvents,
+  handleEventClick,
 }: {
   today: Moment;
-  setToday: Dispatch<SetStateAction<moment.Moment>>;
-  setView: Dispatch<SetStateAction<CalendarViewType | undefined>>;
+  goToDay: (date: Moment) => void;
   weekEvents: EventI[];
+  handleEventClick: (event: EventI) => void;
 }) {
   const [currentTimeRow, setCurrentTimeRow] = useState<number>(-1);
+  const overNightAndMultiDayEvents = getOvernightAndMultiDayEvents(weekEvents);
 
   // Update currentTimeRow every 2 minutes
   useEffect(() => {
@@ -50,9 +55,11 @@ export default function WeekView({
     return row;
   };
 
-  // Scroll to current time
   useEffect(() => {
+    // Set current time row on first render
     setCurrentTimeRow(getCurrentTimeRow());
+
+    // Scroll to current time
     const currentHour = getCurrentTimeRow();
     const currentRow = document.getElementById(`${currentHour}${currentDay}`);
     if (currentRow) {
@@ -117,8 +124,7 @@ export default function WeekView({
                     : "btn-ghost"
                 }`}
                 onClick={() => {
-                  setView("day");
-                  setToday(currDate);
+                  goToDay(currDate);
                 }}
               >
                 {currDate.format("D")}
@@ -174,7 +180,7 @@ export default function WeekView({
                 id={`${row}${col}`}
                 className={`border-l-2 ${
                   isCurrentTime
-                    ? "border-b-[3px] border-b-primary"
+                    ? "z-10 border-b-[3px] border-b-primary"
                     : "border-base-200"
                 } ${
                   row % 2 && !isCurrentTime ? "border-b-[1px]" : "border-b-2"
@@ -187,7 +193,11 @@ export default function WeekView({
               >
                 {/* Current Time Circle Indicator */}
                 {isCurrentTime && (
-                  <div className="relative left-[-0.3rem] top-[0.9rem] h-2 w-2 rounded-full bg-primary"></div>
+                  <div
+                    className={`relative left-[-0.3rem] ${
+                      currentTimeRow === 0 ? "top-[0.3rem]" : "top-[0.9rem]"
+                    } h-2 w-2 rounded-full bg-primary`}
+                  ></div>
                 )}
               </div>
             );
@@ -195,7 +205,7 @@ export default function WeekView({
         )}
 
         {/* Events */}
-        {weekEvents.map((event, i) => {
+        {[...overNightAndMultiDayEvents, ...weekEvents].map((event, i) => {
           const col = event.startDateTime.getDay() + 3;
           let row = event.startDateTime.getHours() * 2 + 1;
           if (event.startDateTime.getMinutes() === 30) {
@@ -209,10 +219,25 @@ export default function WeekView({
           return (
             <div
               key={i}
-              className={`mx-1 rounded px-1 ${BG_COLOUR_MAP[event.colour]}`}
+              className={`mx-1 rounded px-1 ${
+                BG_COLOUR_MAP[event.colour]
+              } cursor-pointer`}
               style={{
                 gridColumn: col,
                 gridRow: `${row}/span ${duration}`,
+              }}
+              onClick={() => {
+                if (
+                  overNightAndMultiDayEvents.filter((e) => e.id === event.id)
+                    .length > 0
+                ) {
+                  const originalEvent = weekEvents.filter(
+                    (e) => e.id === event.id
+                  )[0];
+                  handleEventClick(originalEvent);
+                } else {
+                  handleEventClick(event);
+                }
               }}
             >
               <div className="truncate text-sm">{event.title}</div>

@@ -10,11 +10,11 @@ import Toolbar from "./_toolbar";
 import {
   getEventsInMonth,
   getEventsInWeek,
-  getOvernightAndMultiDayEvents,
 } from "./_utils";
 import MonthView from "./_monthView";
 import { useToast } from "~/components/hooks/toastContext";
 import { FaPlus } from "react-icons/fa";
+import EventDetailsModal from "./_eventDetailsModal";
 
 const DEFAULT_VIEW: CalendarViewType = "week";
 
@@ -24,10 +24,30 @@ export default function Calendar() {
   const [today, setToday] = useState<Moment>(moment());
 
   const { openModal, closeModal } = useModal();
+
+  // Open Add Event Modal
   const openEventModal = () => {
     openModal({
       content: <AddEventModalContent handleAddEvent={handleAddEvent} />,
       id: "add-event-modal",
+    });
+  };
+
+  // Open Event Details Modal
+  const openEventDetailsModal = (event: EventI) => {
+    openModal({
+      content: (
+        <EventDetailsModal
+          initialEvent={event}
+          onSave={(event) => {
+            closeModal("event-details-modal");
+            setEvents((prev) =>
+              prev.map((e) => (e.id === event.id ? event : e))
+            );
+          }}
+        />
+      ),
+      id: "event-details-modal",
     });
   };
 
@@ -99,6 +119,11 @@ export default function Calendar() {
   const weekEvents = getEventsInWeek(today, events);
   const monthEvents = getEventsInMonth(today, events);
 
+  const goToDay = (day: Moment) => {
+    setToday(day.clone());
+    setView("day");
+  };
+
   return (
     <Layout>
       <Toolbar
@@ -123,21 +148,18 @@ export default function Calendar() {
             </div>
             <WeekView
               today={today}
-              setToday={setToday}
-              setView={setView}
-              weekEvents={[
-                ...getOvernightAndMultiDayEvents(weekEvents),
-                ...weekEvents,
-              ]}
+              goToDay={goToDay}
+              weekEvents={weekEvents}
+              handleEventClick={openEventDetailsModal}
             />
           </>
         )}
         {view === "month" && (
           <MonthView
             today={today}
-            setToday={setToday}
-            setView={setView}
+            goToDay={goToDay}
             monthEvents={[...monthEvents]}
+            handleEventClick={openEventDetailsModal}
           />
         )}
         {view === "day" && <DayView today={today} />}

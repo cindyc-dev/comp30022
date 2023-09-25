@@ -1,15 +1,15 @@
 import { Moment } from "moment";
 import { arrayRange, handleScroll } from "./_utils";
-import { Dispatch, SetStateAction, useRef } from "react";
-import { CalendarViewType, EventI } from "~/types/EventI";
+import { useRef } from "react";
+import { EventI } from "~/types/EventI";
 import moment from "moment";
 import { BG_COLOUR_MAP } from "~/types/Colours";
 
 interface MonthViewProps {
   today: Moment;
-  setToday: Dispatch<SetStateAction<Moment>>;
-  setView: Dispatch<SetStateAction<CalendarViewType | undefined>>;
+  goToDay: (date: Moment) => void;
   monthEvents: EventI[];
+  handleEventClick: (event: EventI) => void;
 }
 
 const GRID_TEMPLATE_COLUMNS = "repeat(7, minmax(3rem, 1fr))";
@@ -22,9 +22,9 @@ const GRID_TEMPLATE_ROWS = `${(SINGLE_ROW + " ").repeat(NUM_ROWS)}`;
 
 export default function MonthView({
   today,
-  setToday,
-  setView,
+  goToDay,
   monthEvents,
+  handleEventClick,
 }: MonthViewProps) {
   // Make the Header and Body scroll together
   const headerRef = useRef<HTMLDivElement>(null);
@@ -79,6 +79,7 @@ export default function MonthView({
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
           gridTemplateRows: GRID_TEMPLATE_ROWS,
+          // backgroundColor: "#EAECF6",
         }}
         ref={bodyRef}
         onScroll={(e) => handleScroll({ e, otherRef: headerRef })}
@@ -117,8 +118,7 @@ export default function MonthView({
                       : "btn-ghost"
                   }`}
                   onClick={() => {
-                    setView("day");
-                    setToday(currDate);
+                    goToDay(currDate);
                   }}
                 >
                   {currDate.isSame(currDate.clone().startOf("month"))
@@ -130,7 +130,13 @@ export default function MonthView({
           })
         )}
         {monthEvents.map((event) => (
-          <Event key={event.id} event={event} eventsByDay={eventsByDay} />
+          <Event
+            key={event.id}
+            event={event}
+            eventsByDay={eventsByDay}
+            goToDay={goToDay}
+            handleEventClick={handleEventClick}
+          />
         ))}
       </div>
     </div>
@@ -140,9 +146,13 @@ export default function MonthView({
 function Event({
   event,
   eventsByDay,
+  goToDay,
+  handleEventClick,
 }: {
   event: EventI;
   eventsByDay: { [key: string]: EventI[] };
+  goToDay: (date: Moment) => void;
+  handleEventClick: (event: EventI) => void;
 }) {
   // Row based on week number of month
   const start = moment(event.startDateTime);
@@ -164,14 +174,13 @@ function Event({
       return (
         <div
           className={
-            "m-0 mx-1 mb-1 mt-0.5 overflow-hidden rounded bg-base-300 px-1"
+            "m-0 mx-1 mb-1 mt-0.5 cursor-pointer overflow-hidden rounded bg-base-300 px-1"
           }
           style={{
-            gridColumnStart: startCol,
-            gridColumnEnd: endCol,
-            gridRowStart: startRow,
-            gridRowEnd: startRow + 1,
+            gridColumn: startCol,
+            gridRow: startRow,
           }}
+          onClick={() => goToDay(start)}
         >
           <div className="-mt-0.5 truncate text-xs">
             {eventsByDay[day].length - EVENTS_PER_ROW} more
@@ -186,13 +195,14 @@ function Event({
     <div
       className={`${
         BG_COLOUR_MAP[event.colour]
-      } m-0 mx-1 mt-0.5 overflow-hidden rounded px-1`}
+      } m-0 mx-1 mt-0.5 cursor-pointer overflow-hidden rounded px-1`}
       style={{
         gridColumnStart: startCol,
         gridColumnEnd: endCol,
         gridRowStart: startRow,
         gridRowEnd: endRow,
       }}
+      onClick={() => handleEventClick(event)}
     >
       <div className="-mt-0.5 truncate text-xs font-semibold md:text-sm">
         {event.title}
