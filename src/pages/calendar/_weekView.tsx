@@ -69,7 +69,7 @@ export default function WeekView({
         inline: "center",
       });
     }
-  }, []);
+  }, [weekEvents]);
 
   return (
     <div className="w-full">
