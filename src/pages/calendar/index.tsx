@@ -10,6 +10,7 @@ import Toolbar from "./_toolbar";
 import { getEventsInMonth, getEventsInWeek } from "./_utils";
 import MonthView from "./_monthView";
 import { useToast } from "~/components/hooks/toastContext";
+import { FaPlus } from "react-icons/fa";
 
 const DEFAULT_VIEW: CalendarViewType = "week";
 
@@ -95,6 +96,15 @@ export default function Calendar() {
       />
       {/* Calendar View */}
       <div className="m-2 w-full">
+        {/* Static Create Event Button at bottom right corner but don't exceed layout */}
+        <div className="sticky top-40 z-40 flex h-0 w-full justify-end bg-base-100 md:top-44">
+          <button
+            className="btn btn-circle btn-primary mr-2 mt-2"
+            onClick={openEventModal}
+          >
+            <FaPlus />
+          </button>
+        </div>
         {view === "week" && (
           <WeekView
             today={today}

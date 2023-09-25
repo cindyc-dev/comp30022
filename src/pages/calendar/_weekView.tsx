@@ -1,5 +1,5 @@
 import moment, { Moment } from "moment";
-import { Dispatch, SetStateAction, useRef } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { CalendarViewType, EventI } from "~/types/EventI";
 import { arrayRange, handleScroll } from "./_utils";
 
@@ -52,6 +52,27 @@ export default function WeekView({
       }
     }
   });
+
+  const getRowColOfCurrentTime = () => {
+    const currentTimeNearestHalfHour =
+      moment().minute() < 16 || moment().minute() > 45 ? 0 : 1;
+    const currentDay = moment().day() + 3;
+    const currentHour = moment().hour() * 2 + currentTimeNearestHalfHour;
+    return { row: currentHour, col: currentDay };
+  };
+
+  // Scroll to current time
+  useEffect(() => {
+    const { row: currentHour, col: currentDay } = getRowColOfCurrentTime();
+    const currentRow = document.getElementById(`${currentHour}${currentDay}`);
+    if (currentRow) {
+      currentRow.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    }
+  }, []);
 
   return (
     <div className="w-full">
@@ -156,14 +177,13 @@ export default function WeekView({
         {/* Fill rows with borders */}
         {arrayRange(3, 9, 1).map((col) =>
           arrayRange(0, 48, 1).map((row) => {
-            const currentTimeNearestHalfHour =
-              moment().minute() < 16 || moment().minute() > 45 ? 0 : 1;
-            const isCurrentTime =
-              moment().day() === col - 3 &&
-              moment().hour() * 2 + currentTimeNearestHalfHour === row;
+            const { row: currentHour, col: currentDay } =
+              getRowColOfCurrentTime();
+            const isCurrentTime = row === currentHour && col === currentDay;
             return (
               <div
                 key={row}
+                id={`${row}${col}`}
                 className={`border-l-2 ${
                   isCurrentTime
                     ? "border-b-[3px] border-b-primary"
