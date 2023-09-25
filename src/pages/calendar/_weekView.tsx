@@ -1,5 +1,5 @@
 import moment, { Moment } from "moment";
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { CalendarViewType, EventI } from "~/types/EventI";
 import { arrayRange, handleScroll } from "./_utils";
 import { EVENT_COLOUR_MAP } from "~/types/Colours";
@@ -20,6 +20,16 @@ export default function WeekView({
   setView: Dispatch<SetStateAction<CalendarViewType | undefined>>;
   weekEvents: EventI[];
 }) {
+  const [currentTimeRow, setCurrentTimeRow] = useState<number>(-1);
+
+  // Update currentTimeRow every 2 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTimeRow(getCurrentTimeRow());
+    }, 2 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Make the Header and Body scroll together
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -45,24 +55,26 @@ export default function WeekView({
     }
   });
 
-  const getRowColOfCurrentTime = () => {
-    const isCurrentTimeInWeek = moment().isBetween(
+  const currentDay = moment().day() + 3;
+  const getCurrentTimeRow = () => {
+    const currentTime = moment();
+    const isCurrentTimeInWeek = currentTime.isBetween(
       today.clone().startOf("week"),
       today.clone().endOf("week")
     );
     if (!isCurrentTimeInWeek) {
-      return { row: -1, col: -1 };
+      return -1;
     }
     const currentTimeNearestHalfHour =
-      moment().minute() < 16 ? 0 : moment().minute() > 45 ? 2 : 1;
-    const currentDay = moment().day() + 3;
-    const currentHour = moment().hour() * 2 + currentTimeNearestHalfHour;
-    return { row: currentHour, col: currentDay };
+      currentTime.minute() < 16 ? 0 : currentTime.minute() > 45 ? 2 : 1;
+    const row = currentTime.hour() * 2 + currentTimeNearestHalfHour;
+    return row;
   };
 
   // Scroll to current time
   useEffect(() => {
-    const { row: currentHour, col: currentDay } = getRowColOfCurrentTime();
+    setCurrentTimeRow(getCurrentTimeRow());
+    const currentHour = getCurrentTimeRow();
     const currentRow = document.getElementById(`${currentHour}${currentDay}`);
     if (currentRow) {
       currentRow.scrollIntoView({
@@ -176,9 +188,7 @@ export default function WeekView({
         {/* Fill rows with borders */}
         {arrayRange(3, 9, 1).map((col) =>
           arrayRange(0, 48, 1).map((row) => {
-            const { row: currentHour, col: currentDay } =
-              getRowColOfCurrentTime();
-            const isCurrentTime = row === currentHour && col === currentDay;
+            const isCurrentTime = row === currentTimeRow && col === currentDay;
             return (
               <div
                 key={row}
