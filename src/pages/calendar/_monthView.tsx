@@ -12,7 +12,7 @@ interface MonthViewProps {
 }
 
 const GRID_TEMPLATE_COLUMNS = "repeat(7, minmax(3rem, 1fr))";
-const GRID_TEMPLATE_ROWS = "repeat(5, minmax(14vh, 1fr))";
+const GRID_TEMPLATE_ROWS = "repeat(5, minmax(15vh, 1fr))";
 
 export default function MonthView({
   today,
@@ -52,7 +52,7 @@ export default function MonthView({
         })}
       </div>
       <div
-        className="hide-scrollbar grid w-full overflow-x-scroll"
+        className="hide-scrollbar mt-1 grid w-full overflow-x-scroll"
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
           gridTemplateRows: GRID_TEMPLATE_ROWS,

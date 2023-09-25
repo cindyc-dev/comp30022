@@ -2,20 +2,12 @@ import moment, { Moment } from "moment";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { CalendarViewType, EventI } from "~/types/EventI";
 import { arrayRange, handleScroll } from "./_utils";
+import { EVENT_COLOUR_MAP } from "~/types/Colours";
 
 const TIME_WIDTH = "3em";
 const TIME_GAP = "10px";
 const ROW_HEIGHT = "1.2rem";
 const GRID_TEMPLATE_COLUMNS = `${TIME_WIDTH} 10px repeat(7, minmax(3rem, 1fr))`;
-const EVENT_COLOUR_MAP: Record<string, string> = {
-  red: "bg-red-100",
-  orange: "bg-orange-100",
-  blue: "bg-blue-100",
-  green: "bg-green-100",
-  yellow: "bg-yellow-100",
-  purple: "bg-purple-100",
-  pink: "bg-pink-100",
-};
 
 export default function WeekView({
   today,
@@ -54,6 +46,13 @@ export default function WeekView({
   });
 
   const getRowColOfCurrentTime = () => {
+    const isCurrentTimeInWeek = moment().isBetween(
+      today.clone().startOf("week"),
+      today.clone().endOf("week")
+    );
+    if (!isCurrentTimeInWeek) {
+      return { row: -1, col: -1 };
+    }
     const currentTimeNearestHalfHour =
       moment().minute() < 16 || moment().minute() > 45 ? 0 : 1;
     const currentDay = moment().day() + 3;
@@ -158,7 +157,7 @@ export default function WeekView({
             className="row-span-2 text-right"
             style={{ gridColumn: 1, gridRow: hour * 2 + 1 }}
           >
-            <p className="m-0">{hour}:00</p>
+            <p className="m-0 -mt-2">{hour}:00</p>
           </div>
         ))}
         {/* Markers for Hours */}
@@ -209,7 +208,10 @@ export default function WeekView({
         {/* Events */}
         {[...overnightAndMultiDayEvents, ...weekEvents].map((event, i) => {
           const col = event.startDateTime.getDay() + 3;
-          const row = event.startDateTime.getHours() * 2 + 1;
+          let row = event.startDateTime.getHours() * 2 + 1;
+          if (event.startDateTime.getMinutes() === 30) {
+            row += 1;
+          }
           const duration =
             (moment(event.endDateTime).diff(event.startDateTime, "minutes") /
               60) *

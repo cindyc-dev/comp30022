@@ -1,3 +1,4 @@
+import { Colour } from "./Colours";
 import { ConnectionI } from "./ConnectionI";
 
 export interface EventI {
@@ -8,7 +9,7 @@ export interface EventI {
   location?: string;
   notes: string;
   relatedConnections: ConnectionI[];
-  colour: string;
+  colour: Colour;
 }
 
 type CalendarViewType = "day" | "week" | "month";
