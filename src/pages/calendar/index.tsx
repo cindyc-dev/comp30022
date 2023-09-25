@@ -137,10 +137,7 @@ export default function Calendar() {
             today={today}
             setToday={setToday}
             setView={setView}
-            monthEvents={[
-              ...getOvernightAndMultiDayEvents(monthEvents),
-              ...monthEvents,
-            ]}
+            monthEvents={[...monthEvents]}
           />
         )}
         {view === "day" && <DayView today={today} />}

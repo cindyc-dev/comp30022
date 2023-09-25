@@ -13,8 +13,12 @@ interface MonthViewProps {
 }
 
 const GRID_TEMPLATE_COLUMNS = "repeat(7, minmax(3rem, 1fr))";
-const GRID_TEMPLATE_ROWS = "repeat(5, minmax(15vh, 1fr))";
-const EVENT_HEIGHT = "2.5rem";
+const EVENT_HEIGHT = "1.2rem";
+const NUM_ROWS = 5;
+const EVENTS_PER_ROW = 3;
+const BODY_ROWS = EVENTS_PER_ROW * 2 + 1;
+const SINGLE_ROW = `2.2rem ${(EVENT_HEIGHT + " ").repeat(BODY_ROWS)}`;
+const GRID_TEMPLATE_ROWS = `${(SINGLE_ROW + " ").repeat(NUM_ROWS)}`;
 
 export default function MonthView({
   today,
@@ -27,6 +31,23 @@ export default function MonthView({
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const monthStart = today.clone().startOf("month");
+
+  // Organise the events by day like day: [events] and sort them by start time
+  const eventsByDay: { [key: string]: EventI[] } = {};
+
+  monthEvents.forEach((event) => {
+    const day = moment(event.startDateTime).format("YYYY-MM-DD");
+    if (!eventsByDay[day]) {
+      eventsByDay[day] = [];
+    }
+    eventsByDay[day].push(event);
+  });
+
+  Object.keys(eventsByDay).forEach((day) => {
+    eventsByDay[day].sort((a, b) =>
+      moment(a.startDateTime).isBefore(moment(b.startDateTime)) ? -1 : 1
+    );
+  });
 
   return (
     <div className="h-full w-full">
@@ -69,7 +90,8 @@ export default function MonthView({
               .startOf("week")
               .add(week, "week")
               .add(day, "day");
-
+            const rowStart = `${week * (BODY_ROWS + 1) + 1}`;
+            const rowEnd = `${week * (BODY_ROWS + 1) + (BODY_ROWS + 1) + 1}`;
             return (
               <div
                 key={day}
@@ -80,9 +102,15 @@ export default function MonthView({
                     ? "hash-background border-base-100"
                     : "border-base-200"
                 }`}
+                style={{
+                  gridRowStart: rowStart,
+                  gridRowEnd: rowEnd,
+                  gridColumnStart: `${day + 1}`,
+                  gridColumnEnd: `${day + 2}`,
+                }}
               >
                 <button
-                  className={`btn btn-circle btn-sm m-0 whitespace-nowrap text-sm ${
+                  className={`btn btn-circle btn-sm m-0 whitespace-nowrap ${
                     moment().format("YYYY-MM-DD") ===
                     currDate.format("YYYY-MM-DD")
                       ? "btn-primary"
@@ -97,34 +125,81 @@ export default function MonthView({
                     ? currDate.format("MMM DD")
                     : currDate.format("DD")}
                 </button>
-                <div
-                  className="grid h-full w-full gap-1"
-                  style={{
-                    gridTemplateRows: `repeat(3, ${EVENT_HEIGHT})`,
-                  }}
-                >
-                  {monthEvents
-                    .filter((event) =>
-                      moment(event.startDateTime).isSame(currDate, "day")
-                    )
-                    .map((event) => (
-                      <div
-                        className={`${
-                          BG_COLOUR_MAP[event.colour]
-                        } m-0 mx-1 overflow-hidden rounded px-1`}
-                      >
-                        <div className="truncate text-sm">{event.title}</div>
-                        <div className="text-xs">
-                          {moment(event.startDateTime).format("HH:mm")} -{" "}
-                          {moment(event.endDateTime).format("HH:mm")}
-                        </div>
-                      </div>
-                    ))}
-                </div>
               </div>
             );
           })
         )}
+        {monthEvents.map((event) => (
+          <Event key={event.id} event={event} eventsByDay={eventsByDay} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Event({
+  event,
+  eventsByDay,
+}: {
+  event: EventI;
+  eventsByDay: { [key: string]: EventI[] };
+}) {
+  // Row based on week number of month
+  const start = moment(event.startDateTime);
+  const startCol = `${start.clone().day() + 1}`;
+  const endCol = `${moment(event.endDateTime).clone().day() + 2}`;
+  const week =
+    start.clone().startOf("week").diff(start.clone().startOf("month"), "week") *
+      (BODY_ROWS + 1) +
+    (BODY_ROWS + 1) +
+    1;
+  const day = start.clone().format("YYYY-MM-DD");
+  const eventNum = eventsByDay[day].indexOf(event);
+
+  const startRow = week + eventNum * 2 + 1;
+  const endRow = startRow + 2;
+  if (eventNum >= EVENTS_PER_ROW) {
+    // Add a "x more" event
+    if (eventNum === EVENTS_PER_ROW) {
+      return (
+        <div
+          className={
+            "m-0 mx-1 mb-1 mt-0.5 overflow-hidden rounded bg-base-300 px-1"
+          }
+          style={{
+            gridColumnStart: startCol,
+            gridColumnEnd: endCol,
+            gridRowStart: startRow,
+            gridRowEnd: startRow + 1,
+          }}
+        >
+          <div className="-mt-0.5 truncate text-xs">
+            {eventsByDay[day].length - EVENTS_PER_ROW} more
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  }
+  return (
+    <div
+      className={`${
+        BG_COLOUR_MAP[event.colour]
+      } m-0 mx-1 mt-0.5 overflow-hidden rounded px-1`}
+      style={{
+        gridColumnStart: startCol,
+        gridColumnEnd: endCol,
+        gridRowStart: startRow,
+        gridRowEnd: endRow,
+      }}
+    >
+      <div className="-mt-0.5 truncate text-xs font-semibold md:text-sm">
+        {event.title}
+      </div>
+      <div className="overflow-clip whitespace-nowrap text-xs">
+        {moment(event.startDateTime).format("HH:mm")} -{" "}
+        {moment(event.endDateTime).format("HH:mm")}
       </div>
     </div>
   );
