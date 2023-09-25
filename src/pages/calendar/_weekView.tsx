@@ -54,7 +54,7 @@ export default function WeekView({
       return { row: -1, col: -1 };
     }
     const currentTimeNearestHalfHour =
-      moment().minute() < 16 || moment().minute() > 45 ? 0 : 1;
+      moment().minute() < 16 ? 0 : moment().minute() > 45 ? 2 : 1;
     const currentDay = moment().day() + 3;
     const currentHour = moment().hour() * 2 + currentTimeNearestHalfHour;
     return { row: currentHour, col: currentDay };

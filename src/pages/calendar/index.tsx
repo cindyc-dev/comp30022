@@ -19,7 +19,7 @@ export default function Calendar() {
   const [view, setView] = useState<CalendarViewType>();
   const [today, setToday] = useState<Moment>(moment());
 
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const openEventModal = () => {
     openModal({
       content: <AddEventModalContent handleAddEvent={handleAddEvent} />,
@@ -37,6 +37,8 @@ export default function Calendar() {
       });
       return;
     }
+    // Close modal
+    closeModal("add-event-modal");
 
     setEvents((prev) => [...prev, event]);
   };
