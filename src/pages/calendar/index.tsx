@@ -43,10 +43,14 @@ export default function Calendar() {
 
   /* Using arrow keys to navigate calendar and D, M, W for changing views */
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
+    // Getting from local storage because state is not updated in injected event listener
+    const view = localStorage.getItem("calendar-view") as CalendarViewType;
+
     // Make sure we are not typing in an input field
     if (event.target instanceof HTMLInputElement) {
       return;
     }
+
     if (event.key === "ArrowLeft") {
       setToday((prev) => prev.clone().subtract(1, view));
     }
@@ -63,6 +67,7 @@ export default function Calendar() {
       setView("month");
     }
   }, []);
+
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress);
 
@@ -96,22 +101,24 @@ export default function Calendar() {
       />
       {/* Calendar View */}
       <div className="m-2 w-full">
-        {/* Static Create Event Button at bottom right corner but don't exceed layout */}
-        <div className="sticky top-40 z-40 flex h-0 w-full justify-end bg-base-100 md:top-44">
-          <button
-            className="btn btn-circle btn-primary mr-2 mt-2"
-            onClick={openEventModal}
-          >
-            <FaPlus />
-          </button>
-        </div>
         {view === "week" && (
-          <WeekView
-            today={today}
-            setToday={setToday}
-            setView={setView}
-            weekEvents={getEventsInWeek(today, events)}
-          />
+          <>
+            {/* Static Create Event Button at bottom right corner but don't exceed layout */}
+            <div className="sticky top-40 z-40 flex h-0 w-full justify-end bg-base-100 md:top-44">
+              <button
+                className="btn btn-circle btn-primary mr-2 mt-2"
+                onClick={openEventModal}
+              >
+                <FaPlus />
+              </button>
+            </div>
+            <WeekView
+              today={today}
+              setToday={setToday}
+              setView={setView}
+              weekEvents={getEventsInWeek(today, events)}
+            />
+          </>
         )}
         {view === "month" && (
           <MonthView
