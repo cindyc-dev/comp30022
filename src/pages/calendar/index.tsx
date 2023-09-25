@@ -7,7 +7,11 @@ import AddEventModalContent from "./_addEventModalContent";
 import WeekView from "./_weekView";
 import { useCallback, useEffect, useState } from "react";
 import Toolbar from "./_toolbar";
-import { getEventsInMonth, getEventsInWeek } from "./_utils";
+import {
+  getEventsInMonth,
+  getEventsInWeek,
+  getOvernightAndMultiDayEvents,
+} from "./_utils";
 import MonthView from "./_monthView";
 import { useToast } from "~/components/hooks/toastContext";
 import { FaPlus } from "react-icons/fa";
@@ -92,6 +96,9 @@ export default function Calendar() {
     }
   }, [view]);
 
+  const weekEvents = getEventsInWeek(today, events);
+  const monthEvents = getEventsInMonth(today, events);
+
   return (
     <Layout>
       <Toolbar
@@ -118,7 +125,10 @@ export default function Calendar() {
               today={today}
               setToday={setToday}
               setView={setView}
-              weekEvents={getEventsInWeek(today, events)}
+              weekEvents={[
+                ...getOvernightAndMultiDayEvents(weekEvents),
+                ...weekEvents,
+              ]}
             />
           </>
         )}
@@ -127,7 +137,10 @@ export default function Calendar() {
             today={today}
             setToday={setToday}
             setView={setView}
-            monthEvents={getEventsInMonth(today, events)}
+            monthEvents={[
+              ...getOvernightAndMultiDayEvents(monthEvents),
+              ...monthEvents,
+            ]}
           />
         )}
         {view === "day" && <DayView today={today} />}

@@ -1,4 +1,4 @@
-import { COLOURS, Colour, EVENT_COLOUR_MAP } from "~/types/Colours";
+import { COLOURS, Colour, BG_COLOUR_MAP } from "~/types/Colours";
 
 interface ColourPickerProps {
   colour: Colour;
@@ -16,7 +16,7 @@ function ColourPicker({
       {colourOptions.map((option) => {
         return (
           <div
-            className={`btn btn-circle btn-sm ${EVENT_COLOUR_MAP[option]} ${
+            className={`btn btn-circle btn-sm ${BG_COLOUR_MAP[option]} ${
               option === colour && "outline outline-2 outline-primary"
             }`}
             onClick={() => setColour(option)}

@@ -3,6 +3,7 @@ import { arrayRange, handleScroll } from "./_utils";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { CalendarViewType, EventI } from "~/types/EventI";
 import moment from "moment";
+import { BG_COLOUR_MAP } from "~/types/Colours";
 
 interface MonthViewProps {
   today: Moment;
@@ -13,6 +14,7 @@ interface MonthViewProps {
 
 const GRID_TEMPLATE_COLUMNS = "repeat(7, minmax(3rem, 1fr))";
 const GRID_TEMPLATE_ROWS = "repeat(5, minmax(15vh, 1fr))";
+const EVENT_HEIGHT = "2.5rem";
 
 export default function MonthView({
   today,
@@ -95,6 +97,30 @@ export default function MonthView({
                     ? currDate.format("MMM DD")
                     : currDate.format("DD")}
                 </button>
+                <div
+                  className="grid h-full w-full gap-1"
+                  style={{
+                    gridTemplateRows: `repeat(3, ${EVENT_HEIGHT})`,
+                  }}
+                >
+                  {monthEvents
+                    .filter((event) =>
+                      moment(event.startDateTime).isSame(currDate, "day")
+                    )
+                    .map((event) => (
+                      <div
+                        className={`${
+                          BG_COLOUR_MAP[event.colour]
+                        } m-0 mx-1 overflow-hidden rounded px-1`}
+                      >
+                        <div className="truncate text-sm">{event.title}</div>
+                        <div className="text-xs">
+                          {moment(event.startDateTime).format("HH:mm")} -{" "}
+                          {moment(event.endDateTime).format("HH:mm")}
+                        </div>
+                      </div>
+                    ))}
+                </div>
               </div>
             );
           })

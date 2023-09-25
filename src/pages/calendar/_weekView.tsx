@@ -2,7 +2,7 @@ import moment, { Moment } from "moment";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { CalendarViewType, EventI } from "~/types/EventI";
 import { arrayRange, handleScroll } from "./_utils";
-import { EVENT_COLOUR_MAP } from "~/types/Colours";
+import { BG_COLOUR_MAP } from "~/types/Colours";
 
 const TIME_WIDTH = "3em";
 const TIME_GAP = "10px";
@@ -33,27 +33,6 @@ export default function WeekView({
   // Make the Header and Body scroll together
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
-
-  // Overnight/Multi-day events to be shown as extra events in UI
-  // Check if event goes over multiple days, if so, create events for each day
-  const overnightAndMultiDayEvents: EventI[] = [];
-  weekEvents.forEach((event) => {
-    const start = moment(event.startDateTime);
-    const end = moment(event.endDateTime);
-    const daysDiff = end
-      .clone()
-      .startOf("day")
-      .diff(start.clone().startOf("day"), "days");
-    if (daysDiff > 0) {
-      for (let i = 1; i <= daysDiff; i++) {
-        overnightAndMultiDayEvents.push({
-          ...event,
-          startDateTime: moment(start).add(i, "days").startOf("day").toDate(),
-          endDateTime: end.toDate(),
-        });
-      }
-    }
-  });
 
   const currentDay = moment().day() + 3;
   const getCurrentTimeRow = () => {
@@ -216,7 +195,7 @@ export default function WeekView({
         )}
 
         {/* Events */}
-        {[...overnightAndMultiDayEvents, ...weekEvents].map((event, i) => {
+        {weekEvents.map((event, i) => {
           const col = event.startDateTime.getDay() + 3;
           let row = event.startDateTime.getHours() * 2 + 1;
           if (event.startDateTime.getMinutes() === 30) {
@@ -230,15 +209,13 @@ export default function WeekView({
           return (
             <div
               key={i}
-              className={`mx-1 rounded px-1 ${EVENT_COLOUR_MAP[event.colour]}`}
+              className={`mx-1 rounded px-1 ${BG_COLOUR_MAP[event.colour]}`}
               style={{
                 gridColumn: col,
                 gridRow: `${row}/span ${duration}`,
               }}
             >
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                {event.title}
-              </div>
+              <div className="truncate text-sm">{event.title}</div>
             </div>
           );
         })}

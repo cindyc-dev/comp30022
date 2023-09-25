@@ -49,3 +49,27 @@ export const handleScroll = ({
     otherRef.current.scrollLeft = target.scrollLeft;
   }
 };
+
+// Overnight/Multi-day events to be shown as extra events in UI
+// Check if event goes over multiple days, if so, create events for each day
+export const getOvernightAndMultiDayEvents = (events: EventI[]) => {
+  const overnightAndMultiDayEvents: EventI[] = [];
+  events.forEach((event) => {
+    const start = moment(event.startDateTime);
+    const end = moment(event.endDateTime);
+    const daysDiff = end
+      .clone()
+      .startOf("day")
+      .diff(start.clone().startOf("day"), "days");
+    if (daysDiff > 0) {
+      for (let i = 1; i <= daysDiff; i++) {
+        overnightAndMultiDayEvents.push({
+          ...event,
+          startDateTime: moment(start).add(i, "days").startOf("day").toDate(),
+          endDateTime: end.toDate(),
+        });
+      }
+    }
+  });
+  return overnightAndMultiDayEvents;
+};
