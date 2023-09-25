@@ -7,23 +7,40 @@ import AddEventModalContent from "./_addEventModalContent";
 import WeekView from "./_weekView";
 import { useCallback, useEffect, useState } from "react";
 import Toolbar from "./_toolbar";
-import { getEventsInWeek } from "./_utils";
+import { getEventsInMonth, getEventsInWeek } from "./_utils";
+import MonthView from "./_monthView";
+import { useToast } from "~/components/hooks/toastContext";
+
+const DEFAULT_VIEW: CalendarViewType = "week";
 
 export default function Calendar() {
   const [events, setEvents] = useState<EventI[]>(sampleEvents);
-  const [view, setView] = useState<CalendarViewType>("week");
+  const [view, setView] = useState<CalendarViewType>();
   const [today, setToday] = useState<Moment>(moment());
 
   const { openModal } = useModal();
-
   const openEventModal = () => {
     openModal({
-      content: <AddEventModalContent setEvents={setEvents} />,
+      content: <AddEventModalContent handleAddEvent={handleAddEvent} />,
       id: "add-event-modal",
     });
   };
 
-  // Using arrow keys to navigate calendar
+  const { addToast } = useToast();
+
+  const handleAddEvent = (event: EventI) => {
+    if (!event.title || !event.startDateTime || !event.endDateTime) {
+      addToast({
+        type: "error",
+        message: "Please fill in all required fields.",
+      });
+      return;
+    }
+
+    setEvents((prev) => [...prev, event]);
+  };
+
+  /* Using arrow keys to navigate calendar and D, M, W for changing views */
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     // Make sure we are not typing in an input field
     if (event.target instanceof HTMLInputElement) {
@@ -35,8 +52,16 @@ export default function Calendar() {
     if (event.key === "ArrowRight") {
       setToday((prev) => prev.clone().add(1, view));
     }
+    if (event.key === "d") {
+      setView("day");
+    }
+    if (event.key === "w") {
+      setView("week");
+    }
+    if (event.key === "m") {
+      setView("month");
+    }
   }, []);
-
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress);
 
@@ -45,12 +70,26 @@ export default function Calendar() {
     };
   }, [handleKeyPress]);
 
+  /* Save and retrieve view in local storage */
+  useEffect(() => {
+    const view = localStorage.getItem("calendar-view");
+    if (view) {
+      setView(view as CalendarViewType);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (view) {
+      localStorage.setItem("calendar-view", view);
+    }
+  }, [view]);
+
   return (
     <Layout>
       <Toolbar
         today={today}
         setToday={setToday}
-        view={view}
+        view={view || DEFAULT_VIEW}
         setView={setView}
         openEventModal={openEventModal}
       />
@@ -64,15 +103,18 @@ export default function Calendar() {
             weekEvents={getEventsInWeek(today, events)}
           />
         )}
-        {view === "month" && <MonthView today={today} />}
+        {view === "month" && (
+          <MonthView
+            today={today}
+            setToday={setToday}
+            setView={setView}
+            monthEvents={getEventsInMonth(today, events)}
+          />
+        )}
         {view === "day" && <DayView today={today} />}
       </div>
     </Layout>
   );
-}
-
-function MonthView({ today }: { today: Moment }) {
-  return <div className="grid grid-cols-7 gap-1">{today.format("")}</div>;
 }
 
 function DayView({ today }: { today: Moment }) {

@@ -1,14 +1,19 @@
 import moment, { Moment } from "moment";
 import React, { Dispatch, SetStateAction } from "react";
 import { FaAngleLeft, FaAngleRight, FaPlus } from "react-icons/fa";
-import { MdCalendarViewDay, MdCalendarViewMonth, MdCalendarViewWeek, MdToday } from "react-icons/md";
+import {
+  MdCalendarViewDay,
+  MdCalendarViewMonth,
+  MdCalendarViewWeek,
+  MdToday,
+} from "react-icons/md";
 import { CalendarViewType } from "~/types/EventI";
 
 interface ToolbarProps {
   today: Moment;
   setToday: Dispatch<SetStateAction<Moment>>;
   view: CalendarViewType;
-  setView: Dispatch<SetStateAction<CalendarViewType>>;
+  setView: Dispatch<SetStateAction<CalendarViewType | undefined>>;
   openEventModal: () => void;
 }
 
@@ -16,7 +21,6 @@ interface ViewOptionI {
   value: CalendarViewType;
   icon: JSX.Element;
 }
-
 
 const VIEW_OPTIONS: ViewOptionI[] = [
   {
@@ -82,10 +86,7 @@ function Toolbar({
         <h3 className="m-0">{getHeaderDate()}</h3>
       </div>
       <div className="flex items-center gap-1">
-        <button
-          className="btn btn-primary btn-outline"
-          onClick={openEventModal}
-        >
+        <button className="btn btn-primary" onClick={openEventModal}>
           <FaPlus />
           Create Event
         </button>

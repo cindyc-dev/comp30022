@@ -5,7 +5,7 @@ export interface EventI {
   title: string;
   startDateTime: Date;
   endDateTime: Date;
-  location: string;
+  location?: string;
   notes: string;
   relatedConnections: ConnectionI[];
   colour: string;

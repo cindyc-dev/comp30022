@@ -1,10 +1,11 @@
 import moment, { Moment } from "moment";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { CalendarViewType, EventI } from "~/types/EventI";
-import { arrayRange } from "./_utils";
+import { arrayRange, handleScroll } from "./_utils";
 
 const TIME_WIDTH = "3em";
 const TIME_GAP = "10px";
+const ROW_HEIGHT = "1.2rem";
 const GRID_TEMPLATE_COLUMNS = `${TIME_WIDTH} 10px repeat(7, minmax(3rem, 1fr))`;
 const EVENT_COLOUR_MAP: Record<string, string> = {
   red: "bg-red-100",
@@ -24,26 +25,12 @@ export default function WeekView({
 }: {
   today: Moment;
   setToday: Dispatch<SetStateAction<moment.Moment>>;
-  setView: Dispatch<SetStateAction<CalendarViewType>>;
+  setView: Dispatch<SetStateAction<CalendarViewType | undefined>>;
   weekEvents: EventI[];
 }) {
   // Make the Header and Body scroll together
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
-
-  const handleScrollHeader = (e: React.UIEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLDivElement;
-    if (bodyRef.current) {
-      bodyRef.current.scrollLeft = target.scrollLeft;
-    }
-  };
-
-  const handleScrollBody = (e: React.UIEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLDivElement;
-    if (headerRef.current) {
-      headerRef.current.scrollLeft = target.scrollLeft;
-    }
-  };
 
   // Overnight/Multi-day events to be shown as extra events in UI
   // Check if event goes over multiple days, if so, create events for each day
@@ -67,7 +54,7 @@ export default function WeekView({
   });
 
   return (
-    <div className=" w-full">
+    <div className="w-full">
       {/* White Part above Header */}
       <div className="sticky top-16 z-30 h-2 bg-base-100"></div>
       {/* Sticky Header Days and Dates from Sunday to Saturday */}
@@ -82,7 +69,12 @@ export default function WeekView({
           gridColumnEnd: 10,
         }}
         ref={headerRef}
-        onScroll={handleScrollHeader}
+        onScroll={(e) =>
+          handleScroll({
+            e: e,
+            otherRef: bodyRef,
+          })
+        }
       >
         {/* Fillers */}
         <div
@@ -128,34 +120,68 @@ export default function WeekView({
         className="hide-scrollbar grid w-full overflow-x-scroll"
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
-          gridTemplateRows: "repeat(48, 2rem)",
+          gridTemplateRows: `repeat(48, ${ROW_HEIGHT})`,
         }}
         ref={bodyRef}
-        onScroll={handleScrollBody}
+        onScroll={(e) =>
+          handleScroll({
+            e: e,
+            otherRef: headerRef,
+          })
+        }
       >
         {/* Times from 00:00 to 23:00 */}
         {arrayRange(0, 23).map((hour) => (
-          <>
-            <div className="row-span-2 text-right" style={{ gridColumn: 1 }}>
-              <p className="m-0">{hour}:00</p>
-            </div>
-            <div className="row-span-2 border-b-2  border-base-200"></div>
-          </>
+          <div
+            key={hour}
+            className="row-span-2 text-right"
+            style={{ gridColumn: 1, gridRow: hour * 2 + 1 }}
+          >
+            <p className="m-0">{hour}:00</p>
+          </div>
+        ))}
+        {/* Markers for Hours */}
+        {arrayRange(0, 24).map((hour) => (
+          <div
+            key={hour}
+            className="row-span-2 border-b-2 border-base-200"
+            style={{
+              gridColumnStart: 2,
+              gridColumnEnd: 3,
+              gridRowStart: hour * 2,
+              gridRowEnd: hour * 2 + 1,
+            }}
+          ></div>
         ))}
         {/* Fill rows with borders */}
         {arrayRange(3, 9, 1).map((col) =>
           arrayRange(0, 48, 1).map((row) => {
+            const currentTimeNearestHalfHour =
+              moment().minute() < 16 || moment().minute() > 45 ? 0 : 1;
+            const isCurrentTime =
+              moment().day() === col - 3 &&
+              moment().hour() * 2 + currentTimeNearestHalfHour === row;
             return (
               <div
-                className={`border-l-2 border-base-200 ${
-                  row % 2 ? "border-b-2" : "border-b-[1px]"
+                key={row}
+                className={`border-l-2 ${
+                  isCurrentTime
+                    ? "border-b-[3px] border-b-primary"
+                    : "border-base-200"
+                } ${
+                  row % 2 && !isCurrentTime ? "border-b-[1px]" : "border-b-2"
                 }`}
                 style={{
                   gridColumn: col,
                   gridRowStart: row,
-                  gridRowEnd: row + 2,
+                  gridRowEnd: row + 1,
                 }}
-              ></div>
+              >
+                {/* Current Time Circle Indicator */}
+                {isCurrentTime && (
+                  <div className="relative left-[-0.3rem] top-[0.9rem] h-2 w-2 rounded-full bg-primary"></div>
+                )}
+              </div>
             );
           })
         )}
@@ -168,16 +194,17 @@ export default function WeekView({
             (moment(event.endDateTime).diff(event.startDateTime, "minutes") /
               60) *
             2;
+
           return (
             <div
               key={i}
-              className={`m-1 rounded  px-1 ${EVENT_COLOUR_MAP[event.colour]}`}
+              className={`mx-1 rounded px-1 ${EVENT_COLOUR_MAP[event.colour]}`}
               style={{
                 gridColumn: col,
                 gridRow: `${row}/span ${duration}`,
               }}
             >
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap text-xs">
                 {event.title}
               </div>
             </div>
