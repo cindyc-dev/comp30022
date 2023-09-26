@@ -24,18 +24,6 @@ export default function WeekView({
 }) {
   const [currentTimeRow, setCurrentTimeRow] = useState<number>(-1);
 
-  // Remove events that don't start or end in the range
-  const startRange = today.clone().startOf("week");
-  const endRange = today.clone().endOf("week");
-  weekEvents = weekEvents.filter((event) => {
-    const start = moment(event.startDateTime);
-    const end = moment(event.endDateTime);
-    return (
-      !start.isBetween(startRange, endRange, "day", "[]") ||
-      !end.isBetween(startRange, endRange, "day", "[]")
-    );
-  });
-
   // Update currentTimeRow every 2 minutes
   useEffect(() => {
     const interval = setInterval(() => {
