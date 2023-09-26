@@ -16,6 +16,7 @@ function ColourPicker({
       {colourOptions.map((option) => {
         return (
           <div
+            key={option}
             className={`btn btn-circle btn-sm ${BG_COLOUR_MAP[option]} ${
               option === colour && "outline outline-2 outline-primary"
             }`}

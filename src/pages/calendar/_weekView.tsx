@@ -1,11 +1,7 @@
 import moment, { Moment } from "moment";
 import { useEffect, useRef, useState } from "react";
 import { EventI } from "~/types/EventI";
-import {
-  arrayRange,
-  getOvernightAndMultiDayEvents,
-  handleScroll,
-} from "./_utils";
+import { arrayRange, handleScroll } from "./_utils";
 import { BG_COLOUR_MAP } from "~/types/Colours";
 
 const TIME_WIDTH = "3em";
@@ -17,15 +13,28 @@ export default function WeekView({
   today,
   goToDay,
   weekEvents,
+  overNightAndMultiDayEvents,
   handleEventClick,
 }: {
   today: Moment;
   goToDay: (date: Moment) => void;
   weekEvents: EventI[];
+  overNightAndMultiDayEvents: EventI[];
   handleEventClick: (event: EventI) => void;
 }) {
   const [currentTimeRow, setCurrentTimeRow] = useState<number>(-1);
-  const overNightAndMultiDayEvents = getOvernightAndMultiDayEvents(weekEvents);
+
+  // Remove events that don't start or end in the range
+  const startRange = today.clone().startOf("week");
+  const endRange = today.clone().endOf("week");
+  weekEvents = weekEvents.filter((event) => {
+    const start = moment(event.startDateTime);
+    const end = moment(event.endDateTime);
+    return (
+      !start.isBetween(startRange, endRange, "day", "[]") ||
+      !end.isBetween(startRange, endRange, "day", "[]")
+    );
+  });
 
   // Update currentTimeRow every 2 minutes
   useEffect(() => {
@@ -58,7 +67,6 @@ export default function WeekView({
   useEffect(() => {
     // Set current time row on first render
     setCurrentTimeRow(getCurrentTimeRow());
-
     // Scroll to current time
     const currentHour = getCurrentTimeRow();
     const currentRow = document.getElementById(`${currentHour}${currentDay}`);
@@ -133,6 +141,7 @@ export default function WeekView({
           );
         })}
       </div>
+      {/* Body */}
       <div
         className="hide-scrollbar grid w-full overflow-x-scroll"
         style={{
@@ -203,7 +212,6 @@ export default function WeekView({
             );
           })
         )}
-
         {/* Events */}
         {[...overNightAndMultiDayEvents, ...weekEvents].map((event, i) => {
           const col = event.startDateTime.getDay() + 3;
@@ -212,9 +220,10 @@ export default function WeekView({
             row += 1;
           }
           const duration =
-            (moment(event.endDateTime).diff(event.startDateTime, "minutes") /
-              60) *
-            2;
+            Math.round(
+              moment(event.endDateTime).diff(event.startDateTime, "minutes") /
+                60
+            ) * 2;
 
           return (
             <div

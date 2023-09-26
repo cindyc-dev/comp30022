@@ -8,16 +8,26 @@ export const arrayRange = (start: number, stop: number, step: number = 1) =>
     (_, index) => start + index * step
   );
 
-export const getEventsInWeek = (today: Moment, events: EventI[]) => {
+export const getEventsInWeek = (
+  today: Moment,
+  events: EventI[],
+  getOverlaps = false
+) => {
   const start = today.clone().startOf("week");
   const end = today.clone().endOf("week");
+
   const weekEvents = events.filter((event) => {
     const eventStart = moment(event.startDateTime);
     const eventEnd = moment(event.endDateTime);
-    return (
-      eventStart.isBetween(start, end, "day", "[]") ||
-      eventEnd.isBetween(start, end, "day", "[]")
-    );
+    if (getOverlaps) {
+      // Check if there is any overlap between the event and the week
+      return (
+        start.isAfter(eventStart, "day") ? start : eventStart
+      ).isSameOrBefore(end.isBefore(eventEnd, "day") ? end : eventEnd, "day");
+    } else {
+      // Check if the event starts in the week
+      return eventStart.isBetween(start, end, "day", "[]");
+    }
   });
   return weekEvents;
 };
@@ -52,7 +62,11 @@ export const handleScroll = ({
 
 // Overnight/Multi-day events to be shown as extra events in UI
 // Check if event goes over multiple days, if so, create events for each day
-export const getOvernightAndMultiDayEvents = (events: EventI[]) => {
+export const getOvernightAndMultiDayEvents = (
+  events: EventI[],
+  startRange: Moment,
+  endRange: Moment
+) => {
   const overnightAndMultiDayEvents: EventI[] = [];
   events.forEach((event) => {
     const start = moment(event.startDateTime);
@@ -63,13 +77,32 @@ export const getOvernightAndMultiDayEvents = (events: EventI[]) => {
       .diff(start.clone().startOf("day"), "days");
     if (daysDiff > 0) {
       for (let i = 1; i <= daysDiff; i++) {
+        const startDateTime = start
+          .clone()
+          .add(i, "days")
+          .startOf("day")
+          .toDate();
+        const endDateTime =
+          i === daysDiff
+            ? end.toDate()
+            : start.clone().add(i, "days").endOf("day").toDate();
+
+        // Only add events that are in the range
+        if (
+          !moment(startDateTime).isBetween(startRange, endRange, "day", "[]") ||
+          !moment(endDateTime).isBetween(startRange, endRange, "day", "[]")
+        ) {
+          continue;
+        }
+
         overnightAndMultiDayEvents.push({
           ...event,
-          startDateTime: moment(start).add(i, "days").startOf("day").toDate(),
-          endDateTime: end.toDate(),
+          startDateTime: startDateTime,
+          endDateTime: endDateTime,
         });
       }
     }
   });
+
   return overnightAndMultiDayEvents;
 };

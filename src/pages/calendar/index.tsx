@@ -10,6 +10,7 @@ import Toolbar from "./_toolbar";
 import {
   getEventsInMonth,
   getEventsInWeek,
+  getOvernightAndMultiDayEvents,
 } from "./_utils";
 import MonthView from "./_monthView";
 import { useToast } from "~/components/hooks/toastContext";
@@ -150,6 +151,11 @@ export default function Calendar() {
               today={today}
               goToDay={goToDay}
               weekEvents={weekEvents}
+              overNightAndMultiDayEvents={...getOvernightAndMultiDayEvents(
+                getEventsInWeek(today, events, true),
+                today.clone().startOf("week"),
+                today.clone().endOf("week")
+              )}
               handleEventClick={openEventDetailsModal}
             />
           </>

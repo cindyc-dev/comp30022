@@ -95,4 +95,14 @@ export const sampleEvents: EventI[] = [
     relatedConnections: [],
     colour: "yellow",
   },
+  {
+    id: "9",
+    title: "Multi-week event",
+    startDateTime: moment("2023-09-29 12:00:00").toDate(),
+    endDateTime: moment("2023-10-29 13:00:00").toDate(),
+    location: "Restaurant",
+    notes: "",
+    relatedConnections: [],
+    colour: "pink",
+  },
 ];
