@@ -10,14 +10,14 @@ import { FaFilter, FaPlus, FaTrash } from "react-icons/fa";
 import { useModal } from "~/components/hooks/modalContext";
 import AddConnectionModal, {
   handleAddConnectionProps,
-} from "./_addConnectionModal";
-import Table from "./_table";
+} from "../../components/connections/_addConnectionModal";
+import Table from "~/components/connections/_table";
 import { useToast } from "~/components/hooks/toastContext";
-import DebouncedInput from "./_debouncedInput";
+import DebouncedInput from "~/components/connections/_debouncedInput";
 import { RowSelectionState } from "@tanstack/react-table";
 import Link from "next/link";
 import { BiMailSend } from "react-icons/bi";
-import Tag from "./_tag";
+import Tag from "~/components/connections/_tag";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>(sampleConnections);
