@@ -3,14 +3,16 @@ import { AvatarImage } from "../../components/common/avatarImage";
 import { useToast } from "../../components/hooks/toastContext";
 import { useModal } from "../../components/hooks/modalContext";
 import CloudinaryImageUpload from "~/components/common/cloudinaryImageUpload";
-import { api } from "~/utils/api";
 
-export const UploadImageModalContent = () => {
+export const UploadImageModalContent = ({
+  onSaveImage,
+}: {
+  onSaveImage: (imageUrl: string) => void;
+}) => {
   const [imageUrl, setImageUrl] = useState<string>("");
   const { addToast } = useToast();
   const { closeModal } = useModal();
 
-  const mutation = api.details.setImage.useMutation();
   const saveImage = () => {
     if (!imageUrl) {
       // Show error toast
@@ -21,21 +23,7 @@ export const UploadImageModalContent = () => {
       return;
     }
 
-    const image = {
-      newImage: imageUrl,
-    };
-
-    mutation.mutate(image, {
-      onSuccess: async () => {
-        addToast({
-          type: "success",
-          message: "Profile picture saved successfully.",
-        });
-      },
-    });
-
-    
-
+    onSaveImage(imageUrl);
     closeModal("upload-image-modal");
   };
 
