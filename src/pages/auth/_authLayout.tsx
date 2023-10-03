@@ -1,6 +1,6 @@
 import Image from "next/image";
-import ToastSection from "./common/toastSection";
-import { useToast } from "./hooks/toastContext";
+import ToastSection from "~/components/common/toastSection";
+import { useToast } from "~/components/hooks/toastContext";
 export default function AuthLayout({
   children,
 }: {

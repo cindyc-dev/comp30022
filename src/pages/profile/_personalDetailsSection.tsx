@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { AvatarImage } from "~/components/common/avatarImage";
 import { TextInput } from "~/components/common/textInput";
 import { useModal } from "~/components/hooks/modalContext";
-import { UploadImageModalContent } from "./_uploadImageModalContent";
 import { useToast } from "~/components/hooks/toastContext";
 import { api } from "~/utils/api";
 import { IoMdRefresh } from "react-icons/io";
+import UploadImageModalContent from "~/components/common/uploadImageModalContent";
 
 export const PersonalDetailsSection = () => {
   const [name, setName] = useState<string>("");
@@ -61,9 +61,26 @@ export const PersonalDetailsSection = () => {
     });
   };
 
+  const imageMutation = api.details.setImage.useMutation();
   const editPhoto = () => {
     openModal({
-      content: <UploadImageModalContent />,
+      content: (
+        <UploadImageModalContent
+          onSaveImage={(imageUrl) => {
+            const image = {
+              newImage: imageUrl,
+            };
+            imageMutation.mutate(image, {
+              onSuccess: async () => {
+                addToast({
+                  type: "success",
+                  message: "Profile picture saved successfully.",
+                });
+              },
+            });
+          }}
+        />
+      ),
       id: "upload-image-modal",
     });
   };
@@ -113,23 +130,25 @@ export const PersonalDetailsSection = () => {
         </div>
         <div className="flex w-full flex-col items-center gap-2">
           <TextInput
-            label="Name*"
+            label="Name"
             value={name}
             setValue={setName}
             placeholder="eg. John Green"
+            required={true}
+          />
+          <TextInput
+            label="Email"
+            value={email}
+            setValue={setEmail}
+            placeholder="eg. example@company.com"
+            type="email"
+            required={true}
           />
           <TextInput
             label="Contact"
             value={contact}
             setValue={setContact}
             placeholder="eg. 012-3456789"
-          />
-          <TextInput
-            label="Email*"
-            value={email}
-            setValue={setEmail}
-            placeholder="eg. example@gmail.com"
-            type="email"
           />
         </div>
       </div>

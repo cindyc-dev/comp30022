@@ -1,8 +1,6 @@
-import AuthLayout from "~/components/authLayout";
-import { SignInForm } from "~/components/signInForm";
+import AuthLayout from "./_authLayout";
+import { SignInForm } from "./_signInForm";
 
-
-
-export default function SignIn(){
-  return <AuthLayout children={<SignInForm/>} />;
+export default function SignIn() {
+  return <AuthLayout children={<SignInForm />} />;
 }
