@@ -10,6 +10,7 @@ import { TaskI } from "~/types/TaskI";
 import { useModal } from "~/components/hooks/modalContext";
 import { AddTaskModalContent } from "./_addTaskModalContent";
 import { FaPlusCircle } from "react-icons/fa";
+import EditTaskModalContent from "./_editTaskModalContent";
 
 export const Board = () => {
   const initialColumns: Record<string, ColumnI> = {
@@ -29,6 +30,7 @@ export const Board = () => {
 
   const { openModal } = useModal();
   const [columns, setColumns] = useState(initialColumns);
+  
 
   const handleAddTask = () => {
     openModal({
@@ -36,6 +38,25 @@ export const Board = () => {
       id: "add-task-modal",
     });
   };
+
+  const onUpdateTask = ( title, description, task ) => {
+    console.log("Updating");
+    // setNewTask({ title: title, description: description, status: task.status });
+  };
+
+  const handleEditTask = (task: TaskI) => {
+    console.log("editing");
+    openModal({
+      content: (
+        <EditTaskModalContent
+          task = {task}
+          onUpdateTask={onUpdateTask}
+        />
+      ),
+      id: "edit-task-modal",
+    });
+  };
+
 
   
 
@@ -100,10 +121,8 @@ export const Board = () => {
         <FaPlusCircle />
         Add Task
       </button>
-      
 
-      
-      <div className="my-10  flex flex-wrap justify-start gap-8">
+      <div className="my-10 flex flex-wrap justify-start gap-8">
         <DragDropContext onDragEnd={onDragEnd}>
           {Object.keys(columns).map((columnId) => {
             const column = columns[columnId];
@@ -134,8 +153,9 @@ export const Board = () => {
                                 {...provided.dragHandleProps}
                                 className="card mb-2 bg-indigo-100 shadow"
                               >
-                                <div className="card-body">
+                                <div className="card-body" onClick={() => handleEditTask(task)}>
                                   <h2>{task.title}</h2>
+                                  <p>{task.description}</p>
                                   <button
                                     className="btn-danger btn"
                                     onClick={() => deleteTask(columnId, index)}

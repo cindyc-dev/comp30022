@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { useToast } from "../../components/hooks/toastContext";
 import { useModal } from "../../components/hooks/modalContext";
 import { TaskI } from "~/types/TaskI";
+import { ColumnI } from "~/types/ColumnI";
 
+interface AddTaskModalContentProps {
+  column: Record<string, ColumnI>, 
+  setColumns: React.Dispatch<React.SetStateAction<Record<string, ColumnI>>>
+}
 
-
-export const AddTaskModalContent = ({column,setColumns}) => {
+export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps) => {
   const [newTask, setNewTask] = useState<TaskI>({ title: "", description: "", status: "" });
   const [date, setDate] = useState<string>("");
   const { addToast } = useToast();
@@ -18,7 +22,7 @@ export const AddTaskModalContent = ({column,setColumns}) => {
       // Show error toast if task name or status is empty
       addToast({
         type: "error",
-        message: "Task name and status are required.",
+        message: "Task name is required.",
       });
       return;
     }
@@ -26,11 +30,6 @@ export const AddTaskModalContent = ({column,setColumns}) => {
     newColumns.todos.items.push(newTask);
     setColumns({...newColumns});
 
-    // // Create a copy of the tasks array with the new task added
-    // const updatedTasks = [...tasks, newTask];
-
-    // // Update the tasks state with the updated array
-    // setTasks(updatedTasks);
 
     // Replace the following lines with your logic to add the task
     console.log("Task Name:", newTask.title);
@@ -50,29 +49,31 @@ export const AddTaskModalContent = ({column,setColumns}) => {
 
   return (
     <>
-    
-      <div className="relative flex flex-col items-center gap-4">
+      <div className="relative flex flex-col items-center gap-4 mx-10">
         <h1 className="mt-0">Add Task</h1>
-        <div>
-          <label htmlFor="taskName">Task Name:</label>
-          <input
+        <div className= "flex w-full flex-col">
+          <label htmlFor="taskName">Task Name*</label>
+          <input 
+            className="input input-bordered w-full"
             type="text"
             id="taskName"
             value={newTask.title}
             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
           />
         </div>
-        <div>
-          <label htmlFor="description">Description:</label>
+        <div className="flex w-full flex-col">
+          <label htmlFor="description">Description</label>
           <textarea
+            className="input input-bordered w-full"
             id="description"
             value={newTask.description}
             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
           />
         </div>
-        <div>
-          <label htmlFor="date">Date:</label>
+        <div className="flex w-full flex-col">
+          <label htmlFor="date">Date</label>
           <input
+            className="input input-bordered w-full"
             type="date"
             id="date"
             value={date}
@@ -86,7 +87,6 @@ export const AddTaskModalContent = ({column,setColumns}) => {
     </>
   );
 };
-
 
 
 export default AddTaskModalContent;
