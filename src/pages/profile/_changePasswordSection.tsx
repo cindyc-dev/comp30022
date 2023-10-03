@@ -30,6 +30,15 @@ export const ChangePasswordSection = () => {
       return;
     }
 
+    if (currentPassword === newPassword) {
+      // Show error toast
+      addToast({
+        type: "error",
+        message: "New password cannot be the same as current password.",
+      });
+      return;
+    }
+
     const user = {
       currentPassword: currentPassword,
       newPassword: newPassword,
