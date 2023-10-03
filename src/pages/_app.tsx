@@ -6,6 +6,8 @@ import "~/styles/globals.css";
 import { ReactNode } from "react";
 import Providers from "~/components/hooks/providers";
 import Script from "next/script";
+import Head from "next/head";
+import Loading from "~/components/layout/loading";
 
 const MyApp = ({
   Component,
@@ -16,6 +18,11 @@ const MyApp = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      <Head>
+        <title>Potato CRM</title>
+        <meta name="description" content="Potato CRM" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+      </Head>
       <Providers>
         <Script src="https://upload-widget.cloudinary.com/global/all.js" />
         {Component.auth ? (
@@ -39,7 +46,7 @@ const Auth = ({ children }: { children: ReactNode }) => {
   const { status } = useSession({ required: true });
 
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return children;
