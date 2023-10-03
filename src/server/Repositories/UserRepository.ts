@@ -20,7 +20,6 @@ const userInfoSelect = {
   contact: true,
   image: true,
   password: true,
-
 } satisfies Prisma.UserSelect;
 
 type UserInfoPayload = Prisma.UserGetPayload<{ select: typeof userInfoSelect }>;
@@ -53,7 +52,7 @@ export async function getUserInfoWithUserId(
     });
 
     if (!dbResult) {
-      throw new Error("User does not exist");
+      throw new Error("User does not exist.");
     }
 
     // Transform result
@@ -68,8 +67,7 @@ export async function getUserInfoWithUserId(
 
     return userInfo;
   } catch (error) {
-    console.log("Error Retrieving Info from Database");
-    return null;
+    throw new Error(`Error retrieving user info. Error: ${error}`);
   }
 }
 
@@ -88,7 +86,7 @@ export async function UpdateUserPasswordWithId(
     });
     return true;
   } catch (error) {
-    throw new Error("Error updating user password");
+    throw new Error(`Error updating user password. Error: ${error}`);
   }
 }
 
@@ -107,7 +105,7 @@ export async function updateUserImageWithId(
     });
     return true;
   } catch (error) {
-    throw new Error("Error updating user image");
+    throw new Error(`Error updating user image. Error: ${error}`);
   }
 }
 
@@ -124,7 +122,15 @@ export async function updateUserDetailsWithId(user: UserI): Promise<boolean> {
       },
     });
     return true;
-  } catch (error) {
-    throw new Error("Error updating user details");
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      // The .code property can be accessed in a type-safe manner
+      if (e.code === "P2002") {
+        throw new Error(
+          `Error updating user details. This email is already used on a different account. Error: ${e}`
+        );
+      }
+    }
+    throw new Error(`Error updating user details. Error: ${e}`);
   }
 }

@@ -58,6 +58,12 @@ export const PersonalDetailsSection = () => {
           message: "Profile details saved successfully.",
         });
       },
+      onError: async (error) => {
+        addToast({
+          type: "error",
+          message: `${error.data?.httpStatus} ${error.data?.code}: ${error.message}`,
+        });
+      }
     });
   };
 

@@ -6,6 +6,7 @@ import { BsKanbanFill, BsFillPeopleFill } from "react-icons/bs";
 import { AvatarImage } from "../common/avatarImage";
 import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
+import { useToast } from "../hooks/toastContext";
 
 const PAGES = [
   {
@@ -35,9 +36,19 @@ export const Navbar = () => {
 
   const { data: profileDetails } = api.details.profile.useQuery();
 
+  console.log(profileDetails); // TODO remove
+
+  const { addToast } = useToast();
+
   // Get profileImage from sessionStorage
   useEffect(() => {
     if (profileDetails) {
+      if (!profileDetails?.email) {
+        addToast({
+          message: "Please add your email to your profile",
+          type: "error",
+        });
+      }
       setProfileImage(profileDetails.image);
     }
   }, []);
