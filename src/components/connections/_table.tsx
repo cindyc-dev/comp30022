@@ -15,8 +15,8 @@ import {
 import AvatarImage from "~/components/common/avatarImage";
 import { capitalise } from "~/components/utils/capitalise";
 import { FaCaretDown, FaCaretUp, FaSort } from "react-icons/fa";
-import { fuzzyFilter } from "./_fuzzyFilter";
-import { fuzzySort } from "./_fuzzySort";
+import { fuzzyFilter } from "~/components/utils/fuzzyFilter";
+import { fuzzySort } from "~/components/utils/fuzzySort";
 
 import { RankingInfo } from "@tanstack/match-sorter-utils";
 import { useModal } from "~/components/hooks/modalContext";
