@@ -49,15 +49,25 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String          @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?         @unique
   emailVerified DateTime?
   password      String?
-  image         String?
   contact       String?
+  image         String?
   accounts      Account[]
   sessions      Session[]
+  CustomContact CustomContact[]
+}
+
+model CustomContact {
+  id      String  @id @default(cuid())
+  name    String?
+  email   String?
+  contact String?
+  userId  String
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
