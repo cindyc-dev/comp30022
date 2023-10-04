@@ -34,7 +34,6 @@ export default function MonthView({
 
   // Organise the events by day like day: [events] and sort them by start time
   const eventsByDay: { [key: string]: EventI[] } = {};
-
   monthEvents.forEach((event) => {
     const day = moment(event.startDateTime).format("YYYY-MM-DD");
     if (!eventsByDay[day]) {
@@ -42,12 +41,13 @@ export default function MonthView({
     }
     eventsByDay[day].push(event);
   });
-
   Object.keys(eventsByDay).forEach((day) => {
     eventsByDay[day].sort((a, b) =>
       moment(a.startDateTime).isBefore(moment(b.startDateTime)) ? -1 : 1
     );
   });
+
+  console.log(eventsByDay);
 
   return (
     <div className="h-full w-full">
@@ -156,6 +156,7 @@ function Event({
 }) {
   // Row based on week number of month
   const start = moment(event.startDateTime);
+
   const startCol = `${start.clone().day() + 1}`;
   const endCol = `${moment(event.endDateTime).clone().day() + 2}`;
   const week =

@@ -3,19 +3,19 @@ import { useModal } from "~/components/hooks/modalContext";
 import { Layout } from "~/components/layout/layout";
 import { sampleEvents } from "~/sample_data/sampleEvents";
 import { CalendarViewType, EventI } from "~/types/EventI";
-import AddEventModalContent from "./_addEventModalContent";
-import WeekView from "./_weekView";
+import AddEventModalContent from "~/components/calendar/_addEventModalContent";
+import WeekView from "~/components/calendar/_weekView";
 import { useCallback, useEffect, useState } from "react";
-import Toolbar from "./_toolbar";
+import Toolbar from "~/components/calendar/_toolbar";
 import {
   getEventsInMonth,
   getEventsInWeek,
   getOvernightAndMultiDayEvents,
-} from "./_utils";
-import MonthView from "./_monthView";
+} from "~/components/calendar/_utils";
+import MonthView from "~/components/calendar/_monthView";
 import { useToast } from "~/components/hooks/toastContext";
 import { FaPlus } from "react-icons/fa";
-import EventDetailsModal from "./_eventDetailsModal";
+import EventDetailsModal from "~/components/calendar/_eventDetailsModal";
 
 const DEFAULT_VIEW: CalendarViewType = "week";
 
@@ -46,6 +46,7 @@ export default function Calendar() {
               prev.map((e) => (e.id === event.id ? event : e))
             );
           }}
+          handleDeleteEvent={handleDeleteEvent}
         />
       ),
       id: "event-details-modal",
@@ -66,6 +67,13 @@ export default function Calendar() {
     closeModal("add-event-modal");
 
     setEvents((prev) => [...prev, event]);
+  };
+
+  const handleDeleteEvent = (event: EventI) => {
+    // Close modal
+    closeModal("event-details-modal");
+
+    setEvents((prev) => prev.filter((e) => e.id !== event.id));
   };
 
   /* Using arrow keys to navigate calendar and D, M, W for changing views */
