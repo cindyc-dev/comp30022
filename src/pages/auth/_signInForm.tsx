@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import PasswordInput from "../../components/common/passwordInput";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { FaDiscord } from "react-icons/fa";
+import { FaDiscord, FaGithub, FaGoogle } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { useToast } from "../../components/hooks/toastContext";
 import TextInput from "~/components/common/textInput";
@@ -99,7 +99,21 @@ export const SignInForm = () => {
       <hr />
       <div className="flex flex-col gap-2">
         <button
-          className="btn w-full"
+          className="btn rounded-btn w-full"
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+        >
+          <FaGoogle />
+          Sign in with Google
+        </button>
+        <button
+          className="btn rounded-btn w-full"
+          onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+        >
+          <FaGithub />
+          Sign in with GitHub
+        </button>
+        <button
+          className="btn rounded-btn w-full"
           onClick={() => signIn("discord", { callbackUrl: "/dashboard" })}
         >
           <FaDiscord />

@@ -26,6 +26,8 @@ const config = {
       "cdn.pixabay.com",
       "xsgames.co",
       "i.pinimg.com",
+      "avatars.githubusercontent.com",
+      "lh3.googleusercontent.com",
     ],
   },
 };
