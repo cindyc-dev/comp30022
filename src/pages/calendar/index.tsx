@@ -125,7 +125,7 @@ export default function Calendar() {
     }
   }, [view]);
 
-  const weekEvents = getEventsInWeek(today, events);
+  const weekEvents = getEventsInWeek(today, events, true);
   const monthEvents = getEventsInMonth(today, events);
 
   const goToDay = (day: Moment) => {

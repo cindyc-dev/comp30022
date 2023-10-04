@@ -1,7 +1,7 @@
 import moment, { Moment } from "moment";
 import { useEffect, useRef, useState } from "react";
 import { EventI } from "~/types/EventI";
-import { arrayRange, handleScroll } from "./_utils";
+import { arrayRange, getEventsInWeek, handleScroll } from "./_utils";
 import { BG_COLOUR_MAP } from "~/types/Colours";
 
 const TIME_WIDTH = "3em";
@@ -23,6 +23,11 @@ export default function WeekView({
   handleEventClick: (event: EventI) => void;
 }) {
   const [currentTimeRow, setCurrentTimeRow] = useState<number>(-1);
+
+  console.log({
+    weekEvents: weekEvents,
+    overNightAndMultiDayEvents: overNightAndMultiDayEvents,
+  });
 
   // Update currentTimeRow every 2 minutes
   useEffect(() => {
@@ -201,7 +206,10 @@ export default function WeekView({
           })
         )}
         {/* Events */}
-        {[...overNightAndMultiDayEvents, ...weekEvents].map((event, i) => {
+        {[
+          ...overNightAndMultiDayEvents,
+          ...getEventsInWeek(today.startOf("week"), weekEvents),
+        ].map((event, i) => {
           const col = event.startDateTime.getDay() + 3;
           let row = event.startDateTime.getHours() * 2 + 1;
           if (event.startDateTime.getMinutes() === 30) {
