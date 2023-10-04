@@ -41,6 +41,11 @@ export const Board = () => {
 
   const onUpdateTask = ( title, description, task ) => {
     console.log("Updating");
+    // onUpdateTask(editedTask: TaskI, prevTitle)
+    // Find for the task using id/prevTitle
+    // Replace with new 
+
+    // TODO call backend for updating task
     // setNewTask({ title: title, description: description, status: task.status });
   };
 

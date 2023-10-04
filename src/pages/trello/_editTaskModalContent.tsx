@@ -6,6 +6,7 @@ const EditTaskModalContent = ({ task, onUpdateTask }) => {
   const { closeModal } = useModal();
   const [currentTaskTitle, setCurrentTaskTitle] = useState(task.title);
   const [currentTaskDescription, setCurrentTaskDescription] = useState(task.description);
+  const [currentDate, setCurrentDate] = useState(task.dueDate);
 
   const handleTitleChange = (e) => {
     setCurrentTaskTitle(e.target.value);
@@ -26,17 +27,26 @@ const EditTaskModalContent = ({ task, onUpdateTask }) => {
 
   return (
     <>
-      <div>
-        <h2>Edit Task</h2>
-        <div>
-          <label>Title:</label>
-          <input type="text" value={currentTaskTitle} onChange={handleTitleChange} />
+      <div className = "relative flex flex-col items-center gap-4 mx-10">
+        <h1 className = "mt-0">Edit Task</h1>
+        <div className = "flex w-full flex-col">
+          <label>Task Name</label>
+          <input className = "input input-bordered w-full" type="text" value={currentTaskTitle} onChange={handleTitleChange} />
         </div>
-        <div>
+        <div className = "flex w-full flex-col">
           <label>Description:</label>
-          <textarea value={currentTaskDescription} onChange={handleDescriptionChange} />
+          <textarea className = "input input-bordered w-full" value={currentTaskDescription} onChange={handleDescriptionChange} />
         </div>
-        <button onClick={handleUpdateClick}>Update Task</button>
+        <div className="flex w-full flex-col">
+          <label htmlFor="date">Date</label>
+          <input
+            className="input input-bordered w-full"
+            type="date"
+            id="date"
+            value = {currentDate}
+          />
+        </div>
+        <button className = "btn btn-primary btn-wide" onClick={handleUpdateClick}>Update Task</button>
       </div>
     </>
     
