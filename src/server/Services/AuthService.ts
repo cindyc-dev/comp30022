@@ -9,9 +9,9 @@ export async function hashText(Text: string): Promise<string> {
   return hashedText;
 }
 
-export async function createAccount(email: string, password: string) {
+export async function createAccount(email: string, password: string, name: string) {
   const hashedPassword = await hashText(password);
-  return await createUser(email, hashedPassword); //
+  return await createUser(email, hashedPassword, name); //
 }
 
 export async function accountExists(email: string): Promise<boolean> {

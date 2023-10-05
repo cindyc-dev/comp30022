@@ -2,15 +2,22 @@ import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
 import { UserI } from "~/types/UserI";
 
-export async function createUser(email: string, password: string) {
+export async function createUser(
+  email: string,
+  password: string,
+  name: string
+) {
   const user = await prisma.user.create({
     data: {
+      name: name,
       email: email,
       password: password,
     },
   });
 
-  return user; //
+  console.log(user);
+
+  return user;
 }
 
 const userInfoSelect = {

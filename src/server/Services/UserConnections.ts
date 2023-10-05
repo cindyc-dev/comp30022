@@ -2,9 +2,6 @@ import { getUserConnections } from "../Repositories/ConnectionRepository";
 import { getUserDetails } from "./UserDetails";
 import { getCustomConnection } from "../Repositories/CustomContactRepository";
 
-
-
-
 export async function getAllUserConnectionsDetails(userId: string) {
   const connectionDetails = [];
     
