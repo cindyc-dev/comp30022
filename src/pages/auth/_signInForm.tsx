@@ -70,7 +70,7 @@ export const SignInForm = () => {
       </p>
       <form onSubmit={handleSubmit}>
         <TextInput
-          label="Email"
+          label="📧 Email"
           placeholder="eg. example@company.com"
           value={email}
           setValue={setEmail}
@@ -79,7 +79,7 @@ export const SignInForm = () => {
         <PasswordInput
           setValue={setPassword}
           isShowHide={true}
-          label="Password"
+          label="🔒 Password"
           value={password}
           required={true}
         />
