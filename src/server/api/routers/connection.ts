@@ -12,12 +12,10 @@ export const connectionRouter = createTRPCRouter({
       email: z.string().email(),
       contactNumber: z.string(),
       tags: z.string().array(),
+      notes: z.string(),
     }))
     .mutation(async (opts) => {
       const userId = opts.ctx.session.user.id;
-      if (opts.input.tags.length > 1) {
-        console.log("Tags not supported yet.");
-      }
       if (await checkCustomExists(userId, opts.input.email)) {
         throw new TRPCError({
           code: "CONFLICT",
@@ -25,26 +23,28 @@ export const connectionRouter = createTRPCRouter({
         });
       }
 
-      await createCustomContact(userId, opts.input.name, opts.input.email, opts.input.contactNumber);
+      if (opts.input.tags.length > 1) {
+        console.log("Tags not supported yet.");
+      }
+
+      await createCustomContact(userId, opts.input.name, opts.input.email, opts.input.contactNumber, opts.input.tags, opts.input.notes);
     }),
 
   checkExistingUser: protectedProcedure
     .input(z.object({
       email: z.string().email(),
-      contactNumber: z.string(),
     }))
     .mutation(async (opts) => {
-      return await checkExistingUserExists(opts.input.email, opts.input.contactNumber);
+      return await checkExistingUserExists(opts.input.email);
     }),
 
   deleteCustom: protectedProcedure
     .input(z.object({
       email: z.string(),
-      contact: z.string().optional(),
     }))
     .mutation(async (opts) => {
       const userId = opts.ctx.session.user.id;
-      await deleteCustomConnection(userId, opts.input.email, opts.input.contact);
+      await deleteCustomConnection(userId, opts.input.email);
     }),
 
   createExisting: protectedProcedure
