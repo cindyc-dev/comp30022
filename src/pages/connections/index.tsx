@@ -18,21 +18,45 @@ import { RowSelectionState } from "@tanstack/react-table";
 import Link from "next/link";
 import { BiMailSend } from "react-icons/bi";
 import Tag from "~/components/connections/_tag";
+import { api } from "~/utils/api";
 import Image from "next/image";
 
 export default function Connections() {
-  const [data, setData] = useState<ConnectionI[]>(sampleConnections);
+  const [data, setData] = useState<ConnectionI[]>([]);
   const [filteredData, setFilteredData] = useState<ConnectionI[]>(data);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const tagColoursMap: Record<string, string> = sampleTags;
 
-  // TODO fetch data and tagColoursMap from API
+  const tagColoursMap: Record<string, string> = sampleTags;
 
   const { openModal, closeModal } = useModal();
   const { addToast } = useToast();
 
+  // TODO fetch data and tagColoursMap from API
+
+  // Get data from API
+  const {
+    data: connections,
+    isLoading,
+    error,
+  } = api.connection.getAllConnections.useQuery();
+
+  useEffect(() => {
+    if (connections) {
+      console.log({ connections: connections });
+      setData(connections);
+    }
+    if (error) {
+      console.error(error);
+      addToast({
+        type: "error",
+        message: `Error fetching connections. ${error}: ${error.message}`,
+      });
+    }
+  }, [connections, error]);
+
+  // Open Add Connection Modal
   const addConnection = () => {
     openModal({
       content: (
@@ -83,6 +107,7 @@ export default function Connections() {
     closeModal("add-connection-modal");
   };
 
+  // Multiple-row operation: Delete
   const handleDeleteMultipleConnections = () => {
     // TODO send rowSelection to API and get back success or error
     // TODO remove deleted connections from data
@@ -103,6 +128,7 @@ export default function Connections() {
     setRowSelection({});
   };
 
+  // Multiple-row operation: Email
   const getSelectedEmails = () => {
     return Object.keys(rowSelection)
       .map((id) => data[Number(id)].email)
@@ -118,8 +144,8 @@ export default function Connections() {
     return Array.from(tags);
   };
 
+  // Filter data based on tags
   useEffect(() => {
-    // Filter data based on tags
     if (selectedTags.length > 0) {
       const filteredData = data.filter((connection) =>
         selectedTags.every((tag) => connection.tags.includes(tag))
@@ -193,6 +219,11 @@ export default function Connections() {
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
         />
+        {isLoading && (
+          <div className="flex w-full flex-grow items-center justify-center">
+            <div className="loading loading-spinner loading-lg text-primary"></div>
+          </div>
+        )}
       </div>
 
       {/* No Connections Illustration */}

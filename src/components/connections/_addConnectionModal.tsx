@@ -76,7 +76,7 @@ const SearchTab = () => {
 
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
         {searchResults.map((connection) => (
-          <ConnectionCard connection={connection} />
+          <ConnectionCard key={connection.email} connection={connection} />
         ))}
       </div>
       {/* Show Illustration when 0 Search Results */}
