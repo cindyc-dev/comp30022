@@ -47,7 +47,7 @@ export default function MonthView({
     );
   });
 
-  console.log(eventsByDay);
+  console.log(eventsByDay);   // TODO remove
 
   return (
     <div className="h-full w-full">

@@ -17,6 +17,7 @@ function EventDetailsModal({
   const [isValid, setIsValid] = useState<boolean>(false);
 
   useEffect(() => {
+    // Check if event is valid
     setIsValid(
       event.title !== "" &&
         event.startDateTime !== null &&
@@ -29,8 +30,9 @@ function EventDetailsModal({
       <h1>Event Details</h1>
       <EventDetailsForm event={event} setEvent={setEvent} />
       <div className="mt-2 flex w-full justify-end gap-2">
+        {/* Disable Save button if event is invalid */}
         <button
-          className={`btn btn-primary  ${isValid && "btn-disabled"}`}
+          className={`btn btn-primary  ${!isValid && "btn-disabled"}`}
           onClick={() => onSave(event)}
         >
           <FaSave />

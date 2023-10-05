@@ -48,8 +48,8 @@ export const sampleEvents: EventI[] = [
   {
     id: "4",
     title: "Overnight event",
-    startDateTime: moment("2023-09-29 22:00:00").toDate(),
-    endDateTime: moment("2023-09-30 08:00:00").toDate(),
+    startDateTime: moment("2023-09-24 22:00:00").toDate(),
+    endDateTime: moment("2023-09-25 08:00:00").toDate(),
     location: "My House",
     notes: "Bring sleeping bag",
     relatedConnections: [],

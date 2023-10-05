@@ -180,6 +180,7 @@ export default function WeekView({
               <div
                 key={row}
                 id={`${row}${col}`}
+                // Different border styles for current time
                 className={`border-l-2 ${
                   isCurrentTime
                     ? "z-10 border-b-[3px] border-b-primary"
@@ -205,20 +206,25 @@ export default function WeekView({
             );
           })
         )}
+
         {/* Events */}
         {[
           ...overNightAndMultiDayEvents,
           ...getEventsInWeek(today.startOf("week"), weekEvents),
         ].map((event, i) => {
+          // Calculate the column and row for the event
           const col = event.startDateTime.getDay() + 3;
           let row = event.startDateTime.getHours() * 2 + 1;
           if (event.startDateTime.getMinutes() === 30) {
             row += 1;
           }
+
+          // Calculate the duration of the event (to the nearest half hour)
           const duration =
             Math.round(
-              moment(event.endDateTime).diff(event.startDateTime, "minutes") /
-                60
+              moment(event.endDateTime)
+                .clone()
+                .diff(moment(event.startDateTime).clone(), "minutes") / 60
             ) * 2;
 
           return (
