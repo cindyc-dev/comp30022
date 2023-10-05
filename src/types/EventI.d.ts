@@ -7,7 +7,7 @@ export interface EventI {
   startDateTime: Date;
   endDateTime: Date;
   location?: string;
-  notes: string;
+  notes?: string;
   relatedConnections: ConnectionI[];
   colour: Colour;
 }
