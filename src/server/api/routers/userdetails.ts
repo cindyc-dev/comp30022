@@ -40,4 +40,6 @@ export const detailsRouter = createTRPCRouter({
       const userId = session.user.id;
       await setUserImage(userId, opts.input.newImage);
     }),
+
+
 });

@@ -3,9 +3,12 @@ import { SessionProvider, useSession } from "next-auth/react";
 import { AppProps } from "next/app";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import Providers from "~/components/hooks/providers";
 import Script from "next/script";
+import Head from "next/head";
+import Loading from "~/components/layout/loading";
+import Layout from "~/components/layout/layout";
 
 const MyApp = ({
   Component,
@@ -16,16 +19,29 @@ const MyApp = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Providers>
-        <Script src="https://upload-widget.cloudinary.com/global/all.js" />
-        {Component.auth ? (
-          <Auth>
+      <Suspense
+        fallback={
+          <Layout onlyChildren={true}>
+            <Loading />
+          </Layout>
+        }
+      >
+        <Head>
+          <title>Potato CRM</title>
+          <meta name="description" content="Potato CRM" />
+          <link rel="icon" href="/favicon.ico" sizes="any" />
+        </Head>
+        <Providers>
+          <Script src="https://upload-widget.cloudinary.com/global/all.js" />
+          {Component.auth ? (
+            <Auth>
+              <Component {...pageProps} />
+            </Auth>
+          ) : (
             <Component {...pageProps} />
-          </Auth>
-        ) : (
-          <Component {...pageProps} />
-        )}
-      </Providers>
+          )}
+        </Providers>
+      </Suspense>
     </SessionProvider>
   );
 };
@@ -39,7 +55,11 @@ const Auth = ({ children }: { children: ReactNode }) => {
   const { status } = useSession({ required: true });
 
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return (
+      <Layout onlyChildren={true}>
+        <Loading />
+      </Layout>
+    );
   }
 
   return children;
