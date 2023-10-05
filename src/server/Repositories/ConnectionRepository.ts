@@ -1,6 +1,7 @@
 import { prisma } from "~/server/db";
 import { TRPCError } from "@trpc/server";
 import { getUserDetails } from "../Services/UserDetails";
+import { ConnectionI } from "~/types/ConnectionI";
 
 export async function createConnection(senderId: string, receiverId: string) {
   if (senderId == null || receiverId == null || receiverId.length <= 0){
@@ -21,6 +22,8 @@ export async function createConnection(senderId: string, receiverId: string) {
       data: {
         userId_1: senderId,
         userId_2: receiverId,
+        tags: "",
+        notes: "",
       },
     });
   
@@ -28,6 +31,8 @@ export async function createConnection(senderId: string, receiverId: string) {
       data: {
         userId_1: receiverId,
         userId_2: senderId,
+        tags: "",
+        notes: "",
       },
     });
   
@@ -56,6 +61,8 @@ export async function getUserConnections(
     },
     select: {
       userId_2: true,
+      tags: true,
+      notes: true,
     }
   });
 
@@ -96,6 +103,24 @@ export async function deleteConnection(senderId: string, receiverId: string) {
   return connection1 && connection2;
 }
 
-export async function deleteAllExisting() {
-  return await prisma.userConnection.deleteMany({});
+export async function searchAllUsers(emailString: string, topX: number) {
+  const matches = await prisma.user.findMany({
+    where: {
+      email: {
+        startsWith: emailString,
+      }
+    },
+    take: topX
+  });
+  
+  return matches.map((user) => {
+    const connection: ConnectionI = {
+      name: user.name || "",
+      email: user.email || "",
+      phone: user.contact || undefined,
+      photoUrl: user.image || undefined,
+      tags: [],
+    };
+    return connection;
+  });
 }

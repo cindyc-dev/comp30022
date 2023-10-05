@@ -1,7 +1,15 @@
 import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
+import { ConnectionI } from "~/types/ConnectionI";
 
-export async function createCustomContact(userId: string, name?: string, email?: string, contact?: string, tags?: string[], notes?: string) {
+export async function createCustomContact(
+  userId: string,
+  name: string,
+  email: string,
+  contact: string,
+  tags: string,
+  notes: string,
+) {
   await prisma.customContact.create({
     data: {
       name: name,
@@ -13,7 +21,6 @@ export async function createCustomContact(userId: string, name?: string, email?:
     },
   });
 }
-
 
 const userInfoSelect = {
   id: true,
@@ -34,7 +41,7 @@ export async function checkExistingUserExists(
 
   const dbResult = await prisma.user.findFirst({
     where: {
-        email: email,
+      email: email,
     },
     select: userInfoSelect,
   });
@@ -46,9 +53,9 @@ export async function checkExistingUserExists(
 }
 
 export async function checkCustomExists(
-  userId: string, email: string,
+  userId: string,
+  email: string
 ): Promise<boolean | null> {
-  
   if (email == undefined) return null;
 
   const dbResult = await prisma.customContact.findFirst({
@@ -60,7 +67,7 @@ export async function checkCustomExists(
         {
           email: email,
         },
-      ]
+      ],
     },
   });
 
@@ -70,7 +77,7 @@ export async function checkCustomExists(
   return true;
 }
 
-export async function getCustomConnection(id:string) {
+export async function getCustomConnection(id: string): Promise<ConnectionI[]> {
   const dbResult = await prisma.customContact.findMany({
     where: {
       userId: id,
@@ -78,40 +85,31 @@ export async function getCustomConnection(id:string) {
   });
 
   if (!dbResult) {
-    return null;
+    throw new Error("User does not exist.");
   }
-  return dbResult;
+  return dbResult.map((user) => {
+    const connection: ConnectionI = {
+      name: user.name || "",
+      email: user.email || "",
+      phone: user.contact || undefined,
+      photoUrl: user.image || undefined,
+      tags: [],
+    };
+    return connection;
+  });
 }
 
 export async function deleteCustomConnection(userId: string, email?: string) {
 
+  if (email == undefined) return null;
 
-  if (email != undefined) {
-    const deleted = await prisma.customContact.deleteMany({
-      where: {
-        userId: userId,
-        email: email,
-      },
-    });
-  
-    return deleted;
-  }
-  else {
-    const deleted = await prisma.customContact.deleteMany({
-      where: {
-        userId: userId,
-        
-        OR: [
-          {
-            email: email,
-          },
-          {
-            contact: contact,
-          },
-        ]
-      },
-    });
-  
-    return deleted;
-  }
+  const deleted = await prisma.customContact.deleteMany({
+    where: {
+      userId: userId,
+      email: email,
+    },
+  });
+
+  return deleted;
+
 }

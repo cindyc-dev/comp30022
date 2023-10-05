@@ -5,4 +5,5 @@ export interface ConnectionI {
     email: string;
     tags: string[];
     notes?: string;
+    isExisting?: boolean;
 }

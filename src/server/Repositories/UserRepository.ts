@@ -10,7 +10,7 @@ export async function createUser(email: string, password: string) {
     },
   });
 
-  return user; //
+  return user;
 }
 
 const userInfoSelect = {

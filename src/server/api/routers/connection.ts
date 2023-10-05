@@ -2,7 +2,7 @@ import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {z} from "zod";
 import {checkCustomExists, checkExistingUserExists, createCustomContact, deleteCustomConnection} from "~/server/Repositories/CustomContactRepository";
 import { TRPCError } from "@trpc/server";
-import { createConnection, deleteAllExisting, deleteConnection } from "~/server/Repositories/ConnectionRepository";
+import { createConnection, deleteConnection, searchAllUsers } from "~/server/Repositories/ConnectionRepository";
 import { getAllUserConnectionsDetails } from "~/server/Services/UserConnections";
 
 export const connectionRouter = createTRPCRouter({
@@ -23,11 +23,15 @@ export const connectionRouter = createTRPCRouter({
         });
       }
 
+      const tags = "";
       if (opts.input.tags.length > 1) {
-        console.log("Tags not supported yet.");
+        opts.input.tags.forEach(item => {
+          tags.concat(item); 
+          tags.concat(",");
+        });
       }
 
-      await createCustomContact(userId, opts.input.name, opts.input.email, opts.input.contactNumber, opts.input.tags, opts.input.notes);
+      await createCustomContact(userId, opts.input.name, opts.input.email, opts.input.contactNumber, tags, opts.input.notes);
     }),
 
   checkExistingUser: protectedProcedure
@@ -44,7 +48,7 @@ export const connectionRouter = createTRPCRouter({
     }))
     .mutation(async (opts) => {
       const userId = opts.ctx.session.user.id;
-      await deleteCustomConnection(userId, opts.input.email);
+      return await deleteCustomConnection(userId, opts.input.email);
     }),
 
   createExisting: protectedProcedure
@@ -65,14 +69,19 @@ export const connectionRouter = createTRPCRouter({
 
       await deleteConnection(userId, opts.input.connectionId);
     }),
-
-  deleteAllExisting: protectedProcedure.mutation(async () => {
-    return await deleteAllExisting();
-  }),
   
   getAllConnections: protectedProcedure.query(async (opts) => {
     const session = opts.ctx.session;
     const userId = session.user.id;
     return await getAllUserConnectionsDetails(userId);
-  })
+  }),
+
+  searchAllUsers: protectedProcedure.input(
+    z.object({
+      emailString: z.string(),
+      topX: z.number(),
+    }))
+    .mutation(async (opts) => {
+      return await searchAllUsers(opts.input.emailString, opts.input.topX);
+    })
 });
