@@ -1,6 +1,6 @@
 import { ConnectionI } from "~/types/ConnectionI";
 
-export const DEFAULT_PROFILE_PIC = "/images/default_profile.jpg";
+export const DEFAULT_PROFILE_PIC = "/images/default-profile.jpg";
 
 export const NEW_CONNECTION: ConnectionI = {
   name: "",
