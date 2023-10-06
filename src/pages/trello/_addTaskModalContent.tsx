@@ -3,6 +3,7 @@ import { useToast } from "../../components/hooks/toastContext";
 import { useModal } from "../../components/hooks/modalContext";
 import { TaskI } from "~/types/TaskI";
 import { ColumnI } from "~/types/ColumnI";
+import { set } from "zod";
 
 interface AddTaskModalContentProps {
   column: Record<string, ColumnI>, 
@@ -10,13 +11,14 @@ interface AddTaskModalContentProps {
 }
 
 export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps) => {
-  const [newTask, setNewTask] = useState<TaskI>({ title: "", description: "", status: "" });
+  const [newTask, setNewTask] = useState<TaskI>({ id: "", title: "", description: "", status: ""});
   const [date, setDate] = useState<string>("");
   const { addToast } = useToast();
   const { closeModal } = useModal();
 
 
   const handleAddTask = () => {
+    // Generating random id for task
     const newColumns = {...column};
     if (!newTask.title) {
       // Show error toast if task name or status is empty
@@ -27,14 +29,11 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
       return;
     }
 
+    console.log(newTask);
+
     newColumns.todos.items.push(newTask);
     setColumns({...newColumns});
 
-
-    // Replace the following lines with your logic to add the task
-    console.log("Task Name:", newTask.title);
-    console.log("Description:", newTask.description);
-    console.log("Date:", date);
 
     addToast({
       type: "success",
@@ -42,7 +41,7 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
     });
 
     // Optionally, you can reset the form fields here
-    setNewTask({ title: "", description: "", status: "" });
+    setNewTask({ id: "", title: "", description: "", status: "" });
 
     closeModal("add-task-modal");
   };
@@ -58,7 +57,7 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
             type="text"
             id="taskName"
             value={newTask.title}
-            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+            onChange={(e) => setNewTask({ ...newTask, title: e.target.value, status: "Todo", id: Math.random().toString(36).substring(7)})}
           />
         </div>
         <div className="flex w-full flex-col">

@@ -39,8 +39,9 @@ export const Board = () => {
     });
   };
 
-  const onUpdateTask = ( title, description, task ) => {
+  const onUpdateTask = ( newTask: TaskI ) => {
     console.log("Updating");
+    
     // onUpdateTask(editedTask: TaskI, prevTitle)
     // Find for the task using id/prevTitle
     // Replace with new 
@@ -61,9 +62,6 @@ export const Board = () => {
       id: "edit-task-modal",
     });
   };
-
-
-  
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
@@ -107,6 +105,7 @@ export const Board = () => {
     });
   };
 
+  // change for task ID
   const deleteTask = (columnId: string, taskIndex: number) => {
     setColumns((prevColumns) => {
       const updatedColumn = { ...prevColumns[columnId] };
@@ -158,8 +157,8 @@ export const Board = () => {
                                 {...provided.dragHandleProps}
                                 className="card mb-2 bg-indigo-100 shadow"
                               >
-                                <div className="card-body" onClick={() => handleEditTask(task)}>
-                                  <h2>{task.title}</h2>
+                                <div className="card-body" >
+                                  <h2 onClick={() => handleEditTask(task)}>{task.title}</h2>
                                   <p>{task.description}</p>
                                   <button
                                     className="btn-danger btn"
