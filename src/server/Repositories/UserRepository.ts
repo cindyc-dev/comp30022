@@ -134,3 +134,31 @@ export async function updateUserDetailsWithId(user: UserI): Promise<boolean> {
     throw new Error(`Error updating user details. Error: ${e}`);
   }
 }
+
+export async function saveRestoreToken(email: string, token: string): Promise<boolean> {
+  const expiry = new Date(); // 1 hour
+  expiry.setHours(expiry.getHours() + 1);
+  try {
+    await prisma.user.update({
+      where: {
+        email: email,
+      },
+      data: {
+        restoreCode: token,
+        restoreExpiry: expiry.toISOString(),
+      },
+    });
+    console.log(`Restore token ${token} saved for ${email}.`);
+    return true;
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2025") {
+        console.error(`User ${email} does not exist!`);
+      } else {
+        console.log(e);
+      }
+    }
+
+    return false;
+  }
+}

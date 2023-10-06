@@ -1,8 +1,14 @@
 import bcrypt from "bcrypt";
-import {UpdateUserPasswordWithId, createUser, getUserWithEmail} from "~/server/Repositories/UserRepository";
+import {
+  UpdateUserPasswordWithId,
+  createUser,
+  getUserWithEmail,
+  saveRestoreToken
+} from "~/server/Repositories/UserRepository";
 import { getUserPassword } from "./UserDetails";
 
 const SALT_ROUNDS = 10;
+const RESTORE_TOKEN_LENGTH = 6;
 
 export async function hashText(Text: string): Promise<string> {
   const hashedText = await bcrypt.hash(Text, SALT_ROUNDS);
@@ -45,5 +51,24 @@ export async function updatePassword(id: string, currPassword: string, newPasswo
     }
   }
   return false;
+}
+
+export async function generateRestoreToken(email: string): Promise<boolean> {
+  const token = makeToken(RESTORE_TOKEN_LENGTH);
+
+  return (await saveRestoreToken(email, token));
+}
+
+function makeToken(length: number): string {
+  const characters = "0123456789";
+  let result = "";
+  let counter = 0;
+
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+    counter += 1;
+  }
+
+  return result;
 }
 

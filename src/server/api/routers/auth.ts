@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
-import { createAccount, accountExists, updatePassword } from "~/server/Services/AuthService";
+import {createAccount, accountExists, updatePassword, generateRestoreToken} from "~/server/Services/AuthService";
 import { TRPCError } from "@trpc/server";
 
 export const authRouter = createTRPCRouter({
@@ -28,5 +28,13 @@ export const authRouter = createTRPCRouter({
 
       // true on success; false if Prisma/fetching had an error
       return await updatePassword(userId, opts.input.currentPassword, opts.input.newPassword);
-    })
+    }),
+
+  forgetPassword: publicProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async (opts) => {
+      const email = opts.input.email;
+      // true on success; false if Prisma/fetching had an error
+      return await generateRestoreToken(email);
+    }),
 });
