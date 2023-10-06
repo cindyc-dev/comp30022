@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { createTask, deleteTask } from "~/server/Repositories/TrelloRepository";
+import { removeTask, updateTask } from "~/server/Services/TrelloService";
 import { setTask } from "~/server/Services/TrelloService";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 
 export const trelloRouter = createTRPCRouter({
 
@@ -11,17 +11,19 @@ export const trelloRouter = createTRPCRouter({
         title: z.string(),
         description: z.string(),
         dueDate: z.string().datetime(),
+        status: z.string(),
       })
     )
     .mutation(async (opts) => {
       const session = opts.ctx.session;
       const userId = session.user.id;
-      await setTask({
-        createdById: userId,
-        title: opts.input.title,
-        description: opts.input.description,
-        dueDate: opts.input.dueDate,
-      });
+      await setTask(
+        userId,
+        opts.input.title,
+        opts.input.description,
+        opts.input.dueDate,
+        opts.input.status
+      );
     }),
 
   deleteTask: protectedProcedure
@@ -33,13 +35,26 @@ export const trelloRouter = createTRPCRouter({
     .mutation(async (opts) => {
       const session = opts.ctx.session;
       const userId = session.user.id;
-      await deleteTask({
-        id: id,
-      });
+      await removeTask(userId);
     }),
   
   updateTask: protectedProcedure
+    .input(
+      z.object({
+        // id
+        title: z.string(),
+        description: z.string(),
+        dueDate: z.string().datetime(),
+      })
+    )
+    .mutation(async (opts) => {
+      const session = opts.ctx.session;
+      const userId = session.user.id;
+      await updateTask(userId, opts.input.title, opts.input.description, opts.input.dueDate);
+    }),
 
+  // getTask: protectedProcedure
+  //   .query()
 
 
 });

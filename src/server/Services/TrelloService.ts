@@ -1,19 +1,19 @@
-import { createTask, deleteTask, getTasks } from "../Repositories/TrelloRepository";
-import { TaskInfoPayload } from "../Repositories/TrelloRepository.ts";
+import { createTask, deleteTask, getTasks, renewTask } from "../Repositories/TrelloRepository";
+import { TaskInfoPayload } from "../Repositories/TrelloRepository";
 
 
-export async function setTask(createdById: string, title: string, description: string, dueDate: string): Promise<boolean> {
-  const task = await createTask(createdById, title, description, dueDate);
-  return task ? true : false;
+export async function setTask(createdById: string, title: string, description: string, dueDate: string, status: string): Promise<TaskInfoPayload | null> {
+  const task = await createTask(createdById, title, description, dueDate, status);
+  return task;
 }
 
-export async function removeTask(id: number): Promise<boolean> {
+export async function removeTask(id: string): Promise<boolean> {
   const remove = await deleteTask(id);
   return remove ? true : false;
 }
 
-export async function updateTask(id: number, title: string, description: string, dueDate: string): Promise<boolean> {
-  const update = await updateTask(id, title, description, dueDate);
+export async function updateTask(id: string, title: string, description: string, dueDate: string): Promise<boolean> {
+  const update = await renewTask(id, title, description, dueDate);
   return update ? true : false;
 }
 
