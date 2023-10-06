@@ -8,18 +8,21 @@ const taskSelect = {
   dueDate: true,
   createdById: true,
   status: true,
-  connections: true,
 } satisfies Prisma.TaskSelect;
 
-export async function createTask(createdById: string, title: string, description: string, dueDate: string) {
+export async function createTask(createdById: string, title: string, description: string, dueDate: string, status: string) {
+
   const task = await prisma.task.create({
     data: {
       createdById: createdById,
       title: title,
       description: description,
-      dueDate: dueDate
+      dueDate: dueDate,
+      status: status
     },
   });
+
+  // const taskId = task.id; 
 
   return task;
 }
