@@ -10,7 +10,7 @@ export const trelloRouter = createTRPCRouter({
       z.object({
         title: z.string(),
         description: z.string(),
-        dueDate: z.string().datetime(),
+        dueDate: z.string(),
         status: z.string(),
       })
     )

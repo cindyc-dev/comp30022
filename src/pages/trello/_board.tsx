@@ -11,6 +11,8 @@ import { useModal } from "~/components/hooks/modalContext";
 import { AddTaskModalContent } from "./_addTaskModalContent";
 import { FaPlusCircle } from "react-icons/fa";
 import EditTaskModalContent from "./_editTaskModalContent";
+import { api } from "~/utils/api";
+
 
 export const Board = () => {
   const initialColumns: Record<string, ColumnI> = {
@@ -31,7 +33,6 @@ export const Board = () => {
   const { openModal } = useModal();
   const [columns, setColumns] = useState(initialColumns);
   
-
   const handleAddTask = () => {
     openModal({
       content: <AddTaskModalContent column={columns} setColumns={setColumns} />,
@@ -41,7 +42,7 @@ export const Board = () => {
 
   const onUpdateTask = ( newTask: TaskI ) => {
     console.log("Updating");
-    
+
     // onUpdateTask(editedTask: TaskI, prevTitle)
     // Find for the task using id/prevTitle
     // Replace with new 
@@ -116,6 +117,9 @@ export const Board = () => {
       };
     });
   };
+
+  
+
 
 
   return (

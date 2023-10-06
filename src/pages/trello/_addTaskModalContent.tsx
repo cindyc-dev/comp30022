@@ -3,7 +3,8 @@ import { useToast } from "../../components/hooks/toastContext";
 import { useModal } from "../../components/hooks/modalContext";
 import { TaskI } from "~/types/TaskI";
 import { ColumnI } from "~/types/ColumnI";
-import { set } from "zod";
+import { api } from "~/utils/api";
+
 
 interface AddTaskModalContentProps {
   column: Record<string, ColumnI>, 
@@ -11,12 +12,12 @@ interface AddTaskModalContentProps {
 }
 
 export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps) => {
-  const [newTask, setNewTask] = useState<TaskI>({ id: "", title: "", description: "", status: ""});
+  const [newTask, setNewTask] = useState<TaskI>({ id: "", title: "", description: "", status: "", dueDate: ""});
   const [date, setDate] = useState<string>("");
   const { addToast } = useToast();
   const { closeModal } = useModal();
 
-
+  const mutation = api.trello.addTask.useMutation();
   const handleAddTask = () => {
     // Generating random id for task
     const newColumns = {...column};
@@ -30,18 +31,33 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
     }
 
     console.log(newTask);
-
+    
     newColumns.todos.items.push(newTask);
     setColumns({...newColumns});
-
 
     addToast({
       type: "success",
       message: "Task added successfully.",
     });
 
+    const addedTask = {
+      title: newTask.title,
+      description: newTask.description,
+      status: newTask.status,
+      dueDate: newTask.dueDate,
+    };
+
+    mutation.mutate(addedTask, {
+      onSuccess: async () => {
+        addToast({
+          type: "success",
+          message: "Task added successfully.",
+        });
+      },
+    });
+
     // Optionally, you can reset the form fields here
-    setNewTask({ id: "", title: "", description: "", status: "" });
+    setNewTask({ id: "", title: "", description: "", status: "", dueDate: "" });
 
     closeModal("add-task-modal");
   };

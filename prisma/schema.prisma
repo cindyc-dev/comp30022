@@ -73,7 +73,7 @@ model Task {
   id          Int       @id @default(cuid())
   title       String
   description String?
-  dueDate     DateTime?
+  dueDate     Date?
   createdBy   User      @relation(fields: [createdById], references: [id])
   createdById String
   status      String?
