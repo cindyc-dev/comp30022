@@ -148,17 +148,88 @@ export async function saveRestoreToken(email: string, token: string): Promise<bo
         restoreExpiry: expiry.toISOString(),
       },
     });
-    console.log(`Restore token ${token} saved for ${email}.`);
+    console.log("Saved to db.");
     return true;
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2025") {
-        console.error(`User ${email} does not exist!`);
+        throw new Error(`User ${email} does not exist!`);
       } else {
         console.log(e);
       }
     }
 
     return false;
+  }
+}
+
+export async function getRestoreTokenExpiry(email: string): Promise<Date> {
+  try {
+    const date = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+      select: {
+        restoreExpiry: true,
+      }
+    });
+
+    if (!date?.restoreExpiry) {
+      throw new Error(`No restore token found for ${email}.`);
+    }
+    return new Date(date.restoreExpiry);
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2025") {
+        throw new Error(`User ${email} does not exist!`);
+      }
+    }
+    throw e;
+  }
+}
+
+export async function getRestoreToken(email: string): Promise<string> {
+  try {
+    const dbToken = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+      select: {
+        restoreCode: true,
+      }
+    });
+
+    if (!dbToken?.restoreCode) {
+      throw new Error(`No restore token found for ${email}.`);
+    }
+    return dbToken.restoreCode;
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2025") {
+        throw new Error(`User ${email} does not exist!`);
+      }
+    }
+    throw e;
+  }
+}
+
+export async function resetToken(email: string) {
+  try {
+    await prisma.user.update({
+      where: {
+        email: email,
+      },
+      data: {
+        restoreCode: null,
+        restoreExpiry: null,
+      },
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2025") {
+        throw new Error(`User ${email} does not exist!`);
+      }
+    }
+    throw e;
   }
 }
