@@ -12,4 +12,4 @@ export default function Trello() {
   );
 }
 
-Trello.auth = false;
+Trello.auth = true;

@@ -10,19 +10,24 @@ const taskSelect = {
   status: true,
 } satisfies Prisma.TaskSelect;
 
-export async function createTask(createdById: string, title: string, description: string, dueDate: string, status: string) {
-
+export async function createTask(
+  createdById: string,
+  title: string,
+  description: string,
+  dueDate: string,
+  status: string
+) {
   const task = await prisma.task.create({
     data: {
       createdById: createdById,
       title: title,
       description: description,
-      dueDate: dueDate,
-      status: status
+      dueDate: dueDate ? new Date(dueDate) : null,
+      status: status,
     },
   });
 
-  // const taskId = task.id; 
+  // const taskId = task.id;
 
   return task;
 }
@@ -31,12 +36,17 @@ export async function deleteTask(id: string) {
   const deletion = await prisma.task.delete({
     where: {
       id: id,
-    }
+    },
   });
   return deletion;
 }
 
-export async function renewTask(id: string, title: string, description: string, dueDate: string) {
+export async function renewTask(
+  id: string,
+  title: string,
+  description: string,
+  dueDate: string
+) {
   const update = await prisma.task.update({
     where: {
       id: id,
@@ -44,16 +54,18 @@ export async function renewTask(id: string, title: string, description: string, 
     data: {
       title: title,
       description: description,
-      dueDate: dueDate
+      dueDate: dueDate,
     },
   });
   return update;
 }
 
-export type TaskInfoPayload = Prisma.UserGetPayload<{ select: typeof taskSelect }>;
+export type TaskInfoPayload = Prisma.UserGetPayload<{
+  select: typeof taskSelect;
+}>;
 
 export async function getTasks(
-  createdById: string,
+  createdById: string
 ): Promise<TaskInfoPayload | null> {
   const dbResult = await prisma.task.findMany({
     where: {
