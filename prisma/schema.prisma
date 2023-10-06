@@ -70,11 +70,11 @@ model VerificationToken {
 }
 
 model Task {
-  id          Int       @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String?
-  dueDate     Date?
-  createdBy   User      @relation(fields: [createdById], references: [id])
+  dueDate     DateTime?
+  createdBy   User      @relation(fields: [createdById], references: [id],  onDelete: Cascade)
   createdById String
   status      String?
   //connections User[]
