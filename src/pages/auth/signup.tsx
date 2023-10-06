@@ -1,5 +1,5 @@
-import AuthLayout from "~/components/authLayout";
-import { SignUpForm } from "~/components/signUpForm";
+import AuthLayout from "./_authLayout";
+import { SignUpForm } from "./_signUpForm";
 
 export default function SignUp() {
   return <AuthLayout children={<SignUpForm />} />;

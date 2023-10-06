@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { FaEye, FaRegEyeSlash } from "react-icons/fa";
+import RequiredStar from "./requiredStar";
 
 interface PasswordInputProps {
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   isShowHide: boolean;
   label: string;
+  required?: boolean;
 }
 
 export default function PasswordInput({
@@ -13,6 +15,7 @@ export default function PasswordInput({
   setValue,
   isShowHide,
   label,
+  required = false,
 }: PasswordInputProps) {
   const [isShow, setIsShow] = useState(false);
   const [type, setType] = useState("password");
@@ -25,7 +28,10 @@ export default function PasswordInput({
   return (
     <div className="w-full">
       <label className="label py-0">
-        <span className="label-text">{label}</span>
+        <span className="label-text">
+          {label}
+          {required && <RequiredStar />}
+        </span>
       </label>
       <input
         className="input input-bordered w-full"

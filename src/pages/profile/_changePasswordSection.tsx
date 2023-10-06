@@ -30,6 +30,15 @@ export const ChangePasswordSection = () => {
       return;
     }
 
+    if (currentPassword === newPassword) {
+      // Show error toast
+      addToast({
+        type: "error",
+        message: "New password cannot be the same as current password.",
+      });
+      return;
+    }
+
     const user = {
       currentPassword: currentPassword,
       newPassword: newPassword,
@@ -73,7 +82,9 @@ export const ChangePasswordSection = () => {
           </p>
         </div>
         <button
-          className="btn btn-primary hidden md:block"
+          className={`btn btn-primary hidden md:block ${
+            (!currentPassword || !passwordValid) && "btn-disabled"
+          }`}
           onClick={() => changePassword()}
         >
           Change Password
@@ -87,18 +98,21 @@ export const ChangePasswordSection = () => {
               isShowHide={true}
               label="Current Password"
               value={currentPassword}
+              required={true}
             />
             <PasswordInput
               setValue={setNewPassword}
               isShowHide={true}
               label="New Password"
               value={newPassword}
+              required={true}
             />
             <PasswordInput
               setValue={setConfirmNewPassword}
               isShowHide={false}
               label="Confirm New Password"
               value={confirmNewPassword}
+              required={true}
             />
           </div>
           <div className="mt-2 hidden w-1/2 md:block">
@@ -132,7 +146,9 @@ export const ChangePasswordSection = () => {
         </div>
       </div>
       <button
-        className="btn btn-primary btn-block md:hidden"
+        className={`btn btn-primary btn-block md:hidden ${
+          (!currentPassword || !passwordValid) && "btn-disabled"
+        }`}
         onClick={() => changePassword()}
       >
         Change Password

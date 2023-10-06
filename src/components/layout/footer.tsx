@@ -26,7 +26,7 @@ const GROUP_MEMBERS = [
 
 export const Footer = () => {
   return (
-    <footer className="footer footer-center w-full bg-primary py-2 text-primary-content">
+    <footer className="footer footer-center mt-2 w-full bg-primary py-2 text-primary-content">
       <div>
         <div className="flex gap-4">
           <p>Made with Awesomeness 🤟 for COMP30022</p>

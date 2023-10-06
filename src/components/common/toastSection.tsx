@@ -1,18 +1,5 @@
-import React from "react";
-import {
-  FaInfoCircle,
-  FaCheckCircle,
-  FaExclamationTriangle,
-} from "react-icons/fa";
-import { RxCrossCircled } from "react-icons/rx";
 import { ToastI } from "../hooks/toastContext";
-
-const alertStyleMap = {
-  info: "alert-info",
-  success: "alert-success",
-  warning: "alert-warning",
-  error: "alert-error",
-};
+import Toast from "./toast";
 
 export default function ToastSection({
   toasts,
@@ -24,19 +11,13 @@ export default function ToastSection({
   return (
     <div className="toast z-50">
       {toasts.map(({ type, message }, i) => (
-        <div
-          className={`${alertStyleMap[type]} alert cursor-pointer`}
+        <Toast
           key={i}
-          onClick={() => removeToast(i)}
-        >
-          {type === "info" && <FaInfoCircle />}
-          {type === "success" && <FaCheckCircle />}
-          {type === "warning" && <FaExclamationTriangle />}
-          {type === "error" && <RxCrossCircled />}
-          <div className="max-w-sm whitespace-normal lg:max-w-md">
-            {message}
-          </div>
-        </div>
+          type={type}
+          message={message}
+          removeToast={() => removeToast(i)}
+          i={i}
+        />
       ))}
     </div>
   );

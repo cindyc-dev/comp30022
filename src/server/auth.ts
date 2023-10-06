@@ -5,10 +5,14 @@ import {
   type DefaultSession,
 } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "~/env.mjs";
 import { checkPassword } from "./Services/AuthService";
 import { getUserWithEmail } from "./Repositories/UserRepository";
+import {PrismaAdapter} from "@next-auth/prisma-adapter";
+import {prisma} from "~/server/db";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -72,6 +76,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 3000,
   },
+  adapter: PrismaAdapter(prisma),
   pages: {
     signIn: "/auth/signin",
   },
@@ -79,6 +84,17 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
+    GoogleProvider({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
+    GitHubProvider({
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
