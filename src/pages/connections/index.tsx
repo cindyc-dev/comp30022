@@ -227,7 +227,7 @@ export default function Connections() {
       </div>
 
       {/* No Connections Illustration */}
-      {data.length === 0 && (
+      {(data.length === 0 && !isLoading) && (
         <div className="flex w-full flex-col items-center justify-center text-center">
           <Image
             src="/svg/Empty-pana.svg"

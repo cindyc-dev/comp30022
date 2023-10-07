@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   NEW_CONNECTION,
   sampleSearchResults,
@@ -125,20 +125,6 @@ const CustomTab = ({
     });
   };
 
-  // Check if email is valid when connection.email changes after 2000ms of no change
-  // const [validateEmail] = useDebounce((email: string) => {
-  //   return validateEmail(email);
-  // }, 2000);
-
-  // useEffect(() => {
-  //   if (connection.email) {
-  //     const isValidEmail = validateEmail(connection.email);
-  //     if (!isValidEmail) {
-  //       setConnection({ ...connection, email: "" });
-  //     }
-  //   }
-  // }, [connection.email]);
-
   return (
     <div className="flex flex-col content-center items-center justify-center md:w-4/5">
       <h1 className="my-0">Create a Connection</h1>
@@ -147,6 +133,7 @@ const CustomTab = ({
         setConnection={setConnection}
         tagColoursMap={tagColoursMap}
         editPhoto={editPhoto}
+        debounceEmail={true}
       />
       <button
         className={`btn btn-primary btn-wide ${
