@@ -10,6 +10,7 @@ export interface EventI {
   notes?: string;
   relatedConnections: ConnectionI[];
   colour: Colour;
+  isExternal: boolean;
 }
 
 type CalendarViewType = "day" | "week" | "month";

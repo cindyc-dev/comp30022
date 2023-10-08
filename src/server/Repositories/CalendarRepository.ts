@@ -28,6 +28,23 @@ export async function getAllDbEvents(userId: string, start?: Date, end?: Date): 
   });
 }
 
+export async function getAllConnectedEvents(userId: string, start?: Date, end?: Date): Promise<EventPayload[]> {
+  if (start && end) {
+    return getConnectedEventsInRange(userId, start, end);
+  }
+
+  return prisma.calendarEvent.findMany({
+    where: {
+      invitees: {
+        some: {
+          id: userId,
+        }
+      }
+    },
+    select: eventSelect,
+  });
+}
+
 interface EventInput {
   title: string;
   startDateTime: Date;
@@ -188,3 +205,21 @@ function getDbEventsInRange(userId: string, start: Date, end: Date): Promise<Eve
   });
 }
 
+async function getConnectedEventsInRange(userId: string, start: Date, end: Date): Promise<EventPayload[]> {
+  return prisma.calendarEvent.findMany({
+    where: {
+      invitees: {
+        some: {
+          id: userId,
+        }
+      },
+      start: {
+        gte: start,
+      },
+      end: {
+        lte: end,
+      }
+    },
+    select: eventSelect,
+  });
+}
