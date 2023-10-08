@@ -1,19 +1,31 @@
 import React, { useState } from "react";
 import { useModal } from "../../components/hooks/modalContext";
 import { TaskI } from "~/types/TaskI";
-import { set } from "zod";
 
+interface EditTaskModalContentProps {
+  task: TaskI;
+  onUpdateTask: (newTask: TaskI) => void;
+}
 
-const EditTaskModalContent = ({ task, onUpdateTask }) => {
+const EditTaskModalContent = ({
+  task,
+  onUpdateTask,
+}: EditTaskModalContentProps) => {
   const { closeModal } = useModal();
-  const [newTask, setNewTask] = useState<TaskI>({ id: task.id, title: task.title, description: task.description, status: task.status});
+  const [newTask, setNewTask] = useState<TaskI>({
+    id: task.id,
+    title: task.title,
+    description: task.description,
+    status: task.status,
+    dueDate: task.dueDate,
+  });
 
-  const handleTitleChange = (e) => {
-    setNewTask({ ...newTask, title: e.target.value});
+  const handleTitleChange = (e: { target: { value: any; }; }) => {
+    setNewTask({ ...newTask, title: e.target.value });
   };
 
-  const handleDescriptionChange = (e) => {
-    setNewTask({ ...newTask, description: e.target.value});
+  const handleDescriptionChange = (e: { target: { value: any; }; }) => {
+    setNewTask({ ...newTask, description: e.target.value });
   };
 
   const handleUpdateClick = () => {
@@ -27,20 +39,33 @@ const EditTaskModalContent = ({ task, onUpdateTask }) => {
 
   return (
     <>
-      <div className = "relative flex flex-col items-center gap-4 mx-10">
-        <h1 className = "mt-0">Edit Task</h1>
-        <div className = "flex w-full flex-col">
+      <div className="relative mx-10 flex flex-col items-center gap-4">
+        <h1 className="mt-0">Edit Task</h1>
+        <div className="flex w-full flex-col">
           <label>Task Name:</label>
-          <input className = "input input-bordered w-full" type="text" value={newTask.title} onChange={handleTitleChange} />
+          <input
+            className="input input-bordered w-full"
+            type="text"
+            value={newTask.title}
+            onChange={handleTitleChange}
+          />
         </div>
-        <div className = "flex w-full flex-col">
+        <div className="flex w-full flex-col">
           <label>Description:</label>
-          <textarea className = "input input-bordered w-full" value={newTask.description} onChange={handleDescriptionChange} />
+          <textarea
+            className="input input-bordered w-full"
+            value={newTask.description}
+            onChange={handleDescriptionChange}
+          />
         </div>
-        <button className = "btn btn-primary btn-wide" onClick={handleUpdateClick}>Update Task</button>
+        <button
+          className="btn btn-primary btn-wide"
+          onClick={handleUpdateClick}
+        >
+          Update Task
+        </button>
       </div>
     </>
-
   );
 };
 

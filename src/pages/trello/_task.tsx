@@ -1,8 +1,8 @@
+import { TaskI } from "~/types/TaskI";
 
-function Task({task}: {task: TaskI}) {
-  return (
-    <div>Task</div>
-  )
+function Task({ task }: { task: TaskI }) {
+  console.log(task);
+  return <div>Task</div>;
 }
 
-export default Task
+export default Task;

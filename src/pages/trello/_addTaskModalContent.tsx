@@ -5,14 +5,23 @@ import { TaskI } from "~/types/TaskI";
 import { ColumnI } from "~/types/ColumnI";
 import { api } from "~/utils/api";
 
-
 interface AddTaskModalContentProps {
-  column: Record<string, ColumnI>, 
-  setColumns: React.Dispatch<React.SetStateAction<Record<string, ColumnI>>>
+  column: Record<string, ColumnI>;
+  setColumns: React.Dispatch<React.SetStateAction<Record<string, ColumnI>>>;
 }
 
-export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps) => {
-  const [newTask, setNewTask] = useState<TaskI>({ id: "", title: "", description: "", status: "", dueDate: ""});
+export const AddTaskModalContent = ({
+  column,
+  setColumns,
+}: AddTaskModalContentProps) => {
+  console.log(column, setColumns);
+  const [newTask, setNewTask] = useState<TaskI>({
+    id: "",
+    title: "",
+    description: "",
+    status: "",
+    dueDate: "",
+  });
   const [date, setDate] = useState<string>("");
   const { addToast } = useToast();
   const { closeModal } = useModal();
@@ -31,7 +40,7 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
     }
 
     console.log(newTask);
-    
+
     // newColumns.todos.items.push(newTask);
     // setColumns({...newColumns});
 
@@ -57,9 +66,9 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
       onError: (error) => {
         addToast({
           type: "error",
-          message: `Error adding task. ${error.message}`
+          message: `Error adding task. ${error.message}`,
         });
-      }
+      },
     });
 
     // Optionally, you can reset the form fields here
@@ -70,16 +79,23 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
 
   return (
     <>
-      <div className="relative flex flex-col items-center gap-4 mx-10">
+      <div className="relative mx-10 flex flex-col items-center gap-4">
         <h1 className="mt-0">Add Task</h1>
-        <div className= "flex w-full flex-col">
+        <div className="flex w-full flex-col">
           <label htmlFor="taskName">Task Name*</label>
-          <input 
+          <input
             className="input input-bordered w-full"
             type="text"
             id="taskName"
             value={newTask.title}
-            onChange={(e) => setNewTask({ ...newTask, title: e.target.value, status: "Todo", id: Math.random().toString(36).substring(7)})}
+            onChange={(e) =>
+              setNewTask({
+                ...newTask,
+                title: e.target.value,
+                status: "Todo",
+                id: Math.random().toString(36).substring(7),
+              })
+            }
           />
         </div>
         <div className="flex w-full flex-col">
@@ -88,7 +104,9 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
             className="input input-bordered w-full"
             id="description"
             value={newTask.description}
-            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+            onChange={(e) =>
+              setNewTask({ ...newTask, description: e.target.value })
+            }
           />
         </div>
         <div className="flex w-full flex-col">
@@ -108,6 +126,5 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
     </>
   );
 };
-
 
 export default AddTaskModalContent;

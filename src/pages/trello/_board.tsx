@@ -11,8 +11,6 @@ import { useModal } from "~/components/hooks/modalContext";
 import { AddTaskModalContent } from "./_addTaskModalContent";
 import { FaPlusCircle } from "react-icons/fa";
 import EditTaskModalContent from "./_editTaskModalContent";
-import { api } from "~/utils/api";
-
 
 export const Board = () => {
   const initialColumns: Record<string, ColumnI> = {
@@ -32,7 +30,7 @@ export const Board = () => {
 
   const { openModal } = useModal();
   const [columns, setColumns] = useState(initialColumns);
-  
+
   const handleAddTask = () => {
     openModal({
       content: <AddTaskModalContent column={columns} setColumns={setColumns} />,
@@ -40,12 +38,13 @@ export const Board = () => {
     });
   };
 
-  const onUpdateTask = ( newTask: TaskI ) => {
+  const onUpdateTask = (newTask: TaskI) => {
     console.log("Updating");
+    console.log(newTask);
 
     // onUpdateTask(editedTask: TaskI, prevTitle)
     // Find for the task using id/prevTitle
-    // Replace with new 
+    // Replace with new
 
     // TODO call backend for updating task
     // setNewTask({ title: title, description: description, status: task.status });
@@ -54,12 +53,7 @@ export const Board = () => {
   const handleEditTask = (task: TaskI) => {
     console.log("editing");
     openModal({
-      content: (
-        <EditTaskModalContent
-          task = {task}
-          onUpdateTask={onUpdateTask}
-        />
-      ),
+      content: <EditTaskModalContent task={task} onUpdateTask={onUpdateTask} />,
       id: "edit-task-modal",
     });
   };
@@ -118,13 +112,8 @@ export const Board = () => {
     });
   };
 
-  
-
-
-
   return (
     <div className="flex w-full flex-col">
-      
       <button className="btn btn-primary" onClick={handleAddTask}>
         <FaPlusCircle />
         Add Task
@@ -161,8 +150,10 @@ export const Board = () => {
                                 {...provided.dragHandleProps}
                                 className="card mb-2 bg-indigo-100 shadow"
                               >
-                                <div className="card-body" >
-                                  <h2 onClick={() => handleEditTask(task)}>{task.title}</h2>
+                                <div className="card-body">
+                                  <h2 onClick={() => handleEditTask(task)}>
+                                    {task.title}
+                                  </h2>
                                   <p>{task.description}</p>
                                   <button
                                     className="btn-danger btn"
@@ -185,9 +176,7 @@ export const Board = () => {
           })}
         </DragDropContext>
       </div>
-
     </div>
-      
   );
 };
 
