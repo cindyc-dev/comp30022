@@ -35,9 +35,18 @@ interface EventInput {
   location?: string;
   notes?: string;
   colour: string;
+  connections: string[];
+  customConnections: string[];
 }
 
 export async function addEvent(userId: string, input: EventInput): Promise<string> {
+  const customConnections: string[] = [];
+
+  for (const email of input.customConnections) {
+    const id = await getCustomConnectionId(userId, email);
+    customConnections.push(id);
+  }
+
   const res = await prisma.calendarEvent.create({
     data: {
       title: input.title,
@@ -47,6 +56,20 @@ export async function addEvent(userId: string, input: EventInput): Promise<strin
       notes: input.notes ?? undefined,
       colour: input.colour,
       ownerId: userId,
+      invitees: {
+        connect: input.connections.map((id) => {
+          return {
+            id: id,
+          };
+        }),
+      },
+      customInvitees: {
+        connect: customConnections.map((id) => {
+          return {
+            id
+          };
+        }),
+      },
     },
     select: {
       id: true,
@@ -59,6 +82,13 @@ export async function addEvent(userId: string, input: EventInput): Promise<strin
 export async function editEvent(userId: string, eventId: string, input: EventInput) {
 
   try {
+    const customConnections: string[] = [];
+
+    for (const email of input.customConnections) {
+      const id = await getCustomConnectionId(userId, email);
+      customConnections.push(id);
+    }
+
     await prisma.calendarEvent.update({
       where: {
         id: eventId,
@@ -71,6 +101,20 @@ export async function editEvent(userId: string, eventId: string, input: EventInp
         location: input.location ?? undefined,
         notes: input.notes ?? undefined,
         colour: input.colour,
+        invitees: {
+          connect: input.connections.map((id) => {
+            return {
+              id: id,
+            };
+          }),
+        },
+        customInvitees: {
+          connect: customConnections.map((id) => {
+            return {
+              id
+            };
+          }),
+        },
       }
     });
   } catch (e) {
@@ -108,6 +152,27 @@ export async function deleteEvent(id: string, userId: string) {
   }
 }
 
+async function getCustomConnectionId(id: string, email: string): Promise<string> {
+  const res = await prisma.customContact.findUnique({
+    where: {
+      email: email,
+      id: id,
+    },
+    select: {
+      id: true,
+    }
+  });
+
+  if (!res) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Custom connection with email " + email + " not found.",
+    });
+  }
+
+  return res.id;
+}
+
 function getDbEventsInRange(userId: string, start: Date, end: Date): Promise<EventPayload[]> {
   return prisma.calendarEvent.findMany({
     where: {
@@ -122,5 +187,4 @@ function getDbEventsInRange(userId: string, start: Date, end: Date): Promise<Eve
     select: eventSelect,
   });
 }
-
 
