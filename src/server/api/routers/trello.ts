@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { removeTask, updateTask } from "~/server/Services/TrelloService";
+import {fetchTasks, removeTask, updateTask} from "~/server/Services/TrelloService";
 import { setTask } from "~/server/Services/TrelloService";
 import { createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 
@@ -54,8 +54,10 @@ export const trelloRouter = createTRPCRouter({
       await updateTask(userId, opts.input.id, opts.input.title, opts.input.description, opts.input.dueDate, opts.input.status);
     }),
 
-  // getTask: protectedProcedure
-  //   .query()
+  getTask: protectedProcedure
+    .query(async (opts) => {
+      return fetchTasks(opts.ctx.session.user.id);
+    }),
 
 
 });
