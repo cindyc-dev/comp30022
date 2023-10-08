@@ -50,17 +50,43 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String           @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?          @unique
   emailVerified DateTime?
   password      String?
   image         String?
   contact       String?
   accounts      Account[]
   sessions      Session[]
-  events        CalendarEvent[]
   tasks         Task[]
+  CustomContact CustomContact[]
+  connector     UserConnection[] @relation("connector")
+  connected     UserConnection[] @relation("connected")
+  events        CalendarEvent[]
+}
+
+model CustomContact {
+  id      String  @id @default(cuid())
+  name    String?
+  email   String?
+  contact String?
+  image   String?
+  userId  String
+  tags    String
+  notes   String
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserConnection {
+  userId_1 String
+  userId_2 String
+  tags     String
+  notes    String
+  user1    User   @relation("connector", fields: [userId_1], references: [id], onDelete: Cascade)
+  user2    User   @relation("connected", fields: [userId_2], references: [id], onDelete: Cascade)
+
+  @@id([userId_1, userId_2])
 }
 
 model VerificationToken {
