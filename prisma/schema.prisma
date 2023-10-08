@@ -50,15 +50,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String          @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?         @unique
   emailVerified DateTime?
   password      String?
   image         String?
   contact       String?
   accounts      Account[]
   sessions      Session[]
+  events        CalendarEvent[]
 }
 
 model VerificationToken {
@@ -67,4 +68,16 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model CalendarEvent {
+  id       String   @id @default(cuid())
+  title    String
+  start    DateTime
+  end      DateTime
+  location String?
+  notes    String?  @db.Text
+  colour   String
+  ownerId  String
+  owner    User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 }
