@@ -33,7 +33,7 @@ const Forgot = () => {
         onSuccess: () => {
           addToast({
             type: "success",
-            message: "Email sent!",
+            message: `An email with the verification code has been sent to your email ${email}.`,
           });
           setIsEmailValid(false);
           setStep(1);
@@ -121,7 +121,7 @@ const Forgot = () => {
         )}
         {step === 1 && (
           <div className="flex w-full flex-col gap-4">
-            <p>Check your inbox for a 6-digit token</p>
+            <p>Check your inbox for a 6-digit verification token.</p>
             <TextInput
               label="🔢 Token (6 digits)"
               type="text"
@@ -171,7 +171,10 @@ const Forgot = () => {
                 "Reset Password"
               )}
             </button>
-            <p className="link-primary link text-right text-sm underline">
+            <p
+              className="link-primary link text-right text-sm underline"
+              onClick={() => setStep(0)}
+            >
               Try a different email
             </p>
           </div>
