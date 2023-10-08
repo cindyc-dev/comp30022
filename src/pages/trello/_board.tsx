@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -32,7 +32,8 @@ export const Board = () => {
 
   const { openModal } = useModal();
   const [columns, setColumns] = useState(initialColumns);
-  
+
+
   const handleAddTask = () => {
     openModal({
       content: <AddTaskModalContent column={columns} setColumns={setColumns} />,
@@ -40,7 +41,7 @@ export const Board = () => {
     });
   };
 
-  const onUpdateTask = ( newTask: TaskI ) => {
+  const onUpdateTask = ( newTask ) => {
     console.log("Updating");
 
     // onUpdateTask(editedTask: TaskI, prevTitle)
@@ -106,11 +107,23 @@ export const Board = () => {
     });
   };
 
+  const mutation = api.trello.deleteTask.useMutation();
   // change for task ID
   const deleteTask = (columnId: string, taskIndex: number) => {
     setColumns((prevColumns) => {
       const updatedColumn = { ...prevColumns[columnId] };
-      updatedColumn.items.splice(taskIndex, 1);
+      const removedTask = updatedColumn.items.splice(taskIndex, 1)[0];
+      
+
+      mutation.mutate({ id: removedTask.id }, {
+        onSuccess: () => {
+          console.log("Deleted");
+        },
+        onError: (error) => {
+          console.log(error);
+        }
+      });
+
       return {
         ...prevColumns,
         [columnId]: updatedColumn,

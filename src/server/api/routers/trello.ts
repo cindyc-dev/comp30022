@@ -29,7 +29,7 @@ export const trelloRouter = createTRPCRouter({
   deleteTask: protectedProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.string(),
       })
     )
     .mutation(async (opts) => {

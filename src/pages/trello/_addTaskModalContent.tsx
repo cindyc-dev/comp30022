@@ -20,7 +20,7 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
   const mutation = api.trello.addTask.useMutation();
   const handleAddTask = () => {
     // Generating random id for task
-    // const newColumns = {...column};
+    const newColumns = {...column};
     if (!newTask.title) {
       // Show error toast if task name or status is empty
       addToast({
@@ -31,14 +31,9 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
     }
 
     console.log(newTask);
+    newColumns.todos.items.push(newTask);
+    setColumns({...newColumns});
     
-    // newColumns.todos.items.push(newTask);
-    // setColumns({...newColumns});
-
-    // addToast({
-    //   type: "success",
-    //   message: "Task added successfully.",
-    // });
 
     const addedTask = {
       title: newTask.title,
@@ -62,7 +57,6 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
       }
     });
 
-    // Optionally, you can reset the form fields here
     setNewTask({ id: "", title: "", description: "", status: "", dueDate: "" });
 
     closeModal("add-task-modal");
