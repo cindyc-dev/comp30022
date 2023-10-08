@@ -1,5 +1,6 @@
 import {prisma} from "~/server/db";
 import {Prisma} from "@prisma/client";
+import {TRPCError} from "@trpc/server";
 
 const eventSelect = {
   id: true,
@@ -66,8 +67,14 @@ export async function deleteEvent(id: string, userId: string) {
     });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-
+      if (e.code === "P2025") {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Event not found.",
+        });
+      }
     }
+    throw e;
   }
 }
 
