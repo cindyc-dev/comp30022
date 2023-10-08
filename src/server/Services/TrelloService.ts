@@ -23,18 +23,20 @@ export async function setTask(
   return task ? true : false;
 }
 
-export async function removeTask(id: string): Promise<boolean> {
-  const remove = await deleteTask(id);
+export async function removeTask(userId: string, id: string): Promise<boolean> {
+  const remove = await deleteTask(userId, id);
   return remove ? true : false;
 }
 
 export async function updateTask(
+  userId: string,
   id: string,
   title: string,
   description: string,
-  dueDate: string
+  dueDate: string,
+  status: string
 ): Promise<boolean> {
-  const update = await renewTask(id, title, description, dueDate);
+  const update = await renewTask(userId, id, title, description, dueDate, status);
   return update ? true : false;
 }
 
