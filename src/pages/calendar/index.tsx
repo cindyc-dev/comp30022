@@ -1,7 +1,6 @@
 import moment, { Moment } from "moment";
 import { useModal } from "~/components/hooks/modalContext";
 import { Layout } from "~/components/layout/layout";
-import { sampleEvents } from "~/sample_data/sampleEvents";
 import { CalendarViewType, EventI, EventStateI } from "~/types/EventI";
 import AddEventModalContent from "~/components/calendar/_addEventModalContent";
 import WeekView from "~/components/calendar/_weekView";
@@ -46,10 +45,8 @@ export default function Calendar() {
         <EventDetailsModal
           initialEvent={event}
           onSave={(event) => {
+            handleEditEvent(event);
             closeModal("event-details-modal");
-            setEvents((prev) =>
-              prev.map((e) => (e.id === event.id ? event : e))
-            );
           }}
           handleDeleteEvent={handleDeleteEvent}
         />
@@ -60,6 +57,7 @@ export default function Calendar() {
 
   const { addToast } = useToast();
 
+  /* Add Event */
   const addMutation = api.calendar.addEvent.useMutation();
   const handleAddEvent = (event: EventI) => {
     if (!event.title || !event.startDateTime || !event.endDateTime) {
@@ -69,7 +67,6 @@ export default function Calendar() {
       });
       return;
     }
-    // TODO api call to add event
     const newEvent = {
       title: event.title,
       startDateTime: event.startDateTime.toISOString(),
@@ -102,9 +99,67 @@ export default function Calendar() {
     closeModal("add-event-modal");
   };
 
+  /* Delete Event */
+  const deleteMutation = api.calendar.deleteEvent.useMutation();
   const handleDeleteEvent = (event: EventI) => {
-    // TODO api call to delete event
-    setEvents((prev) => prev.filter((e) => e.id !== event.id)); // TODO remove
+    deleteMutation.mutate(
+      { id: event.id },
+      {
+        onSuccess: (data) => {
+          console.log({ data });
+          // Show success toast
+          addToast({
+            type: "success",
+            message: `Event ${event.title} deleted successfully!`,
+          });
+          refetch();
+        },
+        onError: (error) => {
+          console.log({ error });
+          // Show error toast
+          addToast({
+            type: "error",
+            message: `Event ${event.title} failed to delete.`,
+          });
+        },
+      }
+    );
+
+    // Close modal
+    closeModal("event-details-modal");
+  };
+
+  /* Edit Event */
+  const editMutation = api.calendar.editEvent.useMutation();
+  const handleEditEvent = (event: EventI) => {
+    const newEvent = {
+      id: event.id,
+      title: event.title,
+      startDateTime: event.startDateTime.toISOString(),
+      endDateTime: event.endDateTime.toISOString(),
+      location: event.location,
+      notes: event.notes,
+      colour: event.colour,
+    };
+    editMutation.mutate(newEvent, {
+      onSuccess: (data) => {
+        console.log({ data });
+        // Show success toast
+        addToast({
+          type: "success",
+          message: `Event ${event.title} edited successfully!`,
+        });
+        refetch();
+      },
+      onError: (error) => {
+        console.log({ error });
+        // Show error toast
+        addToast({
+          type: "error",
+          message: `Event ${event.title} failed to edit.`,
+        });
+      },
+    });
 
     // Close modal
     closeModal("event-details-modal");
@@ -173,7 +228,15 @@ export default function Calendar() {
         monthEvents: getEventsInMonth(today, data),
       });
     }
-  }, [data]);
+    if (error) {
+      console.log({ error });
+      // Show error toast
+      addToast({
+        type: "error",
+        message: `Failed to get events. Error: ${error.message}`,
+      });
+    }
+  }, [data, error]);
 
   // const weekEvents = getEventsInWeek(today, events, true);
   // const monthEvents = getEventsInMonth(today, events);
@@ -191,6 +254,7 @@ export default function Calendar() {
         view={view || DEFAULT_VIEW}
         setView={setView}
         openEventModal={openEventModal}
+        isLoading={isLoading}
       />
       {/* Calendar View */}
       <div className="m-2 w-full">

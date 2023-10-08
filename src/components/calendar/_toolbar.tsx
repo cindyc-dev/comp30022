@@ -15,6 +15,7 @@ interface ToolbarProps {
   view: CalendarViewType;
   setView: Dispatch<SetStateAction<CalendarViewType | undefined>>;
   openEventModal: () => void;
+  isLoading: boolean;
 }
 
 interface ViewOptionI {
@@ -43,17 +44,18 @@ function Toolbar({
   view,
   setView,
   openEventModal,
+  isLoading,
 }: ToolbarProps) {
   const getHeaderDate = () => {
     switch (view) {
-    case "month":
-      return today.format("MMMM YYYY");
-    case "week":
-      return `${today.startOf("week").format("MMM Do")} - ${today
-        .endOf("week")
-        .format("MMM Do")}`;
-    case "day":
-      return today.format("Do MMM YYYY");
+      case "month":
+        return today.format("MMMM YYYY");
+      case "week":
+        return `${today.startOf("week").format("MMM Do")} - ${today
+          .endOf("week")
+          .format("MMM Do")}`;
+      case "day":
+        return today.format("Do MMM YYYY");
     }
   };
   return (
@@ -84,6 +86,9 @@ function Toolbar({
           <MdToday /> Today
         </button>
         <h3 className="m-0">{getHeaderDate()}</h3>
+        {isLoading && (
+          <span className="loading loading-spinner loading-md"></span>
+        )}
       </div>
       <div className="flex items-center gap-1">
         <button className="btn btn-primary" onClick={openEventModal}>
