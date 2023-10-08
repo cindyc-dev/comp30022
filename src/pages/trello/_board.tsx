@@ -33,6 +33,16 @@ export const Board = () => {
   const { openModal } = useModal();
   const [columns, setColumns] = useState(initialColumns);
 
+  const {data, isLoading, error, refetch } = api.trello.getTask.useQuery();
+  useEffect(() => {
+    if (data){
+      const newColumns = {...columns};
+      newColumns.todos.items = (data).filter((task) => task.status === "todos");
+      newColumns.inProgress.items = data.filter((task) => task.status === "inProgress");
+      newColumns.done.items = data.filter((task) => task.status === "done");
+      setColumns({...newColumns});
+    }
+  }, [data, error]);
 
   const handleAddTask = () => {
     openModal({
@@ -143,7 +153,7 @@ export const Board = () => {
             const column = columns[columnId];
             return (
               <div key = {columnId}>
-                <h2 className = "mx-6 my-4">{column.title} <span className="text-gray-400">{column.items.length}</span></h2>
+                <h2 className = "mx-6 my-4 m-0">{column.title} <span className="text-gray-400">{column.items.length}</span></h2>
                 <div
                   key={columnId}
                   className="card w-96 flex-1 bg-gray-100 p-4 shadow"
@@ -170,10 +180,11 @@ export const Board = () => {
                                   {...provided.dragHandleProps}
                                   className="card mb-2 bg-indigo-100 shadow"
                                 >
-                                  <div className="card-body" onClick={() => handleEditTask(task)} >
-                                    <h2>{task.title}</h2>
+                                  <div className="card-body m-0 p-5" onClick={() => handleEditTask(task)} >
+                                    <h3 className="m-0">{task.title}</h3>
+                                    <p >{task.dueDate.toDateString()}</p>
                                     <p>{task.description}</p>
-                                    <p>{task.dueDate.toDateString()}</p>
+                                    
                                   </div>
                                 </div>
                               )}

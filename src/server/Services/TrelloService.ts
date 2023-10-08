@@ -42,7 +42,7 @@ export async function updateTask(
 
 export async function fetchTasks(
   createdById: string
-): Promise<TaskInfoPayload | null> {
+): Promise<TaskInfoPayload[] | null> {
   const tasks = await getTasks(createdById);
   return tasks;
 }

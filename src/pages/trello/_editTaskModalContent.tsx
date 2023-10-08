@@ -54,6 +54,19 @@ const EditTaskModalContent = ({ task, onUpdateTask } : EditTaskModalContentProps
           <label>Description:</label>
           <textarea className = "input input-bordered w-full" value={newTask.description} onChange={handleDescriptionChange} />
         </div>
+        <div className="flex w-full flex-col">
+          <label htmlFor="date">Date</label>
+          <input
+            className="input input-bordered w-full"
+            type="date"
+            id="date"
+            value={newTask.dueDate.toISOString().split("T")[0]}
+            onChange={(e) => {
+              setNewTask({ ...newTask, dueDate: new Date(e.target.value) });
+              
+            }}
+          />
+        </div>
         <button className = "btn btn-primary btn-wide" onClick={handleUpdateClick}>Update Task</button>
         <button className="btn-danger btn"onClick={() => deleteTask(task)}>Delete</button>
       </div>

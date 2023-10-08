@@ -4,8 +4,6 @@ import { useModal } from "../../components/hooks/modalContext";
 import { TaskI } from "~/types/TaskI";
 import { ColumnI } from "~/types/ColumnI";
 import { api } from "~/utils/api";
-import { set } from "zod";
-
 
 interface AddTaskModalContentProps {
   column: Record<string, ColumnI>, 
@@ -73,7 +71,7 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
             type="text"
             id="taskName"
             value={newTask.title}
-            onChange={(e) => setNewTask({ ...newTask, title: e.target.value, status: "Todo", id: Math.random().toString(36).substring(7)})}
+            onChange={(e) => setNewTask({ ...newTask, title: e.target.value, status: "Todo"})}
           />
         </div>
         <div className="flex w-full flex-col">
