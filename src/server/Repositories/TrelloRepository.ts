@@ -88,6 +88,5 @@ export async function getTasks(
   if (!dbResult) {
     return null;
   }
-  // return null; //placeholder
   return dbResult;
 }
