@@ -5,21 +5,20 @@ import {addEvent} from "~/server/Repositories/CalendarRepository";
 
 export const calendarRouter = createTRPCRouter({
   getEvents: protectedProcedure
-    .input(String)
+    .input(z.object({
+      start: z.string().datetime().optional(),
+      end: z.string().datetime().optional(),
+    }))
     .query(async (opts) => {
       const session = opts.ctx.session;
       const userId = session.user.id;
-      const input = opts.input;
+      const { start, end } = opts.input;
 
-      if (input) {
-        const { start, end } = JSON.parse(input);
+      if (start && end) {
+        const startDateTime = new Date(start);
+        const endDateTime = new Date(end);
 
-        if (start && end) {
-          const startDateTime = new Date(start);
-          const endDateTime = new Date(end);
-
-          return await getEventsInRange(userId, startDateTime, endDateTime);
-        }
+        return await getEventsInRange(userId, startDateTime, endDateTime);
       }
 
       return await getAllEvents(userId);
@@ -49,5 +48,5 @@ export const calendarRouter = createTRPCRouter({
         startDateTime: parsedStart,
         endDateTime: parsedEnd,
       });
-    })
+    }),
 });
