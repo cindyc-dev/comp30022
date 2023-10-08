@@ -43,13 +43,25 @@ export const Board = () => {
 
   const onUpdateTask = ( newTask ) => {
     console.log("Updating");
+    console.log(newTask);
 
-    // onUpdateTask(editedTask: TaskI, prevTitle)
-    // Find for the task using id/prevTitle
-    // Replace with new 
+    const mutation = api.trello.updateTask.useMutation();
 
-    // TODO call backend for updating task
-    // setNewTask({ title: title, description: description, status: task.status });
+    const updatedTask = {
+      title: newTask.title,
+      description: newTask.description,
+      dueDate: newTask.dueDate,
+      status: newTask.status,
+    };
+
+    mutation.mutate(updatedTask, {
+      onSuccess: () => {
+        console.log("Updated");
+      },
+      onError: (error) => {
+        console.log(error);
+      }
+    });
   };
 
   const handleEditTask = (task: TaskI) => {
