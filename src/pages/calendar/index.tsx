@@ -119,7 +119,7 @@ export default function Calendar() {
           // Show error toast
           addToast({
             type: "error",
-            message: `Event ${event.title} failed to delete.`,
+            message: `Event ${event.title} failed to delete. Error: ${error.message}`,
           });
         },
       }
@@ -156,7 +156,7 @@ export default function Calendar() {
         // Show error toast
         addToast({
           type: "error",
-          message: `Event ${event.title} failed to edit.`,
+          message: `Event ${event.title} failed to edit. Error: ${error.message}`,
         });
       },
     });
