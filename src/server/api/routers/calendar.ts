@@ -94,6 +94,6 @@ export const calendarRouter = createTRPCRouter({
       const userId = session.user.id;
       const eventId = opts.input.id;
 
-      return await deleteEvent(userId, eventId);
+      return await deleteEvent(eventId, userId);
     }),
 });
