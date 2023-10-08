@@ -9,6 +9,7 @@ import { FaInfoCircle } from "react-icons/fa";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { api } from "~/utils/api";
 import { UserI } from "~/types/UserI";
+import { checkEmail } from "../utils/checkEmail";
 
 interface ConnectionDetailsInputsProps {
   connection: ConnectionI;
@@ -36,11 +37,7 @@ function ConnectionDetailsInputs({
   if (debounceEmail) {
     // Check if email is valid when connection.email changes after 3000ms of no change
     useEffect(() => {
-      // Regex that checks if email is valid
-      const re =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-      if (connection.email.length > 0 && re.test(connection.email)) {
+      if (connection.email.length > 0 && checkEmail(connection.email)) {
         setIsLoading(true);
         setTimeout(() => {
           setIsLoading(false);

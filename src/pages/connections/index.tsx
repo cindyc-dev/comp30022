@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { Layout } from "~/components/layout/layout";
 import { ConnectionI } from "~/types/ConnectionI";
-import {
-  NEW_CONNECTION,
-  sampleConnections,
-  sampleTags,
-} from "~/sample_data/sampleConnections";
+import { NEW_CONNECTION, sampleTags } from "~/sample_data/sampleConnections";
 import { FaFilter, FaPlus, FaTrash } from "react-icons/fa";
 import { useModal } from "~/components/hooks/modalContext";
 import AddConnectionModal, {
@@ -20,6 +16,7 @@ import { BiMailSend } from "react-icons/bi";
 import Tag from "~/components/connections/_tag";
 import { api } from "~/utils/api";
 import Image from "next/image";
+import { IoMdRefresh } from "react-icons/io";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>([]);
@@ -40,12 +37,13 @@ export default function Connections() {
     data: connections,
     isLoading,
     error,
+    refetch,
   } = api.connection.getAllConnections.useQuery();
 
   useEffect(() => {
     if (connections) {
       console.log({ connections: connections });
-      setData(connections);
+      setData([...connections]);
     }
     if (error) {
       console.error(error);
@@ -56,20 +54,9 @@ export default function Connections() {
     }
   }, [connections, error]);
 
-  // Open Add Connection Modal
-  const addConnection = () => {
-    openModal({
-      content: (
-        <AddConnectionModal
-          handleCreateConnection={handleAddConnection}
-          tagColoursMap={tagColoursMap}
-        />
-      ),
-      id: "add-connection-modal",
-    });
-  };
+  const customMutation = api.connection.createCustom.useMutation();
 
-  const handleAddConnection = ({
+  const handleCreateCustom = ({
     newConnection,
     setConnection,
   }: handleAddConnectionProps) => {
@@ -88,23 +75,58 @@ export default function Connections() {
       // Show error toast
       addToast({
         type: "error",
-        message: "Email already exists.",
+        message: "You already have a connection with this email.",
       });
       return;
     }
 
-    // TODO send newConnection to API and get back newConnection with id
-    setData((prev) => [...prev, newConnection]); // To remove
+    const newConnectionWithTags = {
+      ...newConnection,
+      tags: newConnection.tags.map((tag) => tag.toLowerCase()),
+      notes: newConnection.notes || "",
+      contactNumber: newConnection.phone || "",
+      photoUrl: newConnection.photoUrl || "",
+    };
 
-    // Show success toast
-    addToast({
-      type: "success",
-      message: "Connection added successfully.",
+    // API call to create new connection
+    customMutation.mutate(newConnectionWithTags, {
+      onSuccess: (data) => {
+        console.log(data);
+        // Show success toast
+        addToast({
+          type: "success",
+          message: `Connection with ${newConnection.name} added successfully.`,
+        });
+
+        // Refetch data
+        refetch();
+      },
+      onError: (error) => {
+        console.error(error);
+        // Show error toast
+        addToast({
+          type: "error",
+          message: `Error creating connection. ${error}: ${error.message}`,
+        });
+      },
     });
 
     // Reset connection and close modal
     setConnection(NEW_CONNECTION);
     closeModal("add-connection-modal");
+  };
+
+  // Open Add Connection Modal
+  const addConnection = () => {
+    openModal({
+      content: (
+        <AddConnectionModal
+          handleCreateCustom={handleCreateCustom}
+          tagColoursMap={tagColoursMap}
+        />
+      ),
+      id: "add-connection-modal",
+    });
   };
 
   // Multiple-row operation: Delete
@@ -227,7 +249,7 @@ export default function Connections() {
       </div>
 
       {/* No Connections Illustration */}
-      {(data.length === 0 && !isLoading) && (
+      {data.length === 0 && !isLoading && (
         <div className="flex w-full flex-col items-center justify-center text-center">
           <Image
             src="/svg/Empty-pana.svg"

@@ -9,6 +9,9 @@ import UploadImageModalContent from "~/components/common/uploadImageModalContent
 import ConnectionDetailsInputs from "./_connectionDetailsInputs";
 import ConnectionCard from "./_connectionCard";
 import Image from "next/image";
+import { checkEmail } from "../utils/checkEmail";
+import DebouncedInput from "./_debouncedInput";
+import { api } from "~/utils/api";
 
 export interface handleAddConnectionProps {
   newConnection: ConnectionI;
@@ -17,10 +20,10 @@ export interface handleAddConnectionProps {
 
 const AddConnectionModal = ({
   tagColoursMap,
-  handleCreateConnection,
+  handleCreateCustom,
 }: {
   tagColoursMap: Record<string, string>;
-  handleCreateConnection: ({
+  handleCreateCustom: ({
     newConnection,
     setConnection,
   }: handleAddConnectionProps) => void;
@@ -47,7 +50,7 @@ const AddConnectionModal = ({
           <SearchTab />
         ) : (
           <CustomTab
-            handleCreateConnection={handleCreateConnection}
+            handleCreateCustom={handleCreateCustom}
             tagColoursMap={tagColoursMap}
           />
         )}
@@ -58,29 +61,70 @@ const AddConnectionModal = ({
 
 const SearchTab = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchResults] = useState<ConnectionI[]>(sampleSearchResults);
+  const [searchResults] = useState<ConnectionI[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // TODO send query to API and set searchResults
+  const mutation = api.connection.searchAllUsers.useMutation();
+
+  // API call to search for connections when searchQuery changes
+  useEffect(() => {
+    if (!checkEmail(searchQuery)) return;
+
+    console.log("Searching for connections with query: ", searchQuery);
+    setIsLoading(true);
+
+    mutation.mutate(
+      { emailString: searchQuery, topX: 5 },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            console.log("Search results: ", data);
+          }
+          setIsLoading(false);
+        },
+        onError: (error) => {
+          console.error(error);
+          setIsLoading(false);
+        },
+      }
+    );
+  }, [searchQuery]);
 
   return (
     <div className="flex flex-col items-center gap-4">
       <h1 className="my-0">Search for Connections</h1>
-      <input
-        type="text"
-        className="input input-primary w-full"
-        placeholder="🔎 Search Connection Email"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        autoFocus
-      />
-
-      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-        {searchResults.map((connection) => (
-          <ConnectionCard key={connection.email} connection={connection} />
-        ))}
+      <div className="w-full">
+        <DebouncedInput
+          value={searchQuery}
+          onChange={(value) => setSearchQuery(value as string)}
+          placeholder="🔎 Search Connection Email"
+          className="input input-primary w-full"
+          debounce={1000}
+        />
+        <div className="flex w-full justify-end text-sm text-gray-400">
+          <p className="m-0 p-0">
+            You must enter a valid email (eg. name@company.com) to search for
+            connections.
+          </p>
+        </div>
       </div>
+
+      {isLoading && (
+        <div className="flex w-full flex-grow items-center justify-center">
+          <div className="loading loading-spinner loading-lg text-primary"></div>
+        </div>
+      )}
+
+      {!isLoading && (
+        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+          {searchResults.map((connection) => (
+            <ConnectionCard key={connection.email} connection={connection} />
+          ))}
+        </div>
+      )}
+
       {/* Show Illustration when 0 Search Results */}
-      {searchResults.length === 0 && (
+      {searchResults.length === 0 && !isLoading && (
         <div className="flex w-full flex-col items-center justify-center text-center">
           <Image
             src="/svg/Search-rafiki.svg"
@@ -102,10 +146,10 @@ const SearchTab = () => {
 
 const CustomTab = ({
   tagColoursMap,
-  handleCreateConnection,
+  handleCreateCustom,
 }: {
   tagColoursMap: Record<string, string>;
-  handleCreateConnection: ({
+  handleCreateCustom: ({
     newConnection,
     setConnection,
   }: handleAddConnectionProps) => void;
@@ -137,10 +181,10 @@ const CustomTab = ({
       />
       <button
         className={`btn btn-primary btn-wide ${
-          (!connection.name || !connection.email) && "btn-disabled"
+          (!connection.name || !checkEmail(connection.email)) && "btn-disabled"
         }`}
         onClick={() =>
-          handleCreateConnection({
+          handleCreateCustom({
             newConnection: connection,
             setConnection: setConnection,
           })

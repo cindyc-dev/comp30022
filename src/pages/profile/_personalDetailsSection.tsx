@@ -57,13 +57,14 @@ export const PersonalDetailsSection = () => {
           type: "success",
           message: "Profile details saved successfully.",
         });
+        refetch();
       },
       onError: async (error) => {
         addToast({
           type: "error",
           message: `${error.data?.httpStatus} ${error.data?.code}: ${error.message}`,
         });
-      }
+      },
     });
   };
 
@@ -103,14 +104,6 @@ export const PersonalDetailsSection = () => {
           </p>
         </div>
         <div className="hidden flex-row gap-2 md:flex">
-          <button
-            className="btn btn-square font-bold"
-            onClick={() => {
-              refetch();
-            }}
-          >
-            <IoMdRefresh />
-          </button>
           <button
             className="btn btn-primary"
             onClick={() => savePersonalDetails()}
@@ -159,14 +152,6 @@ export const PersonalDetailsSection = () => {
         </div>
       </div>
       <div className="flex flex-row gap-2">
-        <button
-          className="btn btn-square font-bold md:hidden"
-          onClick={() => {
-            refetch();
-          }}
-        >
-          <IoMdRefresh />
-        </button>
         <button
           className="btn btn-primary flex-grow md:hidden"
           onClick={() => savePersonalDetails()}
