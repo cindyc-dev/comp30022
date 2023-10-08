@@ -21,6 +21,7 @@ export async function getAllUserConnectionsDetails(userId: string) {
         email: user.email,
         tags: tags,
         notes: userConnections[i]["notes"],
+        photoUrl: user.image,
         isExisting: true,
       };
       connectionDetails.push(connection);

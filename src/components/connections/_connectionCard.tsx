@@ -33,13 +33,8 @@ function ConnectionCard({
         }`}
         onClick={() => handleAdd(connection.id, connection.name)}
       >
-        {isAlreadyConnected ? (
-          "Already Connected"
-        ) : (
-          <div className="flex gap-2">
-            <FaPaperPlane /> Connect
-          </div>
-        )}
+        <FaPaperPlane />
+        {isAlreadyConnected ? "Already Connected" : "Connect"}
       </button>
     </div>
   );
