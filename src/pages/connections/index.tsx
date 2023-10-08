@@ -18,6 +18,7 @@ import { RowSelectionState } from "@tanstack/react-table";
 import Link from "next/link";
 import { BiMailSend } from "react-icons/bi";
 import Tag from "~/components/connections/_tag";
+import Image from "next/image";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>(sampleConnections);
@@ -149,8 +150,11 @@ export default function Connections() {
             placeholder="🔎 Search Connection"
             className="input input-sm"
           />
-          <div className="dropdown dropdown-end">
-            <label tabIndex={0} className="btn btn-primary flex flex-nowrap">
+          <div className="dropdown-end dropdown">
+            <label
+              tabIndex={0}
+              className="btn btn-primary btn-sm flex flex-nowrap"
+            >
               <FaFilter /> Filter
             </label>
             <ul
@@ -190,6 +194,24 @@ export default function Connections() {
           setRowSelection={setRowSelection}
         />
       </div>
+
+      {/* No Connections Illustration */}
+      {data.length === 0 && (
+        <div className="flex w-full flex-col items-center justify-center text-center">
+          <Image
+            src="/svg/Empty-pana.svg"
+            alt={"Empty Illustration"}
+            width={300}
+            height={300}
+            className="m-0 p-0"
+          />
+          <p>
+            You have no connections. Click on the button above to add a new one!
+          </p>
+        </div>
+      )}
+
+      {/* Multi-Row Selection Toolbar */}
       {Object.keys(rowSelection).length > 0 && (
         <div className="navbar fixed bottom-2 flex w-9/12 justify-between gap-2 rounded bg-primary px-10 shadow-md">
           <div className="text-l text-base-300">

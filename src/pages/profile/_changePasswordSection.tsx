@@ -63,7 +63,7 @@ export const ChangePasswordSection = () => {
         setConfirmNewPassword("");
       },
       onError: async (error) => {
-        console.log({ error: error });
+        console.error({ error: error });
         addToast({
           type: "error",
           message: error.message,

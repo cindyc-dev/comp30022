@@ -8,6 +8,7 @@ import { useModal } from "~/components/hooks/modalContext";
 import UploadImageModalContent from "~/components/common/uploadImageModalContent";
 import ConnectionDetailsInputs from "./_connectionDetailsInputs";
 import ConnectionCard from "./_connectionCard";
+import Image from "next/image";
 
 export interface handleAddConnectionProps {
   newConnection: ConnectionI;
@@ -67,7 +68,7 @@ const SearchTab = () => {
       <input
         type="text"
         className="input input-primary w-full"
-        placeholder="🔎 Search Connection"
+        placeholder="🔎 Search Connection Email"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         autoFocus
@@ -78,6 +79,23 @@ const SearchTab = () => {
           <ConnectionCard connection={connection} />
         ))}
       </div>
+      {/* Show Illustration when 0 Search Results */}
+      {searchResults.length === 0 && (
+        <div className="flex w-full flex-col items-center justify-center text-center">
+          <Image
+            src="/svg/Search-rafiki.svg"
+            alt={"No Search Results Illustration"}
+            width={300}
+            height={300}
+            className="m-0 p-0"
+          />
+          <p>
+            {searchQuery.length < 5
+              ? "Enter at least 5 characters to search."
+              : "No results found. Try searching for a different email."}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

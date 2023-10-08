@@ -22,6 +22,6 @@ function parseDbEvent(dbEvents: EventPayload): EventI {
     location: dbEvents.location ?? undefined,
     notes: dbEvents.notes ?? undefined,
     colour: dbEvents.colour,
-    isExternal: false,
+    relatedConnections: [],
   };
 }

@@ -5,6 +5,7 @@ import AvatarImage from "~/components/common/avatarImage";
 import TextInput from "~/components/common/textInput";
 import Tag from "./_tag";
 import { ConnectionI } from "~/types/ConnectionI";
+import TextAreaInput from "~/components/common/textAreaInput";
 
 interface ConnectionDetailsInputsProps {
   connection: ConnectionI;
@@ -100,15 +101,11 @@ function ConnectionDetailsInputs({
           </div>
         </div>
       </div>
-      <div className="w-full">
-        <label className="label">
-          <span className="label-text">✏️ Notes</span>
-        </label>
-        <textarea
-          className="textarea textarea-bordered w-full"
-          placeholder="eg. Met at a conference in 2019. We talked about the new React version..."
-        ></textarea>
-      </div>
+      <TextAreaInput
+        label="✏️ Notes"
+        value={connection.notes || ""}
+        placeholder="eg. Met at a conference in 2019. We talked about the new React version..."
+      />
     </>
   );
 }
