@@ -37,9 +37,19 @@ export const Board = () => {
   useEffect(() => {
     if (data){
       const newColumns = {...columns};
-      newColumns.todos.items = (data).filter((task) => task.status === "todos");
-      newColumns.inProgress.items = data.filter((task) => task.status === "inProgress");
-      newColumns.done.items = data.filter((task) => task.status === "done");
+      const newTasks: TaskI[] = data.map((task) => {
+        const newT: TaskI = {
+          id: task.id,
+          title: task.title,
+          description: task.description || undefined,
+          dueDate: task.dueDate || undefined,
+          status: task.status
+        };
+        return newT;
+      });
+      newColumns.todos.items = newTasks.filter((task) => task.status === "todos");
+      newColumns.inProgress.items = newTasks.filter((task) => task.status === "inProgress");
+      newColumns.done.items = newTasks.filter((task) => task.status === "done");
       setColumns({...newColumns});
     }
   }, [data, error]);
