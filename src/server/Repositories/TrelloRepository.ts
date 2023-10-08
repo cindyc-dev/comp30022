@@ -1,5 +1,7 @@
 import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
+import { tryCatchWrapper } from "~/utils/tryCatchWrapper";
+
 
 const taskSelect = {
   id: true,
@@ -17,44 +19,53 @@ export async function createTask(
   dueDate: string,
   status: string
 ) {
-  const task = await prisma.task.create({
-    data: {
-      createdById: createdById,
-      title: title,
-      description: description,
-      dueDate: dueDate ? new Date(dueDate) : null,
-      status: status,
-    },
-  });
 
-  // const taskId = task.id;
-
-  return task;
+  return await tryCatchWrapper(async () => {
+    const task = await prisma.task.create({
+      data: {
+        createdById: createdById,
+        title: title,
+        description: description,
+        dueDate: dueDate ? new Date(dueDate) : null,
+        status: status,
+      },
+    });
+    return task;
+  }, "Error creating task.");
 }
 
-export async function deleteTask(id: string) {
-  const deletion = await prisma.task.delete({
-    where: {
-      id: id,
-    },
-  });
-  return deletion;
+export async function deleteTask(userId: string, id: string) {
+
+  return await tryCatchWrapper(async () => {
+
+    await prisma.task.delete({
+      where: {
+        id: id,
+        createdById: userId,
+      },
+    });
+    return true;
+  }, "Error deleting task.");
 }
 
 export async function renewTask(
+  userId: string,
   id: string,
   title: string,
   description: string,
-  dueDate: string
+  dueDate: string,
+  status: string
 ) {
   const update = await prisma.task.update({
     where: {
+      createdById: userId,
       id: id,
     },
     data: {
       title: title,
       description: description,
       dueDate: dueDate,
+      status: status,
     },
   });
   return update;
@@ -77,5 +88,6 @@ export async function getTasks(
   if (!dbResult) {
     return null;
   }
-  return dbResult;
+  return null; //placeholder
+  //return dbResult;
 }

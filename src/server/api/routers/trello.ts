@@ -35,22 +35,23 @@ export const trelloRouter = createTRPCRouter({
     .mutation(async (opts) => {
       const session = opts.ctx.session;
       const userId = session.user.id;
-      await removeTask(userId);
+      await removeTask(userId, opts.input.id);
     }),
   
   updateTask: protectedProcedure
     .input(
       z.object({
-        // id
+        id: z.string(),
         title: z.string(),
         description: z.string(),
-        dueDate: z.string().datetime(),
+        dueDate: z.string(),
+        status: z.string()
       })
     )
     .mutation(async (opts) => {
       const session = opts.ctx.session;
       const userId = session.user.id;
-      await updateTask(userId, opts.input.title, opts.input.description, opts.input.dueDate);
+      await updateTask(userId, opts.input.id, opts.input.title, opts.input.description, opts.input.dueDate, opts.input.status);
     }),
 
   // getTask: protectedProcedure
