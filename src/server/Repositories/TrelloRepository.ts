@@ -19,7 +19,6 @@ export async function createTask(
   dueDate: string,
   status: string
 ) {
-
   return await tryCatchWrapper(async () => {
     const task = await prisma.task.create({
       data: {
@@ -64,7 +63,7 @@ export async function renewTask(
     data: {
       title: title,
       description: description,
-      dueDate: dueDate,
+      dueDate: dueDate ? new Date(dueDate) : null,
       status: status,
     },
   });
