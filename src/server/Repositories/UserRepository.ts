@@ -14,9 +14,6 @@ export async function createUser(
       password: password,
     },
   });
-
-  console.log(user);
-
   return user;
 }
 

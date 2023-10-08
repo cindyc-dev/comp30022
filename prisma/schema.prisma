@@ -63,12 +63,16 @@ model CustomContact {
   contact String?
   image   String?
   userId  String
+  tags    String
+  notes   String
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserConnection {
   userId_1 String 
   userId_2 String 
+  tags     String
+  notes    String
   user1    User   @relation("connector", fields: [userId_1], references: [id], onDelete: Cascade)
   user2    User   @relation("connected", fields: [userId_2], references: [id], onDelete: Cascade)
 

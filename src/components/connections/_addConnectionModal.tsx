@@ -1,29 +1,36 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import {
-  NEW_CONNECTION,
-  sampleSearchResults,
-} from "~/sample_data/sampleConnections";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { NEW_CONNECTION } from "~/sample_data/sampleConnections";
 import { ConnectionI } from "~/types/ConnectionI";
 import { useModal } from "~/components/hooks/modalContext";
 import UploadImageModalContent from "~/components/common/uploadImageModalContent";
 import ConnectionDetailsInputs from "./_connectionDetailsInputs";
 import ConnectionCard from "./_connectionCard";
+import Image from "next/image";
+import { checkEmail } from "../utils/checkEmail";
+import { api } from "~/utils/api";
+import TextInput from "../common/textInput";
 
 export interface handleAddConnectionProps {
   newConnection: ConnectionI;
   setConnection: Dispatch<SetStateAction<ConnectionI>>;
 }
 
-const AddConnectionModal = ({
-  tagColoursMap,
-  handleCreateConnection,
-}: {
+interface AddConnectionModalProps {
   tagColoursMap: Record<string, string>;
-  handleCreateConnection: ({
+  handleCreateCustom: ({
     newConnection,
     setConnection,
   }: handleAddConnectionProps) => void;
-}) => {
+  handleAddExisting: (id: string, name: string) => void;
+  data: ConnectionI[];
+}
+
+const AddConnectionModal = ({
+  tagColoursMap,
+  handleCreateCustom,
+  handleAddExisting,
+  data,
+}: AddConnectionModalProps) => {
   const [isSearch, setIsSearch] = useState<boolean>(true);
   return (
     <div>
@@ -43,10 +50,10 @@ const AddConnectionModal = ({
       </div>
       <div className="flex justify-center">
         {isSearch ? (
-          <SearchTab />
+          <SearchTab handleAddExisting={handleAddExisting} connections={data} />
         ) : (
           <CustomTab
-            handleCreateConnection={handleCreateConnection}
+            handleCreateCustom={handleCreateCustom}
             tagColoursMap={tagColoursMap}
           />
         )}
@@ -55,39 +62,116 @@ const AddConnectionModal = ({
   );
 };
 
-const SearchTab = () => {
+const SearchTab = ({
+  connections,
+  handleAddExisting,
+}: {
+  connections: ConnectionI[];
+  handleAddExisting: (id: string, name: string) => void;
+}) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchResults] = useState<ConnectionI[]>(sampleSearchResults);
+  const [searchResults, setSearchResults] = useState<ConnectionI[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [alreadyConnected, setAlreadyConnected] = useState<ConnectionI[]>([]);
 
-  // TODO send query to API and set searchResults
+  const mutation = api.connection.searchAllUsers.useMutation();
+
+  // API call to search for connections when searchQuery changes
+  useEffect(() => {
+    // Clear search results if searchQuery is empty
+    if (searchQuery === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    // Check if searchQuery is a valid email
+    if (!checkEmail(searchQuery)) return;
+
+    console.log("Searching for connections with query: ", searchQuery);
+    setIsLoading(true);
+
+    mutation.mutate(
+      { emailString: searchQuery, topX: 5 },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            console.log("Search results: ", data);
+          }
+          // Separate existing connections from search results
+          const newAlreadyConnected = data.filter((connection) =>
+            connections.find((c) => c.email === connection.email)
+          );
+          setAlreadyConnected(newAlreadyConnected);
+          setSearchResults(data);
+
+          setIsLoading(false);
+        },
+        onError: (error) => {
+          console.error(error);
+          setIsLoading(false);
+        },
+      }
+    );
+  }, [searchQuery]);
 
   return (
     <div className="flex flex-col items-center gap-4">
       <h1 className="my-0">Search for Connections</h1>
-      <input
-        type="text"
-        className="input input-primary w-full"
-        placeholder="🔎 Search Connection"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        autoFocus
-      />
-
-      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-        {searchResults.map((connection) => (
-          <ConnectionCard connection={connection} />
-        ))}
+      <div className="w-full">
+        <TextInput
+          value={searchQuery}
+          setValue={(v) => setSearchQuery(v)}
+          label=""
+          placeholder="🔎 Search Connection Email"
+        />
       </div>
+
+      {isLoading && (
+        <div className="flex w-full flex-grow items-center justify-center">
+          <div className="loading loading-spinner loading-lg text-primary"></div>
+        </div>
+      )}
+
+      {!isLoading && (
+        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+          {searchResults.map((connection) => (
+            <ConnectionCard
+              key={connection.email}
+              connection={connection}
+              isAlreadyConnected={alreadyConnected.includes(connection)}
+              handleAdd={handleAddExisting}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Show Illustration when 0 Search Results */}
+      {searchResults.length === 0 && !isLoading && (
+        <div className="flex w-full flex-col items-center justify-center text-center">
+          <Image
+            src="/svg/Search-rafiki.svg"
+            alt={"No Search Results Illustration"}
+            width={300}
+            height={300}
+            className="m-0 p-0"
+          />
+          <p className="m-0 p-0 text-sm text-gray-400">
+            {!checkEmail(searchQuery)
+              ? "You must enter a valid email (eg. name@company.com) to search for connections."
+              : `No connections with email ${searchQuery} found. Try creating a custom connection.`}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
 
 const CustomTab = ({
   tagColoursMap,
-  handleCreateConnection,
+  handleCreateCustom,
 }: {
   tagColoursMap: Record<string, string>;
-  handleCreateConnection: ({
+  handleCreateCustom: ({
     newConnection,
     setConnection,
   }: handleAddConnectionProps) => void;
@@ -107,20 +191,6 @@ const CustomTab = ({
     });
   };
 
-  // Check if email is valid when connection.email changes after 2000ms of no change
-  // const [validateEmail] = useDebounce((email: string) => {
-  //   return validateEmail(email);
-  // }, 2000);
-
-  // useEffect(() => {
-  //   if (connection.email) {
-  //     const isValidEmail = validateEmail(connection.email);
-  //     if (!isValidEmail) {
-  //       setConnection({ ...connection, email: "" });
-  //     }
-  //   }
-  // }, [connection.email]);
-
   return (
     <div className="flex flex-col content-center items-center justify-center md:w-4/5">
       <h1 className="my-0">Create a Connection</h1>
@@ -129,13 +199,14 @@ const CustomTab = ({
         setConnection={setConnection}
         tagColoursMap={tagColoursMap}
         editPhoto={editPhoto}
+        debounceEmail={true}
       />
       <button
         className={`btn btn-primary btn-wide ${
-          (!connection.name || !connection.email) && "btn-disabled"
+          (!connection.name || !checkEmail(connection.email)) && "btn-disabled"
         }`}
         onClick={() =>
-          handleCreateConnection({
+          handleCreateCustom({
             newConnection: connection,
             setConnection: setConnection,
           })

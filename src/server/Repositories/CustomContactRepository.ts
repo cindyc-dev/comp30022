@@ -1,17 +1,26 @@
 import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
+import { ConnectionI } from "~/types/ConnectionI";
 
-export async function createCustomContact(userId: string, name?: string, email?: string, contact?: string) {
+export async function createCustomContact(
+  userId: string,
+  name: string,
+  email: string,
+  contact: string,
+  tags: string,
+  notes: string
+) {
   await prisma.customContact.create({
     data: {
       name: name,
       email: email,
       contact: contact,
       userId: userId,
+      tags: tags,
+      notes: notes,
     },
   });
 }
-
 
 const userInfoSelect = {
   id: true,
@@ -25,21 +34,13 @@ const userInfoSelect = {
 type UserInfoPayload = Prisma.UserGetPayload<{ select: typeof userInfoSelect }>;
 
 export async function checkExistingUserExists(
-  email: string, contact: string
+  email: string
 ): Promise<UserInfoPayload | null> {
-  
-  if (email == undefined && contact == undefined) return null;
+  if (email == undefined) return null;
 
   const dbResult = await prisma.user.findFirst({
     where: {
-      OR: [
-        {
-          email: email,
-        },
-        { 
-          contact: contact,
-        },
-      ],
+      email: email,
     },
     select: userInfoSelect,
   });
@@ -51,9 +52,9 @@ export async function checkExistingUserExists(
 }
 
 export async function checkCustomExists(
-  userId: string, email: string,
+  userId: string,
+  email: string
 ): Promise<boolean | null> {
-  
   if (email == undefined) return null;
 
   const dbResult = await prisma.customContact.findFirst({
@@ -65,7 +66,7 @@ export async function checkCustomExists(
         {
           email: email,
         },
-      ]
+      ],
     },
   });
 
@@ -75,7 +76,7 @@ export async function checkCustomExists(
   return true;
 }
 
-export async function getCustomConnection(id:string) {
+export async function getCustomConnection(id: string): Promise<ConnectionI[]> {
   const dbResult = await prisma.customContact.findMany({
     where: {
       userId: id,
@@ -83,48 +84,30 @@ export async function getCustomConnection(id:string) {
   });
 
   if (!dbResult) {
-    return null;
+    throw new Error("User does not exist.");
   }
-  return dbResult;
+  return dbResult.map((user) => {
+    const connection: ConnectionI = {
+      id: user.id,
+      name: user.name || "",
+      email: user.email || "",
+      phone: user.contact || undefined,
+      photoUrl: user.image || undefined,
+      tags: [],
+    };
+    return connection;
+  });
 }
 
-export async function deleteCustomConnection(userId: string, email?: string, contact?: string) {
+export async function deleteCustomConnection(userId: string, email?: string) {
+  if (email == undefined) return null;
 
+  const deleted = await prisma.customContact.deleteMany({
+    where: {
+      userId: userId,
+      email: email,
+    },
+  });
 
-  if (email != undefined && contact != undefined) {
-    const deleted = await prisma.customContact.deleteMany({
-      where: {
-        userId: userId,
-        
-        AND: [
-          {
-            email: email,
-          },
-          {
-            contact: contact,
-          },
-        ]
-      },
-    });
-  
-    return deleted;
-  }
-  else {
-    const deleted = await prisma.customContact.deleteMany({
-      where: {
-        userId: userId,
-        
-        OR: [
-          {
-            email: email,
-          },
-          {
-            contact: contact,
-          },
-        ]
-      },
-    });
-  
-    return deleted;
-  }
+  return deleted;
 }

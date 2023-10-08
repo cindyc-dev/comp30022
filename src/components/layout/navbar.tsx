@@ -35,8 +35,6 @@ export const Navbar = () => {
 
   const { data: profileDetails } = api.details.profile.useQuery();
 
-  console.log(profileDetails); // TODO remove
-
   const { addToast } = useToast();
 
   // Get profileImage from sessionStorage
