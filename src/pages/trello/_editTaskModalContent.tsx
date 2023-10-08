@@ -35,6 +35,8 @@ const EditTaskModalContent = ({ task, onUpdateTask } : EditTaskModalContentProps
     mutation.mutate({ id: deletedTask.id }, {
       onSuccess: () => {
         console.log("Deleted");
+        refetch();
+        closeModal("edit-task-modal");
       },
       onError: (error) => {
         console.log(error);

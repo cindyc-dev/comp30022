@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -47,7 +47,9 @@ export const Board = () => {
         };
         return newT;
       });
-      newColumns.todos.items = newTasks.filter((task) => task.status === "todos");
+      console.log({newTasks: newTasks});
+      console.log({newColumns: newColumns});
+      newColumns.todos.items = newTasks.filter((task) => task.status === "Todo");
       newColumns.inProgress.items = newTasks.filter((task) => task.status === "inProgress");
       newColumns.done.items = newTasks.filter((task) => task.status === "done");
       setColumns({...newColumns});
@@ -69,8 +71,8 @@ export const Board = () => {
     const updatedTask = {
       id : newTask.id,
       title: newTask.title,
-      description: newTask.description,
-      dueDate: newTask.dueDate.toISOString(),
+      description: newTask.description || "",
+      dueDate: newTask.dueDate?.toISOString() || "",
       status: newTask.status,
     };
 
@@ -192,8 +194,8 @@ export const Board = () => {
                                 >
                                   <div className="card-body m-0 p-5" onClick={() => handleEditTask(task)} >
                                     <h3 className="m-0">{task.title}</h3>
-                                    <p >{task.dueDate.toDateString()}</p>
-                                    <p>{task.description}</p>
+                                    <p className="m-0">{task.dueDate?.toDateString()}</p>
+                                    <p className="m-0">{task.description}</p>
                                     
                                   </div>
                                 </div>
