@@ -39,17 +39,17 @@ export const Navbar = () => {
   const { addToast } = useToast();
 
   // Get profileImage from sessionStorage
-  // useEffect(() => {
-  //   if (profileDetails) {
-  //     if (!profileDetails?.email) {
-  //       addToast({
-  //         message: "Please add your email to your profile",
-  //         type: "error",
-  //       });
-  //     }
-  //     setProfileImage(profileDetails.image);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (profileDetails) {
+      if (!profileDetails?.email) {
+        addToast({
+          message: "Please add your email to your profile",
+          type: "error",
+        });
+      }
+      setProfileImage(profileDetails.image);
+    }
+  }, []);
 
   return (
     <div className="navbar sticky top-0 z-50 bg-primary text-primary-content shadow">

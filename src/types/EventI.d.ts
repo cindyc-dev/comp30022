@@ -12,4 +12,10 @@ export interface EventI {
   colour: Colour;
 }
 
+export interface EventStateI {
+  allEvents: EventI[];
+  weekEvents: EventI[];
+  monthEvents: EventI[];
+}
+
 type CalendarViewType = "day" | "week" | "month";

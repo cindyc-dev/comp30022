@@ -2,7 +2,7 @@ import moment, { Moment } from "moment";
 import { useModal } from "~/components/hooks/modalContext";
 import { Layout } from "~/components/layout/layout";
 import { sampleEvents } from "~/sample_data/sampleEvents";
-import { CalendarViewType, EventI } from "~/types/EventI";
+import { CalendarViewType, EventI, EventStateI } from "~/types/EventI";
 import AddEventModalContent from "~/components/calendar/_addEventModalContent";
 import WeekView from "~/components/calendar/_weekView";
 import { useCallback, useEffect, useState } from "react";
@@ -16,11 +16,16 @@ import MonthView from "~/components/calendar/_monthView";
 import { useToast } from "~/components/hooks/toastContext";
 import { FaPlus } from "react-icons/fa";
 import EventDetailsModal from "~/components/calendar/_eventDetailsModal";
+import { api } from "~/utils/api";
 
 const DEFAULT_VIEW: CalendarViewType = "week";
 
 export default function Calendar() {
-  const [events, setEvents] = useState<EventI[]>(sampleEvents);
+  const [events, setEvents] = useState<EventStateI>({
+    allEvents: [],
+    weekEvents: [],
+    monthEvents: [],
+  });
   const [view, setView] = useState<CalendarViewType>();
   const [today, setToday] = useState<Moment>(moment());
 
@@ -55,6 +60,7 @@ export default function Calendar() {
 
   const { addToast } = useToast();
 
+  const addMutation = api.calendar.addEvent.useMutation();
   const handleAddEvent = (event: EventI) => {
     if (!event.title || !event.startDateTime || !event.endDateTime) {
       addToast({
@@ -63,17 +69,45 @@ export default function Calendar() {
       });
       return;
     }
+    // TODO api call to add event
+    const newEvent = {
+      title: event.title,
+      startDateTime: event.startDateTime.toISOString(),
+      endDateTime: event.endDateTime.toISOString(),
+      location: event.location,
+      notes: event.notes,
+      colour: event.colour,
+    };
+    addMutation.mutate(newEvent, {
+      onSuccess: (data) => {
+        console.log({ data });
+        // Show success toast
+        addToast({
+          type: "success",
+          message: `Event ${event.title} added successfully!`,
+        });
+        refetch();
+      },
+      onError: (error) => {
+        console.log({ error });
+        // Show error toast
+        addToast({
+          type: "error",
+          message: `Event ${event.title} failed to add.`,
+        });
+      },
+    });
+
     // Close modal
     closeModal("add-event-modal");
-
-    setEvents((prev) => [...prev, event]);
   };
 
   const handleDeleteEvent = (event: EventI) => {
+    // TODO api call to delete event
+    setEvents((prev) => prev.filter((e) => e.id !== event.id)); // TODO remove
+
     // Close modal
     closeModal("event-details-modal");
-
-    setEvents((prev) => prev.filter((e) => e.id !== event.id));
   };
 
   /* Using arrow keys to navigate calendar and D, M, W for changing views */
@@ -102,7 +136,6 @@ export default function Calendar() {
       setView("month");
     }
   }, []);
-
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress);
 
@@ -118,15 +151,32 @@ export default function Calendar() {
       setView(view as CalendarViewType);
     }
   }, []);
-
   useEffect(() => {
     if (view) {
       localStorage.setItem("calendar-view", view);
     }
   }, [view]);
 
-  const weekEvents = getEventsInWeek(today, events, true);
-  const monthEvents = getEventsInMonth(today, events);
+  // Get Events for the month - pass start and end as UTC strings
+  const { data, isLoading, error, refetch } = api.calendar.getEvents.useQuery({
+    start: today.clone().startOf("month").utc().format(),
+    end: today.clone().endOf("month").utc().format(),
+  });
+
+  /* Get all events from API */
+  useEffect(() => {
+    if (data) {
+      console.log({ apiData: data });
+      setEvents({
+        allEvents: data,
+        weekEvents: getEventsInWeek(today, data, true),
+        monthEvents: getEventsInMonth(today, data),
+      });
+    }
+  }, [data]);
+
+  // const weekEvents = getEventsInWeek(today, events, true);
+  // const monthEvents = getEventsInMonth(today, events);
 
   const goToDay = (day: Moment) => {
     setToday(day.clone());
@@ -158,9 +208,9 @@ export default function Calendar() {
             <WeekView
               today={today}
               goToDay={goToDay}
-              weekEvents={weekEvents}
+              weekEvents={events.weekEvents}
               overNightAndMultiDayEvents={...getOvernightAndMultiDayEvents(
-                getEventsInWeek(today, events, true),
+                getEventsInWeek(today, events.allEvents, true),
                 today.clone().startOf("week"),
                 today.clone().endOf("week")
               )}
@@ -172,7 +222,7 @@ export default function Calendar() {
           <MonthView
             today={today}
             goToDay={goToDay}
-            monthEvents={[...monthEvents]}
+            monthEvents={[...events.monthEvents]}
             handleEventClick={openEventDetailsModal}
           />
         )}
