@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { useModal } from "../../components/hooks/modalContext";
 import { TaskI } from "~/types/TaskI";
 import { set } from "zod";
-
+import { api } from "~/utils/api";
 
 const EditTaskModalContent = ({ task, onUpdateTask }) => {
   const { closeModal } = useModal();
-  const [newTask, setNewTask] = useState<TaskI>({ id: task.id, title: task.title, description: task.description, status: task.status});
+  const [newTask, setNewTask] = useState<TaskI>({ id: task.id, title: task.title, description: task.description, status: task.status, dueDate: task.dueDate});
 
   const handleTitleChange = (e) => {
     setNewTask({ ...newTask, title: e.target.value});
@@ -25,6 +25,19 @@ const EditTaskModalContent = ({ task, onUpdateTask }) => {
     closeModal("edit-task-modal");
   };
 
+  const mutation = api.trello.deleteTask.useMutation();
+  // change for task ID
+  const deleteTask = (deletedTask) => {
+    mutation.mutate({ id: deletedTask.id }, {
+      onSuccess: () => {
+        console.log("Deleted");
+      },
+      onError: (error) => {
+        console.log(error);
+      }
+    });
+  };
+
   return (
     <>
       <div className = "relative flex flex-col items-center gap-4 mx-10">
@@ -38,6 +51,7 @@ const EditTaskModalContent = ({ task, onUpdateTask }) => {
           <textarea className = "input input-bordered w-full" value={newTask.description} onChange={handleDescriptionChange} />
         </div>
         <button className = "btn btn-primary btn-wide" onClick={handleUpdateClick}>Update Task</button>
+        <button className="btn-danger btn"onClick={() => deleteTask(task)}>Delete</button>
       </div>
     </>
 

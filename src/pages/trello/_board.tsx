@@ -119,29 +119,7 @@ export const Board = () => {
     });
   };
 
-  const mutation = api.trello.deleteTask.useMutation();
-  // change for task ID
-  const deleteTask = (columnId: string, taskIndex: number) => {
-    setColumns((prevColumns) => {
-      const updatedColumn = { ...prevColumns[columnId] };
-      const removedTask = updatedColumn.items.splice(taskIndex, 1)[0];
-      
-
-      mutation.mutate({ id: removedTask.id }, {
-        onSuccess: () => {
-          console.log("Deleted");
-        },
-        onError: (error) => {
-          console.log(error);
-        }
-      });
-
-      return {
-        ...prevColumns,
-        [columnId]: updatedColumn,
-      };
-    });
-  };
+  
 
   
 
@@ -186,15 +164,9 @@ export const Board = () => {
                                 {...provided.dragHandleProps}
                                 className="card mb-2 bg-indigo-100 shadow"
                               >
-                                <div className="card-body" >
-                                  <h2 onClick={() => handleEditTask(task)}>{task.title}</h2>
+                                <div className="card-body" onClick={() => handleEditTask(task)} >
+                                  <h2>{task.title}</h2>
                                   <p>{task.description}</p>
-                                  <button
-                                    className="btn-danger btn"
-                                    onClick={() => deleteTask(columnId, index)}
-                                  >
-                                    Delete
-                                  </button>
                                 </div>
                               </div>
                             )}
