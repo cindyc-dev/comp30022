@@ -40,7 +40,14 @@ export const authRouter = createTRPCRouter({
     .input(z.object({ email: z.string().email() }))
     .mutation(async (opts) => {
       const email = opts.input.email;
-      // true on success; false if Prisma/fetching had an error
+
+      if (!(await accountExists(opts.input.email))) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Account does not exist",
+        });
+      }
+
       return await generateRestoreToken(email);
     }),
 

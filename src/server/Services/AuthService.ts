@@ -7,6 +7,9 @@ import {
 } from "~/server/Repositories/UserRepository";
 import { getUserPassword } from "./UserDetails";
 import {TRPCError} from "@trpc/server";
+import nodemailer from "nodemailer";
+import {env} from "~/env.mjs";
+
 
 const SALT_ROUNDS = 10;
 export const RESTORE_TOKEN_LENGTH = 6;
@@ -89,6 +92,25 @@ export async function generateRestoreToken(email: string): Promise<boolean> {
 
   console.log(`Restore token ${token} generated for ${email}.`);
   // Send token to email
+  const transporter = nodemailer.createTransport({
+    host: env.EMAIL_SERVER,
+    port: env.EMAIL_PORT,
+    secure: true,
+    auth: {
+      // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+      user: env.EMAIL_ACCOUNT,
+      pass: env.EMAIL_PASSWORD
+    }
+  });
+
+  const info = await transporter.sendMail({
+    from: `"PotatoCRM" <${env.EMAIL_ACCOUNT}>`, // sender address
+    to: email, // list of receivers
+    subject: "Forgotten password", // Subject line
+    text: `Here is your password reset token: ${token}. You'll need this to reset your account's password`, // plain text body
+  });
+
+  console.log("Message sent: %s", info.messageId);
 
   const hashedToken = await hashText(token);
 
