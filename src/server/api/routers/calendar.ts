@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {getAllEvents, getEventsInRange} from "~/server/Services/CalendarService";
+import {addEvent} from "~/server/Repositories/CalendarRepository";
 
 export const calendarRouter = createTRPCRouter({
   getEvents: protectedProcedure
@@ -23,5 +24,31 @@ export const calendarRouter = createTRPCRouter({
       }
 
       return await getAllEvents(userId);
+    }),
+
+  addEvent: protectedProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        startDateTime: z.string().datetime(),
+        endDateTime: z.string().datetime(),
+        location: z.string().optional(),
+        notes: z.string().optional(),
+        colour: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      const { title, startDateTime, endDateTime, location, notes, colour } = opts.input;
+
+      const session = opts.ctx.session;
+      const userId = session.user.id;
+      const parsedStart = new Date(startDateTime);
+      const parsedEnd = new Date(endDateTime);
+
+      return await addEvent(userId, {
+        title, location, notes, colour,
+        startDateTime: parsedStart,
+        endDateTime: parsedEnd,
+      });
     })
 });

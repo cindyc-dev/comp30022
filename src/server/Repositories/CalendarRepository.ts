@@ -27,6 +27,34 @@ export async function getAllDbEvents(userId: string, start?: Date, end?: Date): 
   });
 }
 
+interface EventInput {
+  title: string;
+  startDateTime: Date;
+  endDateTime: Date;
+  location?: string;
+  notes?: string;
+  colour: string;
+}
+
+export async function addEvent(userId: string, input: EventInput): Promise<string> {
+  const res = await prisma.calendarEvent.create({
+    data: {
+      title: input.title,
+      start: input.startDateTime,
+      end: input.endDateTime,
+      location: input.location ?? undefined,
+      notes: input.notes ?? undefined,
+      colour: input.colour,
+      ownerId: userId,
+    },
+    select: {
+      id: true,
+    }
+  });
+
+  return res.id;
+}
+
 function getDbEventsInRange(userId: string, start: Date, end: Date): Promise<EventPayload[]> {
   return prisma.calendarEvent.findMany({
     where: {
