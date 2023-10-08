@@ -10,9 +10,14 @@ import { isObjectsEqual } from "../utils/isObjectEqual";
 interface EditTaskModalContentProps {
   task: TaskI;
   refetch: () => void;
+  onUpdateTask: (t: TaskI) => void;
 }
 
-const EditTaskModalContent = ({ task, refetch }: EditTaskModalContentProps) => {
+const EditTaskModalContent = ({
+  task,
+  refetch,
+  onUpdateTask,
+}: EditTaskModalContentProps) => {
   const { closeModal } = useModal();
   const [newTask, setNewTask] = useState<TaskI>({
     id: task.id,
@@ -23,35 +28,6 @@ const EditTaskModalContent = ({ task, refetch }: EditTaskModalContentProps) => {
   });
   const [hasDueDate, setHasDueDate] = useState(task.dueDate ? true : false);
   const { addToast } = useToast();
-
-  const updateMutation = api.trello.updateTask.useMutation();
-  const onUpdateTask = () => {
-    const updatedTask = {
-      id: newTask.id,
-      title: newTask.title,
-      description: newTask.description || "",
-      dueDate: newTask.dueDate?.toISOString() || "",
-      status: newTask.status,
-    };
-
-    updateMutation.mutate(updatedTask, {
-      onSuccess: () => {
-        addToast({
-          message: `Task "${updatedTask.title}" was updated`,
-          type: "success",
-        });
-        refetch();
-        closeModal("edit-task-modal");
-      },
-      onError: (error) => {
-        console.log(error);
-        addToast({
-          message: `Task "${updatedTask.title}" was not updated`,
-          type: "error",
-        });
-      },
-    });
-  };
 
   const mutation = api.trello.deleteTask.useMutation();
   // change for task ID
@@ -100,7 +76,7 @@ const EditTaskModalContent = ({ task, refetch }: EditTaskModalContentProps) => {
             className={`btn btn-primary ${
               isObjectsEqual(task, newTask) && "btn-disabled"
             }`}
-            onClick={() => onUpdateTask()}
+            onClick={() => onUpdateTask(newTask)}
           >
             <FaSave />
             Save

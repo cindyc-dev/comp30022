@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { ColumnI } from "~/types/ColumnI";
 import { TaskI } from "~/types/TaskI";
 import { useModal } from "~/components/hooks/modalContext";
-import { AddTaskModalContent } from "./_addTaskModalContent";
+import { AddTaskModalContent } from "./addTaskModalContent";
 import { FaPlusCircle } from "react-icons/fa";
-import EditTaskModalContent from "./_editTaskModalContent";
+import EditTaskModalContent from "./editTaskModalContent";
 import { api } from "~/utils/api";
-import moment from "moment";
+import Task from "./task";
+import { useToast } from "../hooks/toastContext";
 
 export const Board = () => {
   const initialColumns: Record<string, ColumnI> = {
@@ -30,9 +26,11 @@ export const Board = () => {
     },
   };
 
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
+  const { addToast } = useToast();
   const [columns, setColumns] = useState(initialColumns);
 
+  /* Get data from API */
   const { data, isLoading, error, refetch } = api.trello.getTask.useQuery();
   useEffect(() => {
     if (data) {
@@ -50,7 +48,7 @@ export const Board = () => {
       console.log({ newTasks: newTasks });
       console.log({ newColumns: newColumns });
       newColumns.todos.items = newTasks.filter(
-        (task) => task.status === "Todo"
+        (task) => task.status === "todos"
       );
       newColumns.inProgress.items = newTasks.filter(
         (task) => task.status === "inProgress"
@@ -60,16 +58,54 @@ export const Board = () => {
     }
   }, [data, error]);
 
-  const handleAddTask = () => {
+  /* Add Task */
+  const handleAddTask = (status: string) => {
     openModal({
-      content: <AddTaskModalContent refetch={refetch} />,
-      id: "add-task-modal",
+      content: <AddTaskModalContent refetch={refetch} status={status} />,
+      id: `add-task-modal-${status}`,
     });
   };
 
+  /* Update Task */
+  const updateMutation = api.trello.updateTask.useMutation();
+  const onUpdateTask = (newTask: TaskI) => {
+    const updatedTask = {
+      id: newTask.id,
+      title: newTask.title,
+      description: newTask.description || "",
+      dueDate: newTask.dueDate?.toISOString() || "",
+      status: newTask.status,
+    };
+
+    updateMutation.mutate(updatedTask, {
+      onSuccess: () => {
+        addToast({
+          message: `Task "${updatedTask.title}" was updated`,
+          type: "success",
+        });
+        refetch();
+        closeModal("edit-task-modal");
+      },
+      onError: (error) => {
+        console.error(error);
+        addToast({
+          message: `Task "${updatedTask.title}" was not updated`,
+          type: "error",
+        });
+      },
+    });
+  };
+
+  /* Edit Task */
   const handleEditTask = (task: TaskI) => {
     openModal({
-      content: <EditTaskModalContent task={task} refetch={refetch} />,
+      content: (
+        <EditTaskModalContent
+          task={task}
+          refetch={refetch}
+          onUpdateTask={onUpdateTask}
+        />
+      ),
       id: "edit-task-modal",
     });
   };
@@ -122,10 +158,6 @@ export const Board = () => {
 
   return (
     <div className="my-5 mb-0 mt-4 flex w-full flex-col">
-      <button className="btn btn-primary" onClick={handleAddTask}>
-        <FaPlusCircle />
-        Add Task
-      </button>
       {isLoading && (
         <div className="my-4 flex w-full justify-center">
           <span className="loading loading-spinner text-primary"></span>
@@ -155,40 +187,24 @@ export const Board = () => {
                             className="task-boxes"
                           >
                             {column.items.map((task: TaskI, index: number) => (
-                              <Draggable
-                                key={task.title}
-                                draggableId={task.title}
+                              <Task
+                                key={task.id}
+                                task={task}
                                 index={index}
-                              >
-                                {(provided) => (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    className="card mb-2 bg-secondary shadow"
-                                  >
-                                    <div
-                                      className="card-body m-0 p-5"
-                                      onClick={() => handleEditTask(task)}
-                                    >
-                                      <h3 className="m-0">{task.title}</h3>
-                                      {task.dueDate && (
-                                        <p className="m-0">
-                                          {moment(task.dueDate).format(
-                                            "DD/MM/YYYY"
-                                          )}
-                                        </p>
-                                      )}
-                                      <p className="m-0">{task.description}</p>
-                                    </div>
-                                  </div>
-                                )}
-                              </Draggable>
+                                handleEditTask={handleEditTask}
+                              />
                             ))}
                             {provided.placeholder}
                           </div>
                         )}
                       </Droppable>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleAddTask(columnId)}
+                      >
+                        <FaPlusCircle />
+                        Add Task
+                      </button>
                     </div>
                   </div>
                 </div>

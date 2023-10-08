@@ -1,5 +1,5 @@
 import { Layout } from "~/components/layout/layout";
-import { Board } from "../../components/trello/_board";
+import { Board } from "~/components/trello/board";
 
 export default function Trello() {
   return (

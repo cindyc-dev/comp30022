@@ -2,24 +2,23 @@ import React, { useState } from "react";
 import { useToast } from "../hooks/toastContext";
 import { useModal } from "../hooks/modalContext";
 import { TaskI } from "~/types/TaskI";
-import { ColumnI } from "~/types/ColumnI";
 import { api } from "~/utils/api";
-import TextInput from "../common/textInput";
-import TextAreaInput from "../common/textAreaInput";
 import TaskDetailInputs from "./taskDetailsInputs";
 
 interface AddTaskModalContentProps {
+  status: string;
   refetch: () => void;
 }
 
 export const AddTaskModalContent = ({
-  refetch
+  status,
+  refetch,
 }: AddTaskModalContentProps) => {
   const [newTask, setNewTask] = useState<TaskI>({
     id: "",
     title: "",
     description: "",
-    status: "",
+    status: status,
   });
   const [hasDueDate, setHasDueDate] = useState(false);
   const { addToast } = useToast();
@@ -49,6 +48,14 @@ export const AddTaskModalContent = ({
           type: "success",
           message: `Task (${newTask.title}) added successfully.`,
         });
+        refetch();
+        setNewTask({
+          id: "",
+          title: "",
+          description: "",
+          status: status,
+        });
+        closeModal(`add-task-modal-${status}`);
       },
       onError: (error) => {
         addToast({
@@ -57,17 +64,6 @@ export const AddTaskModalContent = ({
         });
       },
     });
-
-    setNewTask({
-      id: "",
-      title: "",
-      description: "",
-      status: "",
-    });
-
-    refetch();
-
-    closeModal("add-task-modal");
   };
 
   return (
