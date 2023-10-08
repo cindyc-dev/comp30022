@@ -8,6 +8,25 @@ export const arrayRange = (start: number, stop: number, step: number = 1) =>
     (_, index) => start + index * step
   );
 
+export const getEventsInDay = (today: Moment, events: EventI[], getOverlaps = false) => {
+  const start = today.clone().startOf("day");
+  const end = today.clone().endOf("day");
+  const dayEvents = events.filter((event) => {
+    const eventStart = moment(event.startDateTime);
+    const eventEnd = moment(event.endDateTime);
+    if (getOverlaps) {
+      // Check if there is any overlap between the event and the day
+      return (
+        start.isAfter(eventStart, "day") ? start : eventStart
+      ).isSameOrBefore(end.isBefore(eventEnd, "day") ? end : eventEnd, "day");
+    } else {
+      // Check if the event starts in the day
+      return eventStart.isBetween(start, end, "day", "[]");
+    }
+  });
+  return dayEvents;
+};
+
 export const getEventsInWeek = (
   today: Moment,
   events: EventI[],

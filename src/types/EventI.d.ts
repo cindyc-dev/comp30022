@@ -16,6 +16,7 @@ export interface EventStateI {
   allEvents: EventI[];
   weekEvents: EventI[];
   monthEvents: EventI[];
+  dayEvents: EventI[];
 }
 
 type CalendarViewType = "day" | "week" | "month";

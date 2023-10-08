@@ -9,22 +9,25 @@ const TIME_GAP = "10px";
 const ROW_HEIGHT = "1.2rem";
 const GRID_TEMPLATE_COLUMNS = `${TIME_WIDTH} 10px repeat(7, minmax(3rem, 1fr))`;
 
+interface WeekViewProps {
+  today: Moment;
+  goToDay: (date: Moment) => void;
+  weekEvents: EventI[];
+  overNightAndMultiDayEvents: EventI[];
+  handleEventClick: (event: EventI) => void;
+}
+
 export default function WeekView({
   today,
   goToDay,
   weekEvents,
   overNightAndMultiDayEvents,
   handleEventClick,
-}: {
-  today: Moment;
-  goToDay: (date: Moment) => void;
-  weekEvents: EventI[];
-  overNightAndMultiDayEvents: EventI[];
-  handleEventClick: (event: EventI) => void;
-}) {
+}: WeekViewProps) {
   const [currentTimeRow, setCurrentTimeRow] = useState<number>(-1);
 
   console.log({
+    view: "Week",
     weekEvents: weekEvents,
     overNightAndMultiDayEvents: overNightAndMultiDayEvents,
   });
@@ -41,6 +44,7 @@ export default function WeekView({
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
 
+  // Calculate where is the current time to scroll to
   const currentDay = moment().day() + 3;
   const getCurrentTimeRow = () => {
     const currentTime = moment();
@@ -57,6 +61,7 @@ export default function WeekView({
     return row;
   };
 
+  // Scroll to current time
   useEffect(() => {
     // Set current time row on first render
     setCurrentTimeRow(getCurrentTimeRow());

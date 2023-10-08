@@ -7,6 +7,7 @@ import WeekView from "~/components/calendar/_weekView";
 import { useCallback, useEffect, useState } from "react";
 import Toolbar from "~/components/calendar/_toolbar";
 import {
+  getEventsInDay,
   getEventsInMonth,
   getEventsInWeek,
   getOvernightAndMultiDayEvents,
@@ -16,14 +17,17 @@ import { useToast } from "~/components/hooks/toastContext";
 import { FaPlus } from "react-icons/fa";
 import EventDetailsModal from "~/components/calendar/_eventDetailsModal";
 import { api } from "~/utils/api";
+import { sampleEvents } from "~/sample_data/sampleEvents";
+import DayView from "~/components/calendar/_dayView";
 
 const DEFAULT_VIEW: CalendarViewType = "week";
 
 export default function Calendar() {
   const [events, setEvents] = useState<EventStateI>({
-    allEvents: [],
+    allEvents: sampleEvents,
     weekEvents: [],
     monthEvents: [],
+    dayEvents: [],
   });
   const [view, setView] = useState<CalendarViewType>();
   const [today, setToday] = useState<Moment>(moment());
@@ -212,31 +216,40 @@ export default function Calendar() {
     }
   }, [view]);
 
-  // Get Events for the month - pass start and end as UTC strings
-  const { data, isLoading, error, refetch } = api.calendar.getEvents.useQuery({
-    start: today.clone().startOf("month").utc().format(),
-    end: today.clone().endOf("month").utc().format(),
-  });
-
   /* Get all events from API */
+  // Get Events for the month - pass start and end as UTC strings
+  // TODO uncomment
+  // const { data, isLoading, error, refetch } = api.calendar.getEvents.useQuery({
+  //   start: today.clone().startOf("month").utc().format(),
+  //   end: today.clone().endOf("month").utc().format(),
+  // });
+  // useEffect(() => {
+  //   if (data) {
+  //     console.log({ apiData: data });
+  //     setEvents({
+  //       allEvents: data,
+  //       weekEvents: getEventsInWeek(today, data, true),
+  //       monthEvents: getEventsInMonth(today, data),
+  //     });
+  //   }
+  //   if (error) {
+  //     console.log({ error });
+  //     // Show error toast
+  //     addToast({
+  //       type: "error",
+  //       message: `Failed to get events. Error: ${error.message}`,
+  //     });
+  //   }
+  // }, [data, error]);
+
   useEffect(() => {
-    if (data) {
-      console.log({ apiData: data });
-      setEvents({
-        allEvents: data,
-        weekEvents: getEventsInWeek(today, data, true),
-        monthEvents: getEventsInMonth(today, data),
-      });
-    }
-    if (error) {
-      console.log({ error });
-      // Show error toast
-      addToast({
-        type: "error",
-        message: `Failed to get events. Error: ${error.message}`,
-      });
-    }
-  }, [data, error]);
+    setEvents((prev) => ({
+      ...prev,
+      weekEvents: getEventsInWeek(today, prev.allEvents, true),
+      monthEvents: getEventsInMonth(today, prev.allEvents),
+      dayEvents: getEventsInDay(today, prev.allEvents),
+    }));
+  }, [events.allEvents]);
 
   // const weekEvents = getEventsInWeek(today, events, true);
   // const monthEvents = getEventsInMonth(today, events);
@@ -254,7 +267,8 @@ export default function Calendar() {
         view={view || DEFAULT_VIEW}
         setView={setView}
         openEventModal={openEventModal}
-        isLoading={isLoading}
+        // TODO uncomment
+        // isLoading={isLoading}
       />
       {/* Calendar View */}
       <div className="m-2 w-full">
@@ -290,17 +304,15 @@ export default function Calendar() {
             handleEventClick={openEventDetailsModal}
           />
         )}
-        {view === "day" && <DayView today={today} />}
+        {view === "day" && (
+          <DayView
+            today={today}
+            dayEvents={[...events.dayEvents]}
+            handleEventClick={openEventDetailsModal}
+          />
+        )}
       </div>
     </Layout>
-  );
-}
-
-function DayView({ today }: { today: Moment }) {
-  return (
-    <div>
-      <h2 className="m-0">{today.format("Do MMM YYYY")}</h2>
-    </div>
   );
 }
 

@@ -102,6 +102,7 @@ model CalendarEvent {
   ownerId  String
   owner    User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 }
+
 model Task {
   id          String    @id @default(cuid())
   title       String
