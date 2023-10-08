@@ -33,7 +33,7 @@
     "react-icons": "^4.10.1",
     "react-password-checklist": "^1.4.3",
     "superjson": "1.12.2",
-    "zod": "^3.21.4",
+    "zod": "^3.22.3",
     "zustand": "^4.4.1"
   },
   "devDependencies": {
