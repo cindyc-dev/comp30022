@@ -10,13 +10,16 @@ export const calendarRouter = createTRPCRouter({
       const session = opts.ctx.session;
       const userId = session.user.id;
       const input = opts.input;
-      const { start, end } = JSON.parse(input);
 
-      if (start && end) {
-        const startDateTime = new Date(start);
-        const endDateTime = new Date(end);
+      if (input) {
+        const { start, end } = JSON.parse(input);
 
-        return await getEventsInRange(userId, startDateTime, endDateTime);
+        if (start && end) {
+          const startDateTime = new Date(start);
+          const endDateTime = new Date(end);
+
+          return await getEventsInRange(userId, startDateTime, endDateTime);
+        }
       }
 
       return await getAllEvents(userId);
