@@ -15,12 +15,6 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 // Necessary for Next auth
 model Account {
   id                       String  @id @default(cuid())
@@ -60,10 +54,10 @@ model User {
   accounts       Account[]
   sessions       Session[]
   tasks          Task[]
-  events        CalendarEvent[]
   CustomContact  CustomContact[]
   connector UserConnection[] @relation("connector")
   connected  UserConnection[] @relation("connected")
+  events        CalendarEvent[]
 }
 
 model CustomContact {
@@ -115,6 +109,6 @@ model Task {
   dueDate     DateTime?
   createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById String
-  status      String?
+  status      String
   // connections User[]
 }
