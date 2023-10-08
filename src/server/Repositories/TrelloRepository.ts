@@ -71,13 +71,13 @@ export async function renewTask(
   return update;
 }
 
-export type TaskInfoPayload = Prisma.UserGetPayload<{
+export type TaskInfoPayload = Prisma.TaskGetPayload<{
   select: typeof taskSelect;
 }>;
 
 export async function getTasks(
   createdById: string
-): Promise<TaskInfoPayload | null> {
+): Promise<TaskInfoPayload[] | null> {
   const dbResult = await prisma.task.findMany({
     where: {
       createdById: createdById,
@@ -88,6 +88,6 @@ export async function getTasks(
   if (!dbResult) {
     return null;
   }
-  return null; //placeholder
+  return dbResult; //placeholder
   //return dbResult;
 }
