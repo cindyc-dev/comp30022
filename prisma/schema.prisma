@@ -110,6 +110,6 @@ model Task {
   dueDate     DateTime?
   createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById String
-  status      String?
+  status      String
   // connections User[]
 }
