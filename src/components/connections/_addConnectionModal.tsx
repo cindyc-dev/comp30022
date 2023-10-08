@@ -1,8 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import {
-  NEW_CONNECTION,
-  sampleSearchResults,
-} from "~/sample_data/sampleConnections";
+import { NEW_CONNECTION } from "~/sample_data/sampleConnections";
 import { ConnectionI } from "~/types/ConnectionI";
 import { useModal } from "~/components/hooks/modalContext";
 import UploadImageModalContent from "~/components/common/uploadImageModalContent";
@@ -10,7 +7,6 @@ import ConnectionDetailsInputs from "./_connectionDetailsInputs";
 import ConnectionCard from "./_connectionCard";
 import Image from "next/image";
 import { checkEmail } from "../utils/checkEmail";
-import DebouncedInput from "./_debouncedInput";
 import { api } from "~/utils/api";
 import TextInput from "../common/textInput";
 
@@ -19,16 +15,22 @@ export interface handleAddConnectionProps {
   setConnection: Dispatch<SetStateAction<ConnectionI>>;
 }
 
-const AddConnectionModal = ({
-  tagColoursMap,
-  handleCreateCustom,
-}: {
+interface AddConnectionModalProps {
   tagColoursMap: Record<string, string>;
   handleCreateCustom: ({
     newConnection,
     setConnection,
   }: handleAddConnectionProps) => void;
-}) => {
+  handleAddExisting: (id: string, name: string) => void;
+  data: ConnectionI[];
+}
+
+const AddConnectionModal = ({
+  tagColoursMap,
+  handleCreateCustom,
+  handleAddExisting,
+  data,
+}: AddConnectionModalProps) => {
   const [isSearch, setIsSearch] = useState<boolean>(true);
   return (
     <div>
@@ -48,7 +50,7 @@ const AddConnectionModal = ({
       </div>
       <div className="flex justify-center">
         {isSearch ? (
-          <SearchTab />
+          <SearchTab handleAddExisting={handleAddExisting} connections={data} />
         ) : (
           <CustomTab
             handleCreateCustom={handleCreateCustom}
@@ -60,10 +62,17 @@ const AddConnectionModal = ({
   );
 };
 
-const SearchTab = () => {
+const SearchTab = ({
+  connections,
+  handleAddExisting,
+}: {
+  connections: ConnectionI[];
+  handleAddExisting: (id: string, name: string) => void;
+}) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<ConnectionI[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [alreadyConnected, setAlreadyConnected] = useState<ConnectionI[]>([]);
 
   const mutation = api.connection.searchAllUsers.useMutation();
 
@@ -88,7 +97,13 @@ const SearchTab = () => {
           if (data) {
             console.log("Search results: ", data);
           }
-          setSearchResults(data as ConnectionI[]);
+          // Separate existing connections from search results
+          const newAlreadyConnected = data.filter((connection) =>
+            connections.find((c) => c.email === connection.email)
+          );
+          setAlreadyConnected(newAlreadyConnected);
+          setSearchResults(data);
+
           setIsLoading(false);
         },
         onError: (error) => {
@@ -120,7 +135,12 @@ const SearchTab = () => {
       {!isLoading && (
         <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
           {searchResults.map((connection) => (
-            <ConnectionCard key={connection.email} connection={connection} />
+            <ConnectionCard
+              key={connection.email}
+              connection={connection}
+              isAlreadyConnected={alreadyConnected.includes(connection)}
+              handleAdd={handleAddExisting}
+            />
           ))}
         </div>
       )}
@@ -135,12 +155,10 @@ const SearchTab = () => {
             height={300}
             className="m-0 p-0"
           />
-          <p>
-            <p className="m-0 p-0 text-sm text-gray-400">
-              {!checkEmail(searchQuery)
-                ? "You must enter a valid email (eg. name@company.com) to search for connections."
-                : `No connections with email ${searchQuery} found. Try creating a custom connection.`}
-            </p>
+          <p className="m-0 p-0 text-sm text-gray-400">
+            {!checkEmail(searchQuery)
+              ? "You must enter a valid email (eg. name@company.com) to search for connections."
+              : `No connections with email ${searchQuery} found. Try creating a custom connection.`}
           </p>
         </div>
       )}

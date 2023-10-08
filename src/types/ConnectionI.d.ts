@@ -1,4 +1,5 @@
 export interface ConnectionI {
+    id: string;
     name: string;
     phone?: string;
     photoUrl?: string;

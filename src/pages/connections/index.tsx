@@ -16,7 +16,6 @@ import { BiMailSend } from "react-icons/bi";
 import Tag from "~/components/connections/_tag";
 import { api } from "~/utils/api";
 import Image from "next/image";
-import { IoMdRefresh } from "react-icons/io";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>([]);
@@ -32,7 +31,7 @@ export default function Connections() {
 
   // TODO fetch data and tagColoursMap from API
 
-  // Get data from API
+  /* Get data from API */
   const {
     data: connections,
     isLoading,
@@ -54,8 +53,8 @@ export default function Connections() {
     }
   }, [connections, error]);
 
+  /* Add Custom Connection */
   const customMutation = api.connection.createCustom.useMutation();
-
   const handleCreateCustom = ({
     newConnection,
     setConnection,
@@ -116,6 +115,36 @@ export default function Connections() {
     closeModal("add-connection-modal");
   };
 
+  /* Add Existing Connection */
+  const existingMutation = api.connection.createExisting.useMutation();
+  const handleAddExisting = (id: string, name: string) => {
+    // API call to add existing connection
+    existingMutation.mutate(
+      { connectionId: id },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          // Show success toast
+          addToast({
+            type: "success",
+            message: `Connection with ${name} added successfully.`,
+          });
+
+          // Refetch data
+          refetch();
+        },
+        onError: (error) => {
+          console.error(error);
+          // Show error toast
+          addToast({
+            type: "error",
+            message: `Error adding connection. ${error}: ${error.message}`,
+          });
+        },
+      }
+    );
+  };
+
   // Open Add Connection Modal
   const addConnection = () => {
     openModal({
@@ -123,6 +152,8 @@ export default function Connections() {
         <AddConnectionModal
           handleCreateCustom={handleCreateCustom}
           tagColoursMap={tagColoursMap}
+          handleAddExisting={handleAddExisting}
+          data={data}
         />
       ),
       id: "add-connection-modal",
@@ -276,7 +307,7 @@ export default function Connections() {
               href={`mailto:${getSelectedEmails()}`}
             >
               <BiMailSend />
-              Connect Now
+              Send Email
             </Link>
             <button
               className="btn btn-error"
