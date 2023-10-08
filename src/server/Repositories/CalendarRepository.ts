@@ -56,6 +56,36 @@ export async function addEvent(userId: string, input: EventInput): Promise<strin
   return res.id;
 }
 
+export async function editEvent(userId: string, eventId: string, input: EventInput) {
+
+  try {
+    await prisma.calendarEvent.update({
+      where: {
+        id: eventId,
+        ownerId: userId,
+      },
+      data: {
+        title: input.title,
+        start: input.startDateTime,
+        end: input.endDateTime,
+        location: input.location ?? undefined,
+        notes: input.notes ?? undefined,
+        colour: input.colour,
+      }
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2025") {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Event not found.",
+        });
+      }
+    }
+    throw e;
+  }
+}
+
 export async function deleteEvent(id: string, userId: string) {
 
   try {
