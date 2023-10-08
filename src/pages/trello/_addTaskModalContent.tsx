@@ -12,7 +12,7 @@ interface AddTaskModalContentProps {
 }
 
 export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps) => {
-  const [newTask, setNewTask] = useState<TaskI>({ id: "", title: "", description: "", status: "", dueDate: ""});
+  const [newTask, setNewTask] = useState<TaskI>({ id: "", title: "", description: "", status: "", dueDate: new Date()});
   const [date, setDate] = useState<string>("");
   const { addToast } = useToast();
   const { closeModal } = useModal();
@@ -34,11 +34,11 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
     newColumns.todos.items.push(newTask);
     setColumns({...newColumns});
     
-
+    console.log(newTask.dueDate);
     const addedTask = {
       title: newTask.title,
       description: newTask.description,
-      dueDate: newTask.dueDate,
+      dueDate: newTask.dueDate.toISOString(),
       status: newTask.status,
     };
 
@@ -57,7 +57,7 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
       }
     });
 
-    setNewTask({ id: "", title: "", description: "", status: "", dueDate: "" });
+    setNewTask({ id: "", title: "", description: "", status: "", dueDate: new Date()});
 
     closeModal("add-task-modal");
   };

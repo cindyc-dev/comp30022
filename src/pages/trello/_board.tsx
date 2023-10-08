@@ -41,16 +41,16 @@ export const Board = () => {
     });
   };
 
-  const onUpdateTask = ( newTask ) => {
+  const mutation = api.trello.updateTask.useMutation();
+  const onUpdateTask = ( newTask : TaskI ) => {
     console.log("Updating");
     console.log(newTask);
 
-    const mutation = api.trello.updateTask.useMutation();
-
     const updatedTask = {
+      id : newTask.id,
       title: newTask.title,
       description: newTask.description,
-      dueDate: newTask.dueDate,
+      dueDate: newTask.dueDate.toISOString(),
       status: newTask.status,
     };
 
@@ -90,6 +90,7 @@ export const Board = () => {
     )
       return;
 
+
     // Remove the item from the source column
     const sourceColumn = columns[source.droppableId];
     const updatedSourceItems = [...sourceColumn.items];
@@ -105,8 +106,12 @@ export const Board = () => {
     const draggedTask = sourceColumn.items.find(
       (item: TaskI) => item.title === draggableId
     ) as TaskI;
+    draggedTask.status = destination.droppableId;
+
+    onUpdateTask(draggedTask);
+
     updatedDestinationItems.splice(destination.index, 0, draggedTask);
-    const updatedDestinationColumn = {
+    const updatedDestinationColumn = {  
       ...destinationColumn,
       items: updatedDestinationItems,
     };
@@ -126,8 +131,7 @@ export const Board = () => {
 
 
   return (
-    <div className="flex w-full flex-col">
-      
+    <div className="flex w-full flex-col mb-0 mt-4 my-5">
       <button className="btn btn-primary" onClick={handleAddTask}>
         <FaPlusCircle />
         Add Task
@@ -167,6 +171,7 @@ export const Board = () => {
                                 <div className="card-body" onClick={() => handleEditTask(task)} >
                                   <h2>{task.title}</h2>
                                   <p>{task.description}</p>
+                                  <p>{task.dueDate.toDateString()}</p>
                                 </div>
                               </div>
                             )}

@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { useModal } from "../../components/hooks/modalContext";
 import { TaskI } from "~/types/TaskI";
-import { set } from "zod";
 import { api } from "~/utils/api";
 
-const EditTaskModalContent = ({ task, onUpdateTask }) => {
+interface EditTaskModalContentProps {
+  task : TaskI,
+  onUpdateTask : (newTask : TaskI) => void
+}
+
+const EditTaskModalContent = ({ task, onUpdateTask } : EditTaskModalContentProps ) => {
   const { closeModal } = useModal();
   const [newTask, setNewTask] = useState<TaskI>({ id: task.id, title: task.title, description: task.description, status: task.status, dueDate: task.dueDate});
 
@@ -27,7 +31,7 @@ const EditTaskModalContent = ({ task, onUpdateTask }) => {
 
   const mutation = api.trello.deleteTask.useMutation();
   // change for task ID
-  const deleteTask = (deletedTask) => {
+  const deleteTask = (deletedTask : TaskI) => {
     mutation.mutate({ id: deletedTask.id }, {
       onSuccess: () => {
         console.log("Deleted");
