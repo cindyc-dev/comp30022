@@ -1,9 +1,12 @@
 import { Layout } from "~/components/layout/layout";
+import { Board } from "~/components/trello/board";
 
 export default function Trello() {
   return (
     <Layout>
-      <h1>Trello</h1>
+      <div className="flex w-full flex-col ">
+        <Board />
+      </div>
     </Layout>
   );
 }
