@@ -55,6 +55,22 @@ export async function addEvent(userId: string, input: EventInput): Promise<strin
   return res.id;
 }
 
+export async function deleteEvent(id: string, userId: string) {
+
+  try {
+    await prisma.calendarEvent.delete({
+      where: {
+        id: id,
+        ownerId: userId,
+      }
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+
+    }
+  }
+}
+
 function getDbEventsInRange(userId: string, start: Date, end: Date): Promise<EventPayload[]> {
   return prisma.calendarEvent.findMany({
     where: {
