@@ -66,16 +66,18 @@ function ConnectionDetailsInputs({
         <div className="flex flex-col text-center">
           <label
             className="avatar btn btn-circle btn-ghost h-40 w-40"
-            onClick={() => editPhoto()}
+            onClick={() => !connection.isExisting && editPhoto()}
           >
             <AvatarImage src={connection.photoUrl} />
           </label>
-          <p
-            className="link cursor-pointer text-xs"
-            onClick={() => editPhoto()}
-          >
-            Edit Photo
-          </p>
+          {!connection.isExisting && (
+            <p
+              className="link cursor-pointer text-xs"
+              onClick={() => editPhoto()}
+            >
+              Edit Photo
+            </p>
+          )}
         </div>
         <div className="flex w-full flex-col items-center gap-2">
           <TextInput
@@ -84,6 +86,7 @@ function ConnectionDetailsInputs({
             value={connection.name}
             setValue={(v) => setConnection({ ...connection, name: v })}
             required={true}
+            readonly={connection.isExisting}
           />
           {debounceEmail ? (
             <div className="w-full">
@@ -94,6 +97,7 @@ function ConnectionDetailsInputs({
                 value={connection.email}
                 setValue={(v) => setConnection({ ...connection, email: v })}
                 required={true}
+                readonly={connection.isExisting}
               />
               {isLoading ? (
                 <div className="mt-2 flex w-full items-center justify-end gap-2 text-right text-gray-500">
@@ -134,6 +138,7 @@ function ConnectionDetailsInputs({
               value={connection.email}
               setValue={(v) => setConnection({ ...connection, email: v })}
               required={true}
+              readonly={connection.isExisting}
             />
           )}
           <TextInput
@@ -141,6 +146,7 @@ function ConnectionDetailsInputs({
             placeholder="eg. 123-456-7890"
             value={connection.phone || ""}
             setValue={(v) => setConnection({ ...connection, phone: v })}
+            readonly={connection.isExisting}
           />
           <TextInput
             label="🏷️ Tags (press Enter to add)"
@@ -184,8 +190,22 @@ function ConnectionDetailsInputs({
         <textarea
           className="textarea textarea-bordered w-full"
           placeholder="eg. Met at a conference in 2019. We talked about the new React version..."
+          value={connection.notes || ""}
+          onChange={(e) =>
+            setConnection({ ...connection, notes: e.target.value })
+          }
         ></textarea>
       </div>
+      {/* Users cannot edit information of a connection that has a PotatoCRM account. */}
+      {connection.isExisting && (
+        <div className="alert my-2 w-full bg-secondary">
+          <AiFillCheckCircle />
+          <p className="m-0 flex items-center gap-2 p-0 text-sm">
+            This connection has a PotatoCRM account. You cannot edit their
+            information (Name, Email and Phone Number).
+          </p>
+        </div>
+      )}
     </>
   );
 }

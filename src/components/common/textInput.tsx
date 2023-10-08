@@ -8,6 +8,7 @@ interface TextInputProps {
   type?: string;
   props?: object;
   required?: boolean;
+  readonly?: boolean;
 }
 
 export const TextInput = ({
@@ -18,6 +19,7 @@ export const TextInput = ({
   type = "text",
   props,
   required = false,
+  readonly = false,
 }: TextInputProps) => (
   <div className="w-full">
     <label className="label py-0">
@@ -33,6 +35,8 @@ export const TextInput = ({
       value={value}
       onChange={(e) => setValue(e.target.value)}
       required={required}
+      readOnly={readonly}
+      disabled={readonly}
       {...props}
     />
   </div>
