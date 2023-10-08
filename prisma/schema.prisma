@@ -50,9 +50,9 @@ model Session {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?         @unique
+  email         String?   @unique
   emailVerified DateTime?
   password      String?
   image         String?
@@ -60,6 +60,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   events        CalendarEvent[]
+  tasks         Task[]
 }
 
 model VerificationToken {
@@ -80,4 +81,15 @@ model CalendarEvent {
   colour   String
   ownerId  String
   owner    User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime?
+  createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String
+  status      String?
+  // connections User[]
 }

@@ -2,6 +2,7 @@ import { exampleRouter } from "~/server/api/routers/example";
 import { createTRPCRouter } from "~/server/api/trpc";
 import {authRouter} from "~/server/api/routers/auth";
 import { detailsRouter } from "./routers/userdetails";
+import { trelloRouter } from "./routers/trello";
 import {calendarRouter} from "~/server/api/routers/calendar";
 
 /**
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
   user: authRouter,
   details: detailsRouter,
   calendar: calendarRouter,
+  trello: trelloRouter,
 });
 
 // export type definition of API
