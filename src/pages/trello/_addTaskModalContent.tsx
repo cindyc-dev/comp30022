@@ -4,6 +4,7 @@ import { useModal } from "../../components/hooks/modalContext";
 import { TaskI } from "~/types/TaskI";
 import { ColumnI } from "~/types/ColumnI";
 import { api } from "~/utils/api";
+import { set } from "zod";
 
 
 interface AddTaskModalContentProps {
@@ -13,7 +14,6 @@ interface AddTaskModalContentProps {
 
 export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps) => {
   const [newTask, setNewTask] = useState<TaskI>({ id: "", title: "", description: "", status: "", dueDate: new Date()});
-  const [date, setDate] = useState<string>("");
   const { addToast } = useToast();
   const { closeModal } = useModal();
 
@@ -91,8 +91,11 @@ export const AddTaskModalContent = ({column,setColumns}:AddTaskModalContentProps
             className="input input-bordered w-full"
             type="date"
             id="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={newTask.dueDate.toISOString().split("T")[0]}
+            onChange={(e) => {
+              setNewTask({ ...newTask, dueDate: new Date(e.target.value) });
+              
+            }}
           />
         </div>
         <button className="btn btn-primary btn-wide" onClick={handleAddTask}>

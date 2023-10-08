@@ -17,7 +17,7 @@ import { api } from "~/utils/api";
 export const Board = () => {
   const initialColumns: Record<string, ColumnI> = {
     todos: {
-      title: "Todo",
+      title: "To do",
       items: [],
     },
     inProgress: {
@@ -137,52 +137,57 @@ export const Board = () => {
         Add Task
       </button>
 
-      <div className="my-10 flex flex-wrap justify-start gap-8">
+      <div className="my-10 flex flex-wrap justify-center gap-8">
         <DragDropContext onDragEnd={onDragEnd}>
           {Object.keys(columns).map((columnId) => {
             const column = columns[columnId];
             return (
-              <div
-                key={columnId}
-                className="card w-96 flex-1 bg-gray-100 p-4 shadow"
-              >
-                <div className="card-body">
-                  <h1>{column.title}</h1>
-                  <Droppable droppableId={columnId}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        className="task-boxes"
-                      >
-                        {column.items.map((task: TaskI, index: number) => (
-                          <Draggable
-                            key={task.title}
-                            draggableId={task.title}
-                            index={index}
-                          >
-                            {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className="card mb-2 bg-indigo-100 shadow"
-                              >
-                                <div className="card-body" onClick={() => handleEditTask(task)} >
-                                  <h2>{task.title}</h2>
-                                  <p>{task.description}</p>
-                                  <p>{task.dueDate.toDateString()}</p>
+              <div key = {columnId}>
+                <h2 className = "mx-6 my-4">{column.title} <span className="text-gray-400">{column.items.length}</span></h2>
+                <div
+                  key={columnId}
+                  className="card w-96 flex-1 bg-gray-100 p-4 shadow"
+                >
+                  
+                  <div className="card-body">
+                    <Droppable droppableId={columnId}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          className="task-boxes"
+                        >
+                          {column.items.map((task: TaskI, index: number) => (
+                            <Draggable
+                              key={task.title}
+                              draggableId={task.title}
+                              index={index}
+                            >
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className="card mb-2 bg-indigo-100 shadow"
+                                >
+                                  <div className="card-body" onClick={() => handleEditTask(task)} >
+                                    <h2>{task.title}</h2>
+                                    <p>{task.description}</p>
+                                    <p>{task.dueDate.toDateString()}</p>
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </div>
                 </div>
+
               </div>
+              
             );
           })}
         </DragDropContext>
