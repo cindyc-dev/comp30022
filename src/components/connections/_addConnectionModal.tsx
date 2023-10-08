@@ -12,6 +12,7 @@ import Image from "next/image";
 import { checkEmail } from "../utils/checkEmail";
 import DebouncedInput from "./_debouncedInput";
 import { api } from "~/utils/api";
+import TextInput from "../common/textInput";
 
 export interface handleAddConnectionProps {
   newConnection: ConnectionI;
@@ -61,13 +62,20 @@ const AddConnectionModal = ({
 
 const SearchTab = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchResults] = useState<ConnectionI[]>([]);
+  const [searchResults, setSearchResults] = useState<ConnectionI[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const mutation = api.connection.searchAllUsers.useMutation();
 
   // API call to search for connections when searchQuery changes
   useEffect(() => {
+    // Clear search results if searchQuery is empty
+    if (searchQuery === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    // Check if searchQuery is a valid email
     if (!checkEmail(searchQuery)) return;
 
     console.log("Searching for connections with query: ", searchQuery);
@@ -80,6 +88,7 @@ const SearchTab = () => {
           if (data) {
             console.log("Search results: ", data);
           }
+          setSearchResults(data as ConnectionI[]);
           setIsLoading(false);
         },
         onError: (error) => {
@@ -94,19 +103,12 @@ const SearchTab = () => {
     <div className="flex flex-col items-center gap-4">
       <h1 className="my-0">Search for Connections</h1>
       <div className="w-full">
-        <DebouncedInput
+        <TextInput
           value={searchQuery}
-          onChange={(value) => setSearchQuery(value as string)}
+          setValue={(v) => setSearchQuery(v)}
+          label=""
           placeholder="🔎 Search Connection Email"
-          className="input input-primary w-full"
-          debounce={1000}
         />
-        <div className="flex w-full justify-end text-sm text-gray-400">
-          <p className="m-0 p-0">
-            You must enter a valid email (eg. name@company.com) to search for
-            connections.
-          </p>
-        </div>
       </div>
 
       {isLoading && (
@@ -134,9 +136,11 @@ const SearchTab = () => {
             className="m-0 p-0"
           />
           <p>
-            {searchQuery.length < 5
-              ? "Enter at least 5 characters to search."
-              : "No results found. Try searching for a different email."}
+            <p className="m-0 p-0 text-sm text-gray-400">
+              {!checkEmail(searchQuery)
+                ? "You must enter a valid email (eg. name@company.com) to search for connections."
+                : `No connections with email ${searchQuery} found. Try creating a custom connection.`}
+            </p>
           </p>
         </div>
       )}
