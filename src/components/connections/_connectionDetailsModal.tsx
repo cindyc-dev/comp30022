@@ -6,6 +6,7 @@ import { useModal } from "~/components/hooks/modalContext";
 import { FaSave, FaTrash } from "react-icons/fa";
 import { useToast } from "~/components/hooks/toastContext";
 import { api } from "~/utils/api";
+import { isObjectsEqual } from "../utils/isObjectEqual";
 
 interface ConnectionDetailsModalProps {
   connection: ConnectionI;
@@ -159,10 +160,6 @@ function ConnectionDetailsModal({
     }
   };
 
-  const hasEdit = () => {
-    return JSON.stringify(editedConnection) !== JSON.stringify(connection);
-  };
-
   return (
     <div className="flex justify-center">
       <div className="flex flex-col content-center items-center justify-center  md:w-4/5">
@@ -179,7 +176,9 @@ function ConnectionDetailsModal({
             Delete
           </button>
           <button
-            className={`btn btn-primary ${hasEdit() ? "" : "btn-disabled"}`}
+            className={`btn btn-primary ${
+              isObjectsEqual(connection, editedConnection) && "btn-disabled"
+            }`}
             onClick={saveConnection}
           >
             <FaSave />

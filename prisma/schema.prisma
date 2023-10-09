@@ -8,12 +8,6 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Account {
   id                       String  @id @default(cuid())
   userId                   String
@@ -49,11 +43,15 @@ model User {
   password       String?
   image          String?
   contact        String?
+  restoreCode   String?
+  restoreExpiry DateTime?
   accounts       Account[]
   sessions       Session[]
+  tasks          Task[]
   CustomContact  CustomContact[]
   connector UserConnection[] @relation("connector")
   connected  UserConnection[] @relation("connected")
+  events        CalendarEvent[]
 }
 
 model CustomContact {
@@ -85,4 +83,27 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model CalendarEvent {
+  id       String   @id @default(cuid())
+  title    String
+  start    DateTime
+  end      DateTime
+  location String?
+  notes    String?  @db.Text
+  colour   String
+  ownerId  String
+  owner    User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime?
+  createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String
+  status      String
+  // connections User[]
 }
