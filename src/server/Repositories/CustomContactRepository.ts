@@ -88,13 +88,14 @@ export async function getCustomConnection(id: string): Promise<ConnectionI[]> {
     throw new Error("User does not exist.");
   }
   return dbResult.map((user) => {
+    const tags = user["tags"].split(",").filter((tag) => tag !== "");
     const connection: ConnectionI = {
       id: user.id,
       name: user.name || "",
       email: user.email || "",
       phone: user.contact || undefined,
       photoUrl: user.image || undefined,
-      tags: [],
+      tags: tags,
     };
     return connection;
   });
@@ -133,10 +134,9 @@ export async function editCustomContact(userId: string, connectionEmail:string, 
 
   const BEConnection = await convertToBEConnection(connection);
 
-  const updateContact = await prisma.customContact.updateMany({
+  const updateContact = await prisma.customContact.update({
     where: {
-      userId: userId,
-      email: connectionEmail,
+      id: connection.id,
     },
     data: {
       name: BEConnection.name,
