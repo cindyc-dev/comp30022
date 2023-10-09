@@ -21,7 +21,11 @@ interface AddConnectionModalProps {
     newConnection,
     setConnection,
   }: handleAddConnectionProps) => void;
-  handleAddExisting: (id: string, name: string) => void;
+  handleAddExisting: (
+    id: string,
+    name: string,
+    setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+  ) => void;
   data: ConnectionI[];
 }
 
@@ -67,7 +71,11 @@ const SearchTab = ({
   handleAddExisting,
 }: {
   connections: ConnectionI[];
-  handleAddExisting: (id: string, name: string) => void;
+  handleAddExisting: (
+    id: string,
+    name: string,
+    setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+  ) => void;
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<ConnectionI[]>([]);
@@ -94,16 +102,12 @@ const SearchTab = ({
       { emailString: searchQuery, topX: 5 },
       {
         onSuccess: (data) => {
-          if (data) {
-            console.log("Search results: ", data);
-          }
           // Separate existing connections from search results
           const newAlreadyConnected = data.filter((connection) =>
             connections.find((c) => c.email === connection.email)
           );
           setAlreadyConnected(newAlreadyConnected);
           setSearchResults(data);
-
           setIsLoading(false);
         },
         onError: (error) => {
@@ -140,6 +144,7 @@ const SearchTab = ({
               connection={connection}
               isAlreadyConnected={alreadyConnected.includes(connection)}
               handleAdd={handleAddExisting}
+              setSearchQuery={setSearchQuery}
             />
           ))}
         </div>

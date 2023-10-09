@@ -1,9 +1,10 @@
 import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {z} from "zod";
-import {checkCustomExists, checkExistingUserExists, createCustomContact, deleteCustomConnection} from "~/server/Repositories/CustomContactRepository";
+import {checkCustomExists, checkExistingUserExists, createCustomContact, deleteCustomConnection, deleteManyCustomConnection, editCustomContact} from "~/server/Repositories/CustomContactRepository";
 import { TRPCError } from "@trpc/server";
-import { createConnection, deleteConnection, searchAllUsers } from "~/server/Repositories/ConnectionRepository";
+import { createConnection, deleteConnection, deleteManyExistingConnections, editExistingContact, searchAllUsers } from "~/server/Repositories/ConnectionRepository";
 import { getAllUserConnectionsDetails } from "~/server/Services/UserConnections";
+import { ConnectionI } from "~/types/ConnectionI";
 
 export const connectionRouter = createTRPCRouter({
   createCustom: protectedProcedure
@@ -67,7 +68,7 @@ export const connectionRouter = createTRPCRouter({
     .mutation(async (opts) => {
       const userId = opts.ctx.session.user.id;
 
-      await deleteConnection(userId, opts.input.connectionId);
+      return await deleteConnection(userId, opts.input.connectionId);
     }),
   
   getAllConnections: protectedProcedure.query(async (opts) => {
@@ -83,5 +84,57 @@ export const connectionRouter = createTRPCRouter({
     }))
     .mutation(async (opts) => {
       return await searchAllUsers(opts.input.emailString, opts.input.topX);
+    }),
+
+  editCustom: protectedProcedure.input(
+    z.object({
+      email: z.string(),
+      connection: z.object({
+        id: z.string(),
+        name: z.string(),
+        phone: z.string(),
+        photoUrl: z.string(),
+        email: z.string(),
+        tags: z.string().array(),
+        notes: z.string(),
+        isExisting: z.boolean().optional(),
+      }),
+    }))
+    .mutation(async (opts) => {
+      const userId = opts.ctx.session.user.id;
+      return await editCustomContact(userId, opts.input.email, opts.input.connection);
+    }),
+
+  editExisting: protectedProcedure.input(
+    z.object({
+      connectionId: z.string(),
+      connection: z.object({
+        name: z.string(),
+        phone: z.string(),
+        photoUrl: z.string(),
+        email: z.string(),
+        tags: z.string().array(),
+        notes: z.string(),
+        isExisting: z.boolean().optional(),
+      })
+    }))
+    .mutation(async (opts) => {
+      const userId = opts.ctx.session.user.id;
+      return await editExistingContact(userId, opts.input.connectionId, opts.input.connection as ConnectionI);
+    }),
+
+  
+  deleteMany: protectedProcedure.input(
+    z.object({
+      customEmails: z.string().array(),
+      existingIDs: z.string().array(),
+    })
+  )
+    .mutation(async (opts) => {
+      const userId = opts.ctx.session.user.id;
+      const customs = await deleteManyCustomConnection(userId, opts.input.customEmails);
+      const existings = await deleteManyExistingConnections(userId, opts.input.existingIDs);
+
+      return customs.count + existings.count;
     })
 });

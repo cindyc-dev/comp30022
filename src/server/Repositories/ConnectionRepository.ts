@@ -2,6 +2,7 @@ import { prisma } from "~/server/db";
 import { TRPCError } from "@trpc/server";
 import { getUserDetails } from "../Services/UserDetails";
 import { ConnectionI } from "~/types/ConnectionI";
+import { convertToBEConnection } from "../Services/UserConnections";
 
 export async function createConnection(senderId: string, receiverId: string) {
   if (senderId == null || receiverId == null || receiverId.length <= 0) {
@@ -41,16 +42,9 @@ export async function createConnection(senderId: string, receiverId: string) {
   return null;
 }
 
-// const userInfoSelect = {
-//   id: true,
-//   name: true,
-//   email: true,
-//   contact: true,
-//   image: true,
-//   password: true,
-// } satisfies Prisma.UserSelect;
-
-export async function getUserConnections(userId: string) {
+export async function getUserConnections(
+  userId: string
+){
   const dbResult = await prisma.userConnection.findMany({
     where: {
       userId_1: userId,
@@ -71,27 +65,37 @@ export async function getUserConnections(userId: string) {
 export async function deleteConnection(senderId: string, receiverId: string) {
   const connection1 = await prisma.userConnection.deleteMany({
     where: {
-      AND: [
-        {
-          userId_1: senderId,
-        },
-        {
-          userId_2: receiverId,
-        },
-      ],
+      userId_1: senderId,
+      userId_2: receiverId,
     },
   });
 
   const connection2 = await prisma.userConnection.deleteMany({
     where: {
-      AND: [
-        {
-          userId_1: receiverId,
-        },
-        {
-          userId_2: senderId,
-        },
-      ],
+      userId_1: receiverId,
+      userId_2: senderId,
+    },
+  });
+
+  return connection1 && connection2;
+}
+
+export async function deleteManyExistingConnections(userID: string, connectionIDs: string[]) {
+  const connection1 = await prisma.userConnection.deleteMany({
+    where: {
+      userId_1: userID,
+      userId_2: {
+        in: connectionIDs,
+      },
+    },
+  });
+
+  const connection2 = await prisma.userConnection.deleteMany({
+    where: {
+      userId_1: {
+        in: connectionIDs,
+      },
+      userId_2: userID,
     },
   });
 
@@ -119,4 +123,23 @@ export async function searchAllUsers(emailString: string, topX: number) {
     };
     return connection;
   });
+}
+
+export async function editExistingContact(userId: string, connectionId: string, connection: ConnectionI) {
+
+  const BEConnection = await convertToBEConnection(connection);
+
+  const update = await prisma.userConnection.update({
+    where: {
+      userId_1_userId_2: {
+        userId_1: userId,
+        userId_2: connectionId
+      },
+    },
+    data: {
+      tags: BEConnection.tags,
+      notes: BEConnection.notes,
+    },
+  });
+  return update;
 }

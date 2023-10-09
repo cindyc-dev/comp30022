@@ -83,6 +83,12 @@ export const SignInForm = () => {
           value={password}
           required={true}
         />
+        <div className="flex w-full justify-end text-right">
+          <Link className="link-primary link text-sm" href="/auth/forgot">
+            Forgot Password
+          </Link>
+        </div>
+
         <button
           type="submit"
           className={`btn btn-primary ${

@@ -5,7 +5,7 @@ import { FaAngleLeft } from "react-icons/fa";
 function AboutLayout({ children }: { children: React.ReactNode }) {
   return (
     <Layout onlyChildren={true}>
-      <div className="my-5">
+      <div className="my-5 w-full">
         {/* Back Button that returns to previous page */}
         <button
           className="btn btn-primary"

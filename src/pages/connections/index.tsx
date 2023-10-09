@@ -16,6 +16,7 @@ import { BiMailSend } from "react-icons/bi";
 import Tag from "~/components/connections/_tag";
 import { api } from "~/utils/api";
 import Image from "next/image";
+import ConnectionDetailsModal from "~/components/connections/_connectionDetailsModal";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>([]);
@@ -38,7 +39,6 @@ export default function Connections() {
     error,
     refetch,
   } = api.connection.getAllConnections.useQuery();
-
   useEffect(() => {
     if (connections) {
       console.log({ connections: connections });
@@ -117,7 +117,7 @@ export default function Connections() {
 
   /* Add Existing Connection */
   const existingMutation = api.connection.createExisting.useMutation();
-  const handleAddExisting = (id: string, name: string) => {
+  const handleAddExisting = (id: string, name: string, setSearchQuery: React.Dispatch<React.SetStateAction<string>> ) => {
     // API call to add existing connection
     existingMutation.mutate(
       { connectionId: id },
@@ -132,6 +132,9 @@ export default function Connections() {
 
           // Refetch data
           refetch();
+
+          // Reset search query
+          setSearchQuery("");
         },
         onError: (error) => {
           console.error(error);
@@ -160,22 +163,65 @@ export default function Connections() {
     });
   };
 
-  // Multiple-row operation: Delete
+  // Open Edit Connection Modal
+  const editConnection = (c: ConnectionI) => {
+    openModal({
+      content: (
+        <ConnectionDetailsModal
+          connection={c}
+          tagColoursMap={tagColoursMap}
+          refresh={refetch}
+        />
+      ),
+      id: "connection-details-modal",
+    });
+  };
+
+  /* Multiple-row operation: Delete */
+  const deleteManyMutation = api.connection.deleteMany.useMutation();
   const handleDeleteMultipleConnections = () => {
-    // TODO send rowSelection to API and get back success or error
-    // TODO remove deleted connections from data
     const deletedConnections = Object.keys(rowSelection).map(
       (id) => data[Number(id)]
     );
-    setData((prev) =>
-      prev.filter((connection) => !deletedConnections.includes(connection))
-    );
 
-    // Show success toast
-    addToast({
-      type: "success",
-      message: "Connections deleted successfully.",
+    // Separate to customEmails and existingIDs
+    const customEmails = deletedConnections
+      .filter((connection) => !connection.isExisting)
+      .map((connection) => connection.email);
+    const existingIDs = deletedConnections
+      .filter((connection) => connection.isExisting)
+      .map((connection) => connection.id);
+
+    console.log({
+      customEmails: customEmails,
+      existingIDs: existingIDs,
     });
+
+    // API call to delete connections
+    deleteManyMutation.mutate(
+      { customEmails: customEmails, existingIDs: existingIDs },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          // Show success toast
+          addToast({
+            type: "success",
+            message: "Connections deleted successfully.",
+          });
+
+          // Refetch data
+          refetch();
+        },
+        onError: (error) => {
+          console.error(error);
+          // Show error toast
+          addToast({
+            type: "error",
+            message: `Error deleting connections. ${error}: ${error.message}`,
+          });
+        },
+      }
+    );
 
     // Reset rowSelection
     setRowSelection({});
@@ -271,6 +317,7 @@ export default function Connections() {
           tagColoursMap={tagColoursMap}
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
+          editConnection={editConnection}
         />
         {isLoading && (
           <div className="flex w-full flex-grow items-center justify-center">
