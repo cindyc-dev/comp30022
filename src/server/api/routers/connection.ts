@@ -89,6 +89,7 @@ export const connectionRouter = createTRPCRouter({
     z.object({
       email: z.string(),
       connection: z.object({
+        id: z.string(),
         name: z.string(),
         phone: z.string(),
         photoUrl: z.string(),
