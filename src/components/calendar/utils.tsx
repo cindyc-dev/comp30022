@@ -2,6 +2,9 @@ import moment from "moment";
 import { Moment } from "moment";
 import { EventI } from "~/types/EventI";
 
+const sortByDate = (a: EventI, b: EventI) =>
+  moment(a.startDateTime).diff(moment(b.startDateTime));
+
 export const arrayRange = (start: number, stop: number, step: number = 1) =>
   Array.from(
     { length: (stop - start) / step + 1 },
@@ -28,7 +31,7 @@ export const getEventsInDay = (
       return eventStart.isBetween(start, end, "day", "[]");
     }
   });
-  return dayEvents;
+  return dayEvents.sort(sortByDate);
 };
 
 export const getEventsInWeek = (
@@ -52,7 +55,7 @@ export const getEventsInWeek = (
       return eventStart.isBetween(start, end, "day", "[]");
     }
   });
-  return weekEvents;
+  return weekEvents.sort(sortByDate);
 };
 
 export const getEventsInMonth = (today: Moment, events: EventI[]) => {
@@ -66,7 +69,7 @@ export const getEventsInMonth = (today: Moment, events: EventI[]) => {
       eventEnd.isBetween(start, end, "day", "[]")
     );
   });
-  return monthEvents;
+  return monthEvents.sort(sortByDate);
 };
 
 // Used for scrolling the header and body together
@@ -127,5 +130,46 @@ export const getOvernightAndMultiDayEvents = (
     }
   });
 
-  return overnightAndMultiDayEvents;
+  return overnightAndMultiDayEvents.sort(sortByDate);
+};
+
+// Check if any events overlap
+export const getOverlappingGroups = (events: EventI[]) => {
+  const overlappingGroups: EventI[][] = [];
+  events.forEach((event) => {
+    const start = moment(event.startDateTime);
+    const end = moment(event.endDateTime);
+    const overlapping = events.filter((e) => {
+      const eStart = moment(e.startDateTime);
+      const eEnd = moment(e.endDateTime);
+      return (
+        (start.isBetween(eStart, eEnd, "minute", "[]") ||
+          end.isBetween(eStart, eEnd, "minute", "[]")) &&
+        e.id !== event.id
+      );
+    });
+    if (overlapping.length > 0) {
+      const overlappingGroup = [event, ...overlapping].sort(sortByDate);
+      // Add the event to the existing group
+      overlappingGroups.forEach((group) => {
+        if (group.every((e) => overlappingGroup.includes(e))) {
+          overlappingGroup.forEach((e) => {
+            if (!group.includes(e)) {
+              group.push(e);
+            }
+          });
+        }
+      });
+
+      // Check if the group already exists
+      if (
+        overlappingGroups.filter((group) => {
+          return group.every((e) => overlappingGroup.includes(e));
+        }).length === 0
+      ) {
+        overlappingGroups.push(overlappingGroup);
+      }
+    }
+  });
+  return overlappingGroups;
 };

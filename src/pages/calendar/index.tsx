@@ -191,8 +191,12 @@ export default function Calendar() {
     if (event.key === "w") {
       setView("week");
     }
-    if (event.key === "m") {
-      setView("month");
+    // NOTE: disabling month view for now
+    // if (event.key === "m") {
+    //   setView("month");
+    // }
+    if (event.key === "t") {
+      setToday(moment());
     }
   }, []);
   useEffect(() => {

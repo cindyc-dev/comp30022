@@ -2,7 +2,7 @@ import moment from "moment";
 import { Moment } from "moment";
 import { BG_COLOUR_MAP } from "~/types/Colours";
 import { EventI } from "~/types/EventI";
-import { handleScroll, arrayRange, getEventsInDay } from "./utils";
+import { handleScroll, arrayRange, getEventsInDay, getOverlappingGroups } from "./utils";
 import { useEffect, useRef, useState } from "react";
 
 const TIME_WIDTH = "3em";
@@ -24,12 +24,6 @@ function DayView({
   overNightAndMultiDayEvents,
 }: DayViewProps) {
   const [currentTimeRow, setCurrentTimeRow] = useState<number>(-1);
-
-  console.log({
-    view: "Day",
-    dayEvents: dayEvents,
-    overNightAndMultiDayEvents: overNightAndMultiDayEvents,
-  });
 
   // Make the Header and Body scroll together
   const headerRef = useRef<HTMLDivElement>(null);
@@ -64,6 +58,9 @@ function DayView({
       });
     }
   }, [today]);
+
+  const overlappingGroups = getOverlappingGroups([...overNightAndMultiDayEvents,
+    ...getEventsInDay(today.clone(), dayEvents, false)]);
 
   return (
     <div className="w-full">
@@ -203,16 +200,31 @@ function DayView({
                 .clone()
                 .diff(moment(event.startDateTime).clone(), "minutes") / 60
             ) * 2;
-
+          // Calculate width and left position of the event based on overlapping groups
+          // Find the overlapping group that the event belongs to
+          const overlappingGroup = overlappingGroups.filter((group) =>
+            group.includes(event)
+          )[0];
+          let width = "100%";
+          let left = "0";
+          if (overlappingGroup !== undefined) {
+            const indexInGroup = overlappingGroup.indexOf(event);
+            const numOverlappingEvents = overlappingGroup.length;
+            width = `calc((100%) / ${numOverlappingEvents})`;
+            left = `calc(${indexInGroup} * ${width})`;
+          }
           return (
             <div
               key={i}
               className={`mx-1 rounded px-1 ${
                 BG_COLOUR_MAP[event.colour]
-              } cursor-pointer`}
+              } cursor-pointer border-base-200 border-solid border-[1px]`}
               style={{
                 gridColumn: col,
                 gridRow: `${row}/span ${duration}`,
+                width: width,
+                position: "relative",
+                left: left,
               }}
               onClick={() => {
                 if (

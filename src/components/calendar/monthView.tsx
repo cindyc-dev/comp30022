@@ -47,8 +47,6 @@ export default function MonthView({
     );
   });
 
-  console.log(eventsByDay); // TODO remove
-
   return (
     <div className="h-full w-full">
       {/* Sticky Header Days */}
