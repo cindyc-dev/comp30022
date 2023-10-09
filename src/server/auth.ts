@@ -82,18 +82,18 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+      clientId: env.DISCORD_CLIENT_ID as string,
+      clientSecret: env.DISCORD_CLIENT_SECRET as string,
       allowDangerousEmailAccountLinking: true,
     }),
     GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      clientId: env.GOOGLE_CLIENT_ID as string,
+      clientSecret: env.GOOGLE_CLIENT_SECRET as string,
       allowDangerousEmailAccountLinking: true,
     }),
     GitHubProvider({
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
+      clientId: env.GITHUB_CLIENT_ID as string,
+      clientSecret: env.GITHUB_CLIENT_SECRET as string,
       allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
@@ -105,7 +105,7 @@ export const authOptions: NextAuthOptions = {
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
         email: { label: "Email", type: "text", placeholder: "jsmith" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
@@ -124,7 +124,7 @@ export const authOptions: NextAuthOptions = {
           }
         }
         return null;
-      }
+      },
     }),
     /**
      * ...add more providers here.

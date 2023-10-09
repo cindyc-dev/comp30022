@@ -51,6 +51,8 @@ model User {
   password       String?
   image          String?
   contact        String?
+  restoreCode   String?
+  restoreExpiry DateTime?
   accounts       Account[]
   sessions       Session[]
   tasks          Task[]
