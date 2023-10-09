@@ -22,6 +22,7 @@ import { RankingInfo } from "@tanstack/match-sorter-utils";
 import Link from "next/link";
 
 import { BiMailSend } from "react-icons/bi";
+import Tag from "./_tag";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -116,12 +117,12 @@ function Table({
         cell: ({ row }) => (
           <div className="flex flex-row flex-wrap gap-2">
             {row.original.tags.map((tag) => (
-              <div
+              <Tag
                 key={tag}
-                className={`${tagColoursMap[tag]} badge py-3 text-sm font-normal text-base-100`}
-              >
-                {capitalise(tag)}
-              </div>
+                tag={tag}
+                tagColoursMap={tagColoursMap}
+                isDeletable={false}
+              />
             ))}
           </div>
         ),

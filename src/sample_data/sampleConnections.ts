@@ -3,6 +3,7 @@ import { ConnectionI } from "~/types/ConnectionI";
 export const DEFAULT_PROFILE_PIC = "/images/default-profile.jpg";
 
 export const NEW_CONNECTION: ConnectionI = {
+  id: "",
   name: "",
   email: "",
   tags: [],
@@ -18,12 +19,14 @@ export const sampleTags = {
 
 export const sampleSearchResults: ConnectionI[] = [
   {
+    id: "1",
     name: "John Doe",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/23.jpg",
     email: "john.doe@example.com",
     tags: [],
   },
   {
+    id: "2",
     name: "Jane Smith",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/15.jpg",
     email: "jane.smith@gmail.com",
@@ -34,6 +37,7 @@ export const sampleSearchResults: ConnectionI[] = [
 // Random data generated using ChatGPT with appropriate prompts
 export const sampleConnections: ConnectionI[] = [
   {
+    id: "",
     name: "John Doe",
     phone: "555-1234",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/23.jpg",
@@ -42,18 +46,21 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Met at the conference",
   },
   {
+    id: "",
     name: "Jane Smith",
     email: "jane.smith@gmail.com",
     tags: ["family"],
     notes: "Cousin's birthday",
   },
   {
+    id: "",
     name: "Robert Johnson",
     email: "robert.johnson@workplace.com",
     tags: [],
     notes: "Discuss upcoming project",
   },
   {
+    id: "",
     name: "Emily Brown",
     phone: "555-5678",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/38.jpg",
@@ -62,6 +69,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Likes hiking",
   },
   {
+    id: "",
     name: "Michael Williams",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/11.jpg",
     email: "michael.williams@example.org",
@@ -69,6 +77,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Works in marketing",
   },
   {
+    id: "",
     name: "Samantha Miller",
     phone: "555-2222",
     email: "samantha.miller@example.com",
@@ -76,6 +85,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Shared interest in painting",
   },
   {
+    id: "",
     name: "David Wilson",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/17.jpg",
     email: "david.wilson@gmail.com",
@@ -83,6 +93,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Helped with gardening",
   },
   {
+    id: "",
     name: "Jennifer Lee",
     phone: "555-4444",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/29.jpg",
@@ -90,6 +101,7 @@ export const sampleConnections: ConnectionI[] = [
     tags: ["colleague"],
   },
   {
+    id: "",
     name: "Richard Brown",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/42.jpg",
     email: "richard.brown@hotmail.com",
@@ -97,12 +109,14 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Nephew's graduation",
   },
   {
+    id: "",
     name: "Linda Davis",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/7.jpg",
     email: "linda.davis@example.org",
     tags: ["friend"],
   },
   {
+    id: "",
     name: "Daniel Martinez",
     phone: "555-6666",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/28.jpg",
@@ -111,6 +125,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Discussing new contract",
   },
   {
+    id: "",
     name: "Michelle Taylor",
     phone: "555-7777",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/12.jpg",
@@ -119,6 +134,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Team building event",
   },
   {
+    id: "",
     name: "Christopher Harris",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/34.jpg",
     email: "christopher.harris@hotmail.com",
@@ -126,12 +142,14 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Golf outing",
   },
   {
+    id: "",
     name: "Karen Clark",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/23.jpg",
     email: "karen.clark@example.org",
     tags: [],
   },
   {
+    id: "",
     name: "Matthew Turner",
     phone: "555-8888",
     email: "matthew.turner@gmail.com",
@@ -139,6 +157,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "College roommate",
   },
   {
+    id: "",
     name: "Elizabeth Baker",
     phone: "555-9999",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/4.jpg",
@@ -147,6 +166,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Joint project presentation",
   },
   {
+    id: "",
     name: "William Garcia",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/21.jpg",
     email: "william.garcia@hotmail.com",
@@ -154,6 +174,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Football match",
   },
   {
+    id: "",
     name: "Amanda Martinez",
     phone: "555-1010",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/32.jpg",
@@ -162,6 +183,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Book club meeting",
   },
   {
+    id: "",
     name: "Jason Robinson",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/46.jpg",
     email: "jason.robinson@gmail.com",
@@ -169,6 +191,7 @@ export const sampleConnections: ConnectionI[] = [
     notes: "Organizing block party",
   },
   {
+    id: "",
     name: "Melissa Adams",
     photoUrl: "https://xsgames.co/randomusers/assets/avatars/female/11.jpg",
     email: "melissa.adams@workplace.com",
