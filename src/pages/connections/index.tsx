@@ -117,7 +117,7 @@ export default function Connections() {
 
   /* Add Existing Connection */
   const existingMutation = api.connection.createExisting.useMutation();
-  const handleAddExisting = (id: string, name: string) => {
+  const handleAddExisting = (id: string, name: string, setSearchQuery: React.Dispatch<React.SetStateAction<string>> ) => {
     // API call to add existing connection
     existingMutation.mutate(
       { connectionId: id },
@@ -132,6 +132,9 @@ export default function Connections() {
 
           // Refetch data
           refetch();
+
+          // Reset search query
+          setSearchQuery("");
         },
         onError: (error) => {
           console.error(error);

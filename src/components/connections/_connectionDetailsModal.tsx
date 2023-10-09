@@ -108,8 +108,55 @@ function ConnectionDetailsModal({
     }
   };
 
+  const deleteExistingConnection = api.connection.deleteExisting.useMutation();
+  const deleteCustomConnection = api.connection.deleteCustom.useMutation();
   const deleteConnection = () => {
-    // TODO: Delete connection from API
+    // Check if connection is custom or existing
+    if (editedConnection.isExisting) {
+      deleteExistingConnection.mutate(
+        {
+          connectionId: editedConnection.id,
+        },
+        {
+          onSuccess: () => {
+            addToast({
+              type: "success",
+              message: `Connection with ${connection.name} deleted.`,
+            });
+            refresh();
+            closeModal("connection-details-modal");
+          },
+          onError: (error) => {
+            addToast({
+              type: "error",
+              message: `Error deleting connection. Error: ${error.message}`,
+            });
+          },
+        }
+      );
+    } else {
+      deleteCustomConnection.mutate(
+        {
+          email: editedConnection.email,
+        },
+        {
+          onSuccess: () => {
+            addToast({
+              type: "success",
+              message: `Connection with ${connection.name} deleted.`,
+            });
+            refresh();
+            closeModal("connection-details-modal");
+          },
+          onError: (error) => {
+            addToast({
+              type: "error",
+              message: `Error deleting connection. Error: ${error.message}`,
+            });
+          },
+        }
+      );
+    }
   };
 
   const hasEdit = () => {

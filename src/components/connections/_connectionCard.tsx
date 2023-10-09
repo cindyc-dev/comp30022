@@ -6,10 +6,16 @@ function ConnectionCard({
   connection,
   isAlreadyConnected,
   handleAdd,
+  setSearchQuery,
 }: {
   connection: ConnectionI;
   isAlreadyConnected: boolean;
-  handleAdd: (id: string, name: string) => void;
+  handleAdd: (
+    id: string,
+    name: string,
+    setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+  ) => void;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 }) {
   return (
     <div
@@ -31,7 +37,9 @@ function ConnectionCard({
         className={`btn btn-primary btn-sm text-base-100 ${
           isAlreadyConnected && "btn-disabled"
         }`}
-        onClick={() => handleAdd(connection.id, connection.name)}
+        onClick={() =>
+          handleAdd(connection.id, connection.name, setSearchQuery)
+        }
       >
         <FaPaperPlane />
         {isAlreadyConnected ? "Already Connected" : "Connect"}
