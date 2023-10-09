@@ -2,23 +2,23 @@ import moment, { Moment } from "moment";
 import { useModal } from "~/components/hooks/modalContext";
 import { Layout } from "~/components/layout/layout";
 import { CalendarViewType, EventI, EventStateI } from "~/types/EventI";
-import AddEventModalContent from "~/components/calendar/_addEventModalContent";
-import WeekView from "~/components/calendar/_weekView";
-import { useCallback, useEffect, useState } from "react";
-import Toolbar from "~/components/calendar/_toolbar";
+import AddEventModalContent from "~/components/calendar/addEventModalContent";
+import WeekView from "~/components/calendar/weekView";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Toolbar from "~/components/calendar/toolbar";
 import {
   getEventsInDay,
   getEventsInMonth,
   getEventsInWeek,
   getOvernightAndMultiDayEvents,
-} from "~/components/calendar/_utils";
-import MonthView from "~/components/calendar/_monthView";
+} from "~/components/calendar/utils";
+import MonthView from "~/components/calendar/monthView";
 import { useToast } from "~/components/hooks/toastContext";
 import { FaPlus } from "react-icons/fa";
-import EventDetailsModal from "~/components/calendar/_eventDetailsModal";
+import EventDetailsModal from "~/components/calendar/eventDetailsModal";
 import { api } from "~/utils/api";
 import { sampleEvents } from "~/sample_data/sampleEvents";
-import DayView from "~/components/calendar/_dayView";
+import DayView from "~/components/calendar/dayView";
 
 const DEFAULT_VIEW: CalendarViewType = "week";
 
@@ -31,6 +31,7 @@ export default function Calendar() {
   });
   const [view, setView] = useState<CalendarViewType>();
   const [today, setToday] = useState<Moment>(moment());
+  const prevTodayRef = useRef<Moment>(moment());
 
   const { openModal, closeModal } = useModal();
 
@@ -218,41 +219,48 @@ export default function Calendar() {
 
   /* Get all events from API */
   // Get Events for the month - pass start and end as UTC strings
-  // TODO uncomment
-  // const { data, isLoading, error, refetch } = api.calendar.getEvents.useQuery({
-  //   start: today.clone().startOf("month").utc().format(),
-  //   end: today.clone().endOf("month").utc().format(),
-  // });
-  // useEffect(() => {
-  //   if (data) {
-  //     console.log({ apiData: data });
-  //     setEvents({
-  //       allEvents: data,
-  //       weekEvents: getEventsInWeek(today, data, true),
-  //       monthEvents: getEventsInMonth(today, data),
-  //     });
-  //   }
-  //   if (error) {
-  //     console.log({ error });
-  //     // Show error toast
-  //     addToast({
-  //       type: "error",
-  //       message: `Failed to get events. Error: ${error.message}`,
-  //     });
-  //   }
-  // }, [data, error]);
+  const { data, isLoading, error, refetch } = api.calendar.getEvents.useQuery({
+    start: today.clone().startOf("year").utc().format(),
+    end: today.clone().endOf("year").utc().format(),
+  });
+  useEffect(() => {
+    if (data) {
+      console.log({ apiData: data });
+      setEvents({
+        allEvents: data,
+        weekEvents: getEventsInWeek(today, data, true),
+        monthEvents: getEventsInMonth(today, data),
+        dayEvents: getEventsInDay(today, data, true),
+      });
+    }
+    if (error) {
+      console.log({ error });
+      // Show error toast
+      addToast({
+        type: "error",
+        message: `Failed to get events. Error: ${error.message}`,
+      });
+    }
+  }, [data, error]);
 
   useEffect(() => {
     setEvents((prev) => ({
       ...prev,
-      weekEvents: getEventsInWeek(today, prev.allEvents, true),
-      monthEvents: getEventsInMonth(today, prev.allEvents),
-      dayEvents: getEventsInDay(today, prev.allEvents),
+      weekEvents: getEventsInWeek(today.clone(), prev.allEvents, true),
+      monthEvents: getEventsInMonth(today.clone(), prev.allEvents),
+      dayEvents: getEventsInDay(today.clone(), prev.allEvents, true),
     }));
-  }, [events.allEvents]);
+  }, [events.allEvents, today]);
 
-  // const weekEvents = getEventsInWeek(today, events, true);
-  // const monthEvents = getEventsInMonth(today, events);
+  useEffect(() => {
+    prevTodayRef.current = today;
+
+    // Refetch if year changes
+    if (!today.isSame(prevTodayRef.current, "year")) {
+      console.log("refetch");
+      refetch();
+    }
+  }, [today]);
 
   const goToDay = (day: Moment) => {
     setToday(day.clone());
@@ -262,13 +270,12 @@ export default function Calendar() {
   return (
     <Layout>
       <Toolbar
-        today={today}
+        today={today.clone()}
         setToday={setToday}
         view={view || DEFAULT_VIEW}
         setView={setView}
         openEventModal={openEventModal}
-        // TODO uncomment
-        // isLoading={isLoading}
+        isLoading={isLoading}
       />
       {/* Calendar View */}
       <div className="m-2 w-full">
@@ -284,11 +291,11 @@ export default function Calendar() {
               </button>
             </div>
             <WeekView
-              today={today}
+              today={today.clone()}
               goToDay={goToDay}
               weekEvents={events.weekEvents}
               overNightAndMultiDayEvents={...getOvernightAndMultiDayEvents(
-                getEventsInWeek(today, events.allEvents, true),
+                getEventsInWeek(today.clone(), events.allEvents, true),
                 today.clone().startOf("week"),
                 today.clone().endOf("week")
               )}
@@ -298,7 +305,7 @@ export default function Calendar() {
         )}
         {view === "month" && (
           <MonthView
-            today={today}
+            today={today.clone()}
             goToDay={goToDay}
             monthEvents={[...events.monthEvents]}
             handleEventClick={openEventDetailsModal}
@@ -306,9 +313,14 @@ export default function Calendar() {
         )}
         {view === "day" && (
           <DayView
-            today={today}
+            today={today.clone()}
             dayEvents={[...events.dayEvents]}
             handleEventClick={openEventDetailsModal}
+            overNightAndMultiDayEvents={...getOvernightAndMultiDayEvents(
+              getEventsInDay(today.clone(), events.allEvents, true),
+              today.clone().startOf("day"),
+              today.clone().endOf("day")
+            )}
           />
         )}
       </div>
@@ -316,4 +328,4 @@ export default function Calendar() {
   );
 }
 
-Calendar.auth = false;
+Calendar.auth = true;
