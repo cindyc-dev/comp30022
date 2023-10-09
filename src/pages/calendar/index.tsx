@@ -17,14 +17,13 @@ import { useToast } from "~/components/hooks/toastContext";
 import { FaPlus } from "react-icons/fa";
 import EventDetailsModal from "~/components/calendar/eventDetailsModal";
 import { api } from "~/utils/api";
-import { sampleEvents } from "~/sample_data/sampleEvents";
 import DayView from "~/components/calendar/dayView";
 
 const DEFAULT_VIEW: CalendarViewType = "week";
 
 export default function Calendar() {
   const [events, setEvents] = useState<EventStateI>({
-    allEvents: sampleEvents,
+    allEvents: [],
     weekEvents: [],
     monthEvents: [],
     dayEvents: [],
