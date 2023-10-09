@@ -13,7 +13,9 @@ export async function getAllUserConnectionsDetails(userId: string) {
   if (userConnections != null) {
     for (let i = 0; i < userConnections.length; i++) {
       const connectionId = userConnections[i]["userId_2"];
-      const tags = userConnections[i]["tags"].split(",").filter((tag) => tag !== "");
+      const tags = userConnections[i]["tags"]
+        .split(",")
+        .filter((tag) => tag !== "");
       const user = await getUserDetails(connectionId);
 
       const connection: ConnectionI = {
@@ -36,13 +38,12 @@ export async function getAllUserConnectionsDetails(userId: string) {
 }
 
 export async function convertToBEConnection(connection: ConnectionI) {
-  const tags = "";
-  if (connection.tags.length > 1) {
-    connection.tags.forEach(item => {
-      tags.concat(item); 
-      tags.concat(",");
-    });
+  // Convert tags to string
+  let tags = "";
+  if (connection.tags) {
+    tags = connection.tags.join(",");
   }
+  console.log({ tags: tags });
 
   const BEConnection: BEConnectionI = {
     name: connection.name,
