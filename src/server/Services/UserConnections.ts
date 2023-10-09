@@ -13,7 +13,7 @@ export async function getAllUserConnectionsDetails(userId: string) {
   if (userConnections != null) {
     for (let i = 0; i < userConnections.length; i++) {
       const connectionId = userConnections[i]["userId_2"];
-      const tags = userConnections[i]["tags"].split(",");
+      const tags = userConnections[i]["tags"].split(",").filter((tag) => tag !== "");
       const user = await getUserDetails(connectionId);
 
       const connection: ConnectionI = {
