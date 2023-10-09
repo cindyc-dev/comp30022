@@ -139,14 +139,14 @@ function Table({
         ),
       },
       {
-        header: "CONNECT",
+        header: "SEND EMAIL",
         cell: ({ row }) => (
           <Link
             className="btn btn-secondary btn-sm h-fit py-1"
             href={`mailto: ${row.original.email}`}
           >
             <BiMailSend />
-            Connect Now
+            Send Email
           </Link>
         ),
       },

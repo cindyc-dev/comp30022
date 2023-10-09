@@ -2,7 +2,15 @@ import { FaPaperPlane } from "react-icons/fa";
 import AvatarImage from "~/components/common/avatarImage";
 import { ConnectionI } from "~/types/ConnectionI";
 
-function ConnectionCard({connection}: {connection: ConnectionI}) {
+function ConnectionCard({
+  connection,
+  isAlreadyConnected,
+  handleAdd,
+}: {
+  connection: ConnectionI;
+  isAlreadyConnected: boolean;
+  handleAdd: (id: string, name: string) => void;
+}) {
   return (
     <div
       key={connection.email}
@@ -19,8 +27,14 @@ function ConnectionCard({connection}: {connection: ConnectionI}) {
           <span className="text-sm">{connection.email}</span>
         </div>
       </div>
-      <button className="btn btn-primary btn-sm text-base-100">
-        <FaPaperPlane /> Request
+      <button
+        className={`btn btn-primary btn-sm text-base-100 ${
+          isAlreadyConnected && "btn-disabled"
+        }`}
+        onClick={() => handleAdd(connection.id, connection.name)}
+      >
+        <FaPaperPlane />
+        {isAlreadyConnected ? "Already Connected" : "Connect"}
       </button>
     </div>
   );

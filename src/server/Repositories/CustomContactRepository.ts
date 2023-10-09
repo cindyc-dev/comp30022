@@ -9,7 +9,7 @@ export async function createCustomContact(
   email: string,
   contact: string,
   tags: string,
-  notes: string,
+  notes: string
 ) {
   await prisma.customContact.create({
     data: {
@@ -35,9 +35,8 @@ const userInfoSelect = {
 type UserInfoPayload = Prisma.UserGetPayload<{ select: typeof userInfoSelect }>;
 
 export async function checkExistingUserExists(
-  email: string, 
+  email: string
 ): Promise<UserInfoPayload | null> {
-  
   if (email == undefined) return null;
 
   const dbResult = await prisma.user.findFirst({
@@ -90,6 +89,7 @@ export async function getCustomConnection(id: string): Promise<ConnectionI[]> {
   }
   return dbResult.map((user) => {
     const connection: ConnectionI = {
+      id: user.id,
       name: user.name || "",
       email: user.email || "",
       phone: user.contact || undefined,
@@ -101,7 +101,6 @@ export async function getCustomConnection(id: string): Promise<ConnectionI[]> {
 }
 
 export async function deleteCustomConnection(userId: string, email: string) {
-
   if (email == undefined) return null;
 
   const deleted = await prisma.customContact.deleteMany({

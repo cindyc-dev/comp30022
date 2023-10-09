@@ -7,6 +7,7 @@ import { AvatarImage } from "../common/avatarImage";
 import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { useToast } from "../hooks/toastContext";
+import { DEFAULT_PROFILE_PIC } from "~/sample_data/sampleConnections";
 
 const PAGES = [
   {
@@ -30,13 +31,9 @@ export const Navbar = () => {
   // Check current page to highlight the navbar link
   const router = useRouter();
   const currentPage = router.pathname;
-  const [profileImage, setProfileImage] = useState<string>(
-    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-  );
+  const [profileImage, setProfileImage] = useState<string>(DEFAULT_PROFILE_PIC);
 
   const { data: profileDetails } = api.details.profile.useQuery();
-
-  console.log(profileDetails); // TODO remove
 
   const { addToast } = useToast();
 
@@ -107,7 +104,7 @@ export const Navbar = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <div className="dropdown dropdown-end">
+        <div className="dropdown-end dropdown">
           <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
             <div className="w-10">
               {profileImage && <AvatarImage src={profileImage} />}

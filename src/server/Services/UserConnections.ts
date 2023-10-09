@@ -16,12 +16,13 @@ export async function getAllUserConnectionsDetails(userId: string) {
       const tags = userConnections[i]["tags"].split(",");
       const user = await getUserDetails(connectionId);
 
-
       const connection: ConnectionI = {
+        id: user.id,
         name: user.name,
         email: user.email,
         tags: tags,
         notes: userConnections[i]["notes"],
+        photoUrl: user.image,
         isExisting: true,
       };
       connectionDetails.push(connection);

@@ -5,14 +5,14 @@ import { ConnectionI } from "~/types/ConnectionI";
 import { convertToBEConnection } from "../Services/UserConnections";
 
 export async function createConnection(senderId: string, receiverId: string) {
-  if (senderId == null || receiverId == null || receiverId.length <= 0){
+  if (senderId == null || receiverId == null || receiverId.length <= 0) {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Invalid User ID",
     });
   }
   if (senderId == receiverId) {
-    throw new TRPCError ({
+    throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Cannot form connection with self",
     });
@@ -27,7 +27,7 @@ export async function createConnection(senderId: string, receiverId: string) {
         notes: "",
       },
     });
-  
+
     const connection2 = await prisma.userConnection.create({
       data: {
         userId_1: receiverId,
@@ -36,12 +36,11 @@ export async function createConnection(senderId: string, receiverId: string) {
         notes: "",
       },
     });
-  
-    return connection && connection2; 
+
+    return connection && connection2;
   }
   return null;
 }
-
 
 export async function getUserConnections(
   userId: string
@@ -54,7 +53,7 @@ export async function getUserConnections(
       userId_2: true,
       tags: true,
       notes: true,
-    }
+    },
   });
 
   if (!dbResult) {
@@ -62,7 +61,6 @@ export async function getUserConnections(
   }
   return dbResult;
 }
-
 
 export async function deleteConnection(senderId: string, receiverId: string) {
   const connection1 = await prisma.userConnection.deleteMany({
@@ -109,13 +107,14 @@ export async function searchAllUsers(emailString: string, topX: number) {
     where: {
       email: {
         startsWith: emailString,
-      }
+      },
     },
-    take: topX
+    take: topX,
   });
-  
+
   return matches.map((user) => {
     const connection: ConnectionI = {
+      id: user.id,
       name: user.name || "",
       email: user.email || "",
       phone: user.contact || undefined,
