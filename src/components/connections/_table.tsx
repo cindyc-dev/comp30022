@@ -13,7 +13,6 @@ import {
   OnChangeFn,
 } from "@tanstack/react-table";
 import AvatarImage from "~/components/common/avatarImage";
-import { capitalise } from "~/components/utils/capitalise";
 import { FaCaretDown, FaCaretUp, FaSort } from "react-icons/fa";
 import { fuzzyFilter } from "~/components/utils/fuzzyFilter";
 import { fuzzySort } from "~/components/utils/fuzzySort";

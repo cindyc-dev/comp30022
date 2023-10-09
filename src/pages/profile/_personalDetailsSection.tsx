@@ -4,7 +4,6 @@ import { TextInput } from "~/components/common/textInput";
 import { useModal } from "~/components/hooks/modalContext";
 import { useToast } from "~/components/hooks/toastContext";
 import { api } from "~/utils/api";
-import { IoMdRefresh } from "react-icons/io";
 import UploadImageModalContent from "~/components/common/uploadImageModalContent";
 
 export const PersonalDetailsSection = () => {
