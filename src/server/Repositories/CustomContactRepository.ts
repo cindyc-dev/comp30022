@@ -1,6 +1,7 @@
 import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
 import { ConnectionI } from "~/types/ConnectionI";
+import { convertToBEConnection } from "../Services/UserConnections";
 
 export async function createCustomContact(
   userId: string,
@@ -12,10 +13,10 @@ export async function createCustomContact(
 ) {
   await prisma.customContact.create({
     data: {
+      userId: userId,
       name: name,
       email: email,
       contact: contact,
-      userId: userId,
       tags: tags,
       notes: notes,
     },
@@ -99,7 +100,7 @@ export async function getCustomConnection(id: string): Promise<ConnectionI[]> {
   });
 }
 
-export async function deleteCustomConnection(userId: string, email?: string) {
+export async function deleteCustomConnection(userId: string, email: string) {
   if (email == undefined) return null;
 
   const deleted = await prisma.customContact.deleteMany({
@@ -110,4 +111,41 @@ export async function deleteCustomConnection(userId: string, email?: string) {
   });
 
   return deleted;
+}
+
+export async function deleteManyCustomConnection(userId: string, emails: string[]) {
+
+  const deleted = await prisma.customContact.deleteMany({
+    where: {
+      userId: userId,
+      email: {
+        in: emails,
+      },
+    },
+  });
+
+  return deleted;
+}
+
+export async function editCustomContact(userId: string, connectionEmail:string, connection: ConnectionI) {
+  if (connectionEmail == undefined) return null;
+  
+
+  const BEConnection = await convertToBEConnection(connection);
+
+  const updateContact = await prisma.customContact.updateMany({
+    where: {
+      userId: userId,
+      email: connectionEmail,
+    },
+    data: {
+      name: BEConnection.name,
+      email: BEConnection.email,
+      contact: BEConnection.phone,
+      image: BEConnection.photoUrl,
+      tags: BEConnection.tags,
+      notes: BEConnection.notes,
+    } 
+  });
+  return updateContact;
 }

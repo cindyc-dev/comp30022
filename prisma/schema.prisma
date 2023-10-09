@@ -58,11 +58,11 @@ model User {
 
 model CustomContact {
   id      String  @id @default(cuid())
-  name    String?
-  email   String?
+  userId  String
+  name    String
+  email   String
   contact String?
   image   String?
-  userId  String
   tags    String
   notes   String
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)

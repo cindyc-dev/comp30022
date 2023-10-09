@@ -2,6 +2,7 @@ import { getUserConnections } from "../Repositories/ConnectionRepository";
 import { getUserDetails } from "./UserDetails";
 import { getCustomConnection } from "../Repositories/CustomContactRepository";
 import { ConnectionI } from "~/types/ConnectionI";
+import { BEConnectionI } from "~/types/BEConnectionI";
 
 export async function getAllUserConnectionsDetails(userId: string) {
   const connectionDetails = [];
@@ -32,4 +33,25 @@ export async function getAllUserConnectionsDetails(userId: string) {
   const customContacts = await getCustomConnection(userId);
 
   return [...connectionDetails, ...customContacts!];
+}
+
+export async function convertToBEConnection(connection: ConnectionI) {
+  const tags = "";
+  if (connection.tags.length > 1) {
+    connection.tags.forEach(item => {
+      tags.concat(item); 
+      tags.concat(",");
+    });
+  }
+
+  const BEConnection: BEConnectionI = {
+    name: connection.name,
+    email: connection.email,
+    phone: connection.phone,
+    photoUrl: connection.photoUrl,
+    tags: tags,
+    notes: connection.notes,
+  };
+
+  return BEConnection;
 }
