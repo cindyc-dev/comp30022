@@ -160,22 +160,51 @@ export default function Connections() {
     });
   };
 
-  // Multiple-row operation: Delete
+  /* Multiple-row operation: Delete */
+  const deleteManyMutation = api.connection.deleteMany.useMutation();
   const handleDeleteMultipleConnections = () => {
-    // TODO send rowSelection to API and get back success or error
-    // TODO remove deleted connections from data
     const deletedConnections = Object.keys(rowSelection).map(
       (id) => data[Number(id)]
     );
-    setData((prev) =>
-      prev.filter((connection) => !deletedConnections.includes(connection))
-    );
 
-    // Show success toast
-    addToast({
-      type: "success",
-      message: "Connections deleted successfully.",
+    // Separate to customEmails and existingIDs
+    const customEmails = deletedConnections
+      .filter((connection) => !connection.isExisting)
+      .map((connection) => connection.email);
+    const existingIDs = deletedConnections
+      .filter((connection) => connection.isExisting)
+      .map((connection) => connection.id);
+
+    console.log({
+      customEmails: customEmails,
+      existingIDs: existingIDs,
     });
+
+    // API call to delete connections
+    deleteManyMutation.mutate(
+      { customEmails: customEmails, existingIDs: existingIDs },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          // Show success toast
+          addToast({
+            type: "success",
+            message: "Connections deleted successfully.",
+          });
+
+          // Refetch data
+          refetch();
+        },
+        onError: (error) => {
+          console.error(error);
+          // Show error toast
+          addToast({
+            type: "error",
+            message: `Error deleting connections. ${error}: ${error.message}`,
+          });
+        },
+      }
+    );
 
     // Reset rowSelection
     setRowSelection({});
