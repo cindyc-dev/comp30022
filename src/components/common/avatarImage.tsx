@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { DEFAULT_IMAGE_URL } from "~/sample_data/sampleConnections";
+import { DEFAULT_PROFILE_PIC } from "~/sample_data/sampleConnections";
 
 export const AvatarImage = ({
-  src = DEFAULT_IMAGE_URL,
+  src = DEFAULT_PROFILE_PIC,
   props,
 }: {
   src?: string;

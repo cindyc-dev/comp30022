@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { Layout } from "~/components/layout/layout";
 import { ConnectionI } from "~/types/ConnectionI";
-import {
-  NEW_CONNECTION,
-  sampleConnections,
-  sampleTags,
-} from "~/sample_data/sampleConnections";
+import { NEW_CONNECTION, sampleTags } from "~/sample_data/sampleConnections";
 import { FaFilter, FaPlus, FaTrash } from "react-icons/fa";
 import { useModal } from "~/components/hooks/modalContext";
 import AddConnectionModal, {
@@ -18,33 +14,48 @@ import { RowSelectionState } from "@tanstack/react-table";
 import Link from "next/link";
 import { BiMailSend } from "react-icons/bi";
 import Tag from "~/components/connections/_tag";
+import { api } from "~/utils/api";
+import Image from "next/image";
+import ConnectionDetailsModal from "~/components/connections/_connectionDetailsModal";
 
 export default function Connections() {
-  const [data, setData] = useState<ConnectionI[]>(sampleConnections);
+  const [data, setData] = useState<ConnectionI[]>([]);
   const [filteredData, setFilteredData] = useState<ConnectionI[]>(data);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const tagColoursMap: Record<string, string> = sampleTags;
 
-  // TODO fetch data and tagColoursMap from API
+  const tagColoursMap: Record<string, string> = sampleTags;
 
   const { openModal, closeModal } = useModal();
   const { addToast } = useToast();
 
-  const addConnection = () => {
-    openModal({
-      content: (
-        <AddConnectionModal
-          handleCreateConnection={handleAddConnection}
-          tagColoursMap={tagColoursMap}
-        />
-      ),
-      id: "add-connection-modal",
-    });
-  };
+  // TODO fetch data and tagColoursMap from API
 
-  const handleAddConnection = ({
+  /* Get data from API */
+  const {
+    data: connections,
+    isLoading,
+    error,
+    refetch,
+  } = api.connection.getAllConnections.useQuery();
+  useEffect(() => {
+    if (connections) {
+      console.log({ connections: connections });
+      setData([...connections]);
+    }
+    if (error) {
+      console.error(error);
+      addToast({
+        type: "error",
+        message: `Error fetching connections. ${error}: ${error.message}`,
+      });
+    }
+  }, [connections, error]);
+
+  /* Add Custom Connection */
+  const customMutation = api.connection.createCustom.useMutation();
+  const handleCreateCustom = ({
     newConnection,
     setConnection,
   }: handleAddConnectionProps) => {
@@ -63,18 +74,40 @@ export default function Connections() {
       // Show error toast
       addToast({
         type: "error",
-        message: "Email already exists.",
+        message: "You already have a connection with this email.",
       });
       return;
     }
 
-    // TODO send newConnection to API and get back newConnection with id
-    setData((prev) => [...prev, newConnection]); // To remove
+    const newConnectionWithTags = {
+      ...newConnection,
+      tags: newConnection.tags.map((tag) => tag.toLowerCase()),
+      notes: newConnection.notes || "",
+      contactNumber: newConnection.phone || "",
+      photoUrl: newConnection.photoUrl || "",
+    };
 
-    // Show success toast
-    addToast({
-      type: "success",
-      message: "Connection added successfully.",
+    // API call to create new connection
+    customMutation.mutate(newConnectionWithTags, {
+      onSuccess: (data) => {
+        console.log(data);
+        // Show success toast
+        addToast({
+          type: "success",
+          message: `Connection with ${newConnection.name} added successfully.`,
+        });
+
+        // Refetch data
+        refetch();
+      },
+      onError: (error) => {
+        console.error(error);
+        // Show error toast
+        addToast({
+          type: "error",
+          message: `Error creating connection. ${error}: ${error.message}`,
+        });
+      },
     });
 
     // Reset connection and close modal
@@ -82,26 +115,119 @@ export default function Connections() {
     closeModal("add-connection-modal");
   };
 
+  /* Add Existing Connection */
+  const existingMutation = api.connection.createExisting.useMutation();
+  const handleAddExisting = (id: string, name: string, setSearchQuery: React.Dispatch<React.SetStateAction<string>> ) => {
+    // API call to add existing connection
+    existingMutation.mutate(
+      { connectionId: id },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          // Show success toast
+          addToast({
+            type: "success",
+            message: `Connection with ${name} added successfully.`,
+          });
+
+          // Refetch data
+          refetch();
+
+          // Reset search query
+          setSearchQuery("");
+        },
+        onError: (error) => {
+          console.error(error);
+          // Show error toast
+          addToast({
+            type: "error",
+            message: `Error adding connection. ${error}: ${error.message}`,
+          });
+        },
+      }
+    );
+  };
+
+  // Open Add Connection Modal
+  const addConnection = () => {
+    openModal({
+      content: (
+        <AddConnectionModal
+          handleCreateCustom={handleCreateCustom}
+          tagColoursMap={tagColoursMap}
+          handleAddExisting={handleAddExisting}
+          data={data}
+        />
+      ),
+      id: "add-connection-modal",
+    });
+  };
+
+  // Open Edit Connection Modal
+  const editConnection = (c: ConnectionI) => {
+    openModal({
+      content: (
+        <ConnectionDetailsModal
+          connection={c}
+          tagColoursMap={tagColoursMap}
+          refresh={refetch}
+        />
+      ),
+      id: "connection-details-modal",
+    });
+  };
+
+  /* Multiple-row operation: Delete */
+  const deleteManyMutation = api.connection.deleteMany.useMutation();
   const handleDeleteMultipleConnections = () => {
-    // TODO send rowSelection to API and get back success or error
-    // TODO remove deleted connections from data
     const deletedConnections = Object.keys(rowSelection).map(
       (id) => data[Number(id)]
     );
-    setData((prev) =>
-      prev.filter((connection) => !deletedConnections.includes(connection))
-    );
 
-    // Show success toast
-    addToast({
-      type: "success",
-      message: "Connections deleted successfully.",
+    // Separate to customEmails and existingIDs
+    const customEmails = deletedConnections
+      .filter((connection) => !connection.isExisting)
+      .map((connection) => connection.email);
+    const existingIDs = deletedConnections
+      .filter((connection) => connection.isExisting)
+      .map((connection) => connection.id);
+
+    console.log({
+      customEmails: customEmails,
+      existingIDs: existingIDs,
     });
+
+    // API call to delete connections
+    deleteManyMutation.mutate(
+      { customEmails: customEmails, existingIDs: existingIDs },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          // Show success toast
+          addToast({
+            type: "success",
+            message: "Connections deleted successfully.",
+          });
+
+          // Refetch data
+          refetch();
+        },
+        onError: (error) => {
+          console.error(error);
+          // Show error toast
+          addToast({
+            type: "error",
+            message: `Error deleting connections. ${error}: ${error.message}`,
+          });
+        },
+      }
+    );
 
     // Reset rowSelection
     setRowSelection({});
   };
 
+  // Multiple-row operation: Email
   const getSelectedEmails = () => {
     return Object.keys(rowSelection)
       .map((id) => data[Number(id)].email)
@@ -117,8 +243,8 @@ export default function Connections() {
     return Array.from(tags);
   };
 
+  // Filter data based on tags
   useEffect(() => {
-    // Filter data based on tags
     if (selectedTags.length > 0) {
       const filteredData = data.filter((connection) =>
         selectedTags.every((tag) => connection.tags.includes(tag))
@@ -149,8 +275,11 @@ export default function Connections() {
             placeholder="🔎 Search Connection"
             className="input input-sm"
           />
-          <div className="dropdown dropdown-end">
-            <label tabIndex={0} className="btn btn-primary flex flex-nowrap">
+          <div className="dropdown-end dropdown">
+            <label
+              tabIndex={0}
+              className="btn btn-primary btn-sm flex flex-nowrap"
+            >
               <FaFilter /> Filter
             </label>
             <ul
@@ -188,8 +317,32 @@ export default function Connections() {
           tagColoursMap={tagColoursMap}
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
+          editConnection={editConnection}
         />
+        {isLoading && (
+          <div className="flex w-full flex-grow items-center justify-center">
+            <div className="loading loading-spinner loading-lg text-primary"></div>
+          </div>
+        )}
       </div>
+
+      {/* No Connections Illustration */}
+      {data.length === 0 && !isLoading && (
+        <div className="flex w-full flex-col items-center justify-center text-center">
+          <Image
+            src="/svg/Empty-pana.svg"
+            alt={"Empty Illustration"}
+            width={300}
+            height={300}
+            className="m-0 p-0"
+          />
+          <p>
+            You have no connections. Click on the button above to add a new one!
+          </p>
+        </div>
+      )}
+
+      {/* Multi-Row Selection Toolbar */}
       {Object.keys(rowSelection).length > 0 && (
         <div className="navbar fixed bottom-2 flex w-9/12 justify-between gap-2 rounded bg-primary px-10 shadow-md">
           <div className="text-l text-base-300">
@@ -201,7 +354,7 @@ export default function Connections() {
               href={`mailto:${getSelectedEmails()}`}
             >
               <BiMailSend />
-              Connect Now
+              Send Email
             </Link>
             <button
               className="btn btn-error"

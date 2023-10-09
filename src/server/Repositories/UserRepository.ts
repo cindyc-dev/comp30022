@@ -10,16 +10,16 @@ export async function createUser(email: string, password: string) {
     },
   });
 
-  return user; //
+  return user;
 }
 
 const userInfoSelect = {
   id: true,
   name: true,
   email: true,
+  contact: true,
   image: true,
   password: true,
-  contact: true,
 } satisfies Prisma.UserSelect;
 
 type UserInfoPayload = Prisma.UserGetPayload<{ select: typeof userInfoSelect }>;
