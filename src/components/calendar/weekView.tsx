@@ -1,8 +1,15 @@
 import moment, { Moment } from "moment";
 import { useEffect, useRef, useState } from "react";
 import { EventI } from "~/types/EventI";
-import { arrayRange, getEventsInDay, getEventsInWeek, getOverlappingGroups, getOvernightAndMultiDayEvents, handleScroll } from "./utils";
-import { BG_COLOUR_MAP } from "~/types/Colours";
+import {
+  arrayRange,
+  getEventsInDay,
+  getEventsInWeek,
+  getOverlappingGroups,
+  getOvernightAndMultiDayEvents,
+  handleScroll,
+} from "./utils";
+import Event from "./event";
 
 const TIME_WIDTH = "3em";
 const TIME_GAP = "10px";
@@ -226,8 +233,18 @@ export default function WeekView({
                 .diff(moment(event.startDateTime).clone(), "minutes") / 60
             ) * 2;
           // Calculate width and left position of the event based on overlapping groups
-          const thisDay = today.clone().startOf("week").add(col - 3, "day");
-          const overlappingGroups = getOverlappingGroups([...getEventsInDay(thisDay, weekEvents, false), ...getOvernightAndMultiDayEvents(getEventsInDay(thisDay, weekEvents, true), thisDay.clone().startOf("day"), thisDay.clone().endOf("day"))]);
+          const thisDay = today
+            .clone()
+            .startOf("week")
+            .add(col - 3, "day");
+          const overlappingGroups = getOverlappingGroups([
+            ...getEventsInDay(thisDay, weekEvents, false),
+            ...getOvernightAndMultiDayEvents(
+              getEventsInDay(thisDay, weekEvents, true),
+              thisDay.clone().startOf("day"),
+              thisDay.clone().endOf("day")
+            ),
+          ]);
           // Find the overlapping group that the event belongs to
           const overlappingGroup = overlappingGroups.filter((group) =>
             group.includes(event)
@@ -241,34 +258,18 @@ export default function WeekView({
             left = `calc(${indexInGroup} * ${width})`;
           }
           return (
-            <div
+            <Event
               key={i}
-              className={`mx-1 rounded px-1 ${
-                BG_COLOUR_MAP[event.colour]
-              } cursor-pointer border-base-200 border-solid border-[1px]`}
-              style={{
-                gridColumn: col,
-                gridRow: `${row}/span ${duration}`,
-                width: width,
-                position: "relative",
-                left: left,
-              }}
-              onClick={() => {
-                if (
-                  overNightAndMultiDayEvents.filter((e) => e.id === event.id)
-                    .length > 0
-                ) {
-                  const originalEvent = weekEvents.filter(
-                    (e) => e.id === event.id
-                  )[0];
-                  handleEventClick(originalEvent);
-                } else {
-                  handleEventClick(event);
-                }
-              }}
-            >
-              <div className="truncate text-sm">{event.title}</div>
-            </div>
+              event={event}
+              events={weekEvents}
+              overNightAndMultiDayEvents={overNightAndMultiDayEvents}
+              row={row}
+              col={col}
+              width={width}
+              left={left}
+              duration={duration}
+              handleEventClick={handleEventClick}
+            />
           );
         })}
       </div>
