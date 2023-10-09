@@ -4,7 +4,6 @@ import {checkCustomExists, checkExistingUserExists, createCustomContact, deleteC
 import { TRPCError } from "@trpc/server";
 import { createConnection, deleteConnection, deleteManyExistingConnections, editExistingContact, searchAllUsers } from "~/server/Repositories/ConnectionRepository";
 import { getAllUserConnectionsDetails } from "~/server/Services/UserConnections";
-import { ConnectionI } from "~/types/ConnectionI";
 
 export const connectionRouter = createTRPCRouter({
   createCustom: protectedProcedure
@@ -90,6 +89,7 @@ export const connectionRouter = createTRPCRouter({
     z.object({
       email: z.string(),
       connection: z.object({
+        id: z.string(),
         name: z.string(),
         phone: z.string(),
         photoUrl: z.string(),
@@ -101,7 +101,7 @@ export const connectionRouter = createTRPCRouter({
     }))
     .mutation(async (opts) => {
       const userId = opts.ctx.session.user.id;
-      return await editCustomContact(userId, opts.input.email, opts.input.connection as ConnectionI);
+      return await editCustomContact(userId, opts.input.email, opts.input.connection);
     }),
 
   editExisting: protectedProcedure.input(
@@ -119,7 +119,7 @@ export const connectionRouter = createTRPCRouter({
     }))
     .mutation(async (opts) => {
       const userId = opts.ctx.session.user.id;
-      return await editExistingContact(userId, opts.input.connectionId, opts.input.connection as ConnectionI);
+      return await editExistingContact(userId, opts.input.connectionId, opts.input.connection);
     }),
 
   

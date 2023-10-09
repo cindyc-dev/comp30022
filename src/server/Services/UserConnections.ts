@@ -43,7 +43,6 @@ export async function convertToBEConnection(connection: ConnectionI) {
   if (connection.tags) {
     tags = connection.tags.join(",");
   }
-  console.log({ tags: tags });
 
   const BEConnection: BEConnectionI = {
     name: connection.name,
