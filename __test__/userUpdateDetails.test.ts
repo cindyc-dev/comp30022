@@ -12,6 +12,8 @@ const old_user = {
   password: alphaNumericPW,
   image: "https://i.redd.it/mf030h11if231.jpg",
   contact: "+82 10-9482-0863",
+  restoreCode: "000000",
+  restoreExpiry: new Date("2023-01-01"),
 };
 const new_name = "Alice";
 const new_email = "alice@yahoo.com";
@@ -24,6 +26,8 @@ const new_user = {
   password: alphaNumericPW,
   image: "https://i.redd.it/mf030h11if231.jpg",
   contact: new_contact,
+  restoreCode: "000000",
+  restoreExpiry: new Date("2023-01-01"),
 };
 
 test("Should update the name, contact and email fields", async () => {
