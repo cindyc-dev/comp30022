@@ -13,17 +13,15 @@ import {
   OnChangeFn,
 } from "@tanstack/react-table";
 import AvatarImage from "~/components/common/avatarImage";
-import { capitalise } from "~/components/utils/capitalise";
 import { FaCaretDown, FaCaretUp, FaSort } from "react-icons/fa";
 import { fuzzyFilter } from "~/components/utils/fuzzyFilter";
 import { fuzzySort } from "~/components/utils/fuzzySort";
 
 import { RankingInfo } from "@tanstack/match-sorter-utils";
-import { useModal } from "~/components/hooks/modalContext";
-import ConnectionDetailsModal from "./_connectionDetailsModal";
 import Link from "next/link";
 
 import { BiMailSend } from "react-icons/bi";
+import Tag from "./_tag";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -41,6 +39,7 @@ interface TableProps {
   tagColoursMap: Record<string, string>;
   rowSelection: RowSelectionState;
   setRowSelection: OnChangeFn<RowSelectionState>;
+  editConnection: (c: ConnectionI) => void;
 }
 
 function Table({
@@ -50,10 +49,9 @@ function Table({
   tagColoursMap,
   rowSelection,
   setRowSelection,
+  editConnection,
 }: TableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  const { openModal } = useModal();
 
   const columns = useMemo<ColumnDef<ConnectionI>[]>(
     () => [
@@ -94,17 +92,7 @@ function Table({
             <div className="ml-2">
               <div
                 className="link cursor-pointer text-primary"
-                onClick={() => {
-                  openModal({
-                    content: (
-                      <ConnectionDetailsModal
-                        connection={row.original}
-                        tagColoursMap={tagColoursMap}
-                      />
-                    ),
-                    id: "connection-details-modal",
-                  });
-                }}
+                onClick={() => editConnection(row.original)}
               >
                 {row.original.name}
               </div>
@@ -128,25 +116,25 @@ function Table({
         cell: ({ row }) => (
           <div className="flex flex-row flex-wrap gap-2">
             {row.original.tags.map((tag) => (
-              <div
+              <Tag
                 key={tag}
-                className={`${tagColoursMap[tag]} badge py-3 text-sm font-normal text-base-100`}
-              >
-                {capitalise(tag)}
-              </div>
+                tag={tag}
+                tagColoursMap={tagColoursMap}
+                isDeletable={false}
+              />
             ))}
           </div>
         ),
       },
       {
-        header: "CONNECT",
+        header: "SEND EMAIL",
         cell: ({ row }) => (
           <Link
             className="btn btn-secondary btn-sm h-fit py-1"
             href={`mailto: ${row.original.email}`}
           >
             <BiMailSend />
-            Connect Now
+            Send Email
           </Link>
         ),
       },

@@ -5,16 +5,19 @@ import UploadImageModalContent from "~/components/common/uploadImageModalContent
 import { useModal } from "~/components/hooks/modalContext";
 import { FaSave, FaTrash } from "react-icons/fa";
 import { useToast } from "~/components/hooks/toastContext";
+import { api } from "~/utils/api";
 import { isObjectsEqual } from "../utils/isObjectEqual";
 
 interface ConnectionDetailsModalProps {
   connection: ConnectionI;
   tagColoursMap: Record<string, string>;
+  refresh: () => void;
 }
 
 function ConnectionDetailsModal({
   connection,
   tagColoursMap,
+  refresh,
 }: ConnectionDetailsModalProps) {
   const [editedConnection, setEditedConnection] =
     useState<ConnectionI>(connection);
@@ -36,9 +39,9 @@ function ConnectionDetailsModal({
     });
   };
 
+  const editCustomMutation = api.connection.editCustom.useMutation();
+  const editExistingConnection = api.connection.editExisting.useMutation();
   const saveConnection = () => {
-    // TODO: Save connection to API
-
     // Validate that connection has name and email
     if (!editedConnection.name || !editedConnection.email) {
       // Show error toast
@@ -49,17 +52,112 @@ function ConnectionDetailsModal({
       return;
     }
 
-    // Show success toast
-    addToast({
-      type: "success",
-      message: "Connection saved successfully.",
-    });
+    const newConnection = {
+      ...editedConnection,
+      phone: editedConnection.phone || "",
+      photoUrl: editedConnection.photoUrl || "",
+      notes: editedConnection.notes || "",
+    };
 
-    closeModal("connection-details-modal");
+    // Check if connection is custom or existing
+    if (editedConnection.isExisting) {
+      editExistingConnection.mutate(
+        {
+          connectionId: editedConnection.id,
+          connection: newConnection,
+        },
+        {
+          onSuccess: () => {
+            addToast({
+              type: "success",
+              message: "Connection updated.",
+            });
+            refresh();
+            closeModal("connection-details-modal");
+          },
+          onError: (error) => {
+            addToast({
+              type: "error",
+              message: `Error updating connection. Error: ${error.message}`,
+            });
+          },
+        }
+      );
+    } else {
+      editCustomMutation.mutate(
+        {
+          email: editedConnection.email,
+          connection: newConnection,
+        },
+        {
+          onSuccess: () => {
+            addToast({
+              type: "success",
+              message: "Connection updated.",
+            });
+            refresh();
+            closeModal("connection-details-modal");
+          },
+          onError: (error) => {
+            addToast({
+              type: "error",
+              message: `Error updating connection. Error: ${error.message}`,
+            });
+          },
+        }
+      );
+    }
   };
 
+  const deleteExistingConnection = api.connection.deleteExisting.useMutation();
+  const deleteCustomConnection = api.connection.deleteCustom.useMutation();
   const deleteConnection = () => {
-    // TODO: Delete connection from API
+    // Check if connection is custom or existing
+    if (editedConnection.isExisting) {
+      deleteExistingConnection.mutate(
+        {
+          connectionId: editedConnection.id,
+        },
+        {
+          onSuccess: () => {
+            addToast({
+              type: "success",
+              message: `Connection with ${connection.name} deleted.`,
+            });
+            refresh();
+            closeModal("connection-details-modal");
+          },
+          onError: (error) => {
+            addToast({
+              type: "error",
+              message: `Error deleting connection. Error: ${error.message}`,
+            });
+          },
+        }
+      );
+    } else {
+      deleteCustomConnection.mutate(
+        {
+          email: editedConnection.email,
+        },
+        {
+          onSuccess: () => {
+            addToast({
+              type: "success",
+              message: `Connection with ${connection.name} deleted.`,
+            });
+            refresh();
+            closeModal("connection-details-modal");
+          },
+          onError: (error) => {
+            addToast({
+              type: "error",
+              message: `Error deleting connection. Error: ${error.message}`,
+            });
+          },
+        }
+      );
+    }
   };
 
   return (

@@ -6,7 +6,7 @@ interface DebouncedInputProps {
   onChange: (value: string | number) => void;
   debounce?: number;
   label?: string;
-  reuqired?: boolean;
+  required?: boolean;
 }
 
 function DebouncedInput({

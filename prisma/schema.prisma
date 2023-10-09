@@ -1,21 +1,13 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider     = "mysql"
-  // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
-// Necessary for Next auth
 model Account {
   id                       String  @id @default(cuid())
   userId                   String
@@ -51,6 +43,8 @@ model User {
   password       String?
   image          String?
   contact        String?
+  restoreCode   String?
+  restoreExpiry DateTime?
   accounts       Account[]
   sessions       Session[]
   tasks          Task[]
@@ -62,11 +56,11 @@ model User {
 
 model CustomContact {
   id      String  @id @default(cuid())
-  name    String?
-  email   String?
+  userId  String
+  name    String
+  email   String
   contact String?
   image   String?
-  userId  String
   tags    String
   notes   String
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)

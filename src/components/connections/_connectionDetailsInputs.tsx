@@ -1,11 +1,15 @@
 // Used in _addConnectionModal.tsx and _connectionDetailsModal.tsx
 
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import AvatarImage from "~/components/common/avatarImage";
 import TextInput from "~/components/common/textInput";
 import Tag from "./_tag";
 import { ConnectionI } from "~/types/ConnectionI";
-import TextAreaInput from "~/components/common/textAreaInput";
+import { FaInfoCircle } from "react-icons/fa";
+import { AiFillCheckCircle } from "react-icons/ai";
+import { api } from "~/utils/api";
+import { UserI } from "~/types/UserI";
+import { checkEmail } from "../utils/checkEmail";
 
 interface ConnectionDetailsInputsProps {
   connection: ConnectionI;
@@ -23,22 +27,57 @@ function ConnectionDetailsInputs({
   debounceEmail = false,
 }: ConnectionDetailsInputsProps) {
   const [tagInput, setTagInput] = useState<string>("");
+
+  // Check if email is valid when connection.email changes after 2000ms of no change
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [existingUser, setExistingUser] = useState<UserI | null>(null);
+
+  const mutation = api.connection.checkExistingUser.useMutation();
+
+  if (debounceEmail) {
+    // Check if email is valid when connection.email changes after 3000ms of no change
+    useEffect(() => {
+      if (connection.email.length > 0 && checkEmail(connection.email)) {
+        setIsLoading(true);
+        setTimeout(() => {
+          setIsLoading(false);
+          mutation.mutate(
+            { email: connection.email },
+            {
+              onSuccess: (data) => {
+                if (data) {
+                  setExistingUser(data as UserI);
+                } else {
+                  setExistingUser(null);
+                }
+              },
+            }
+          );
+        }, 3000);
+      } else {
+        setExistingUser(null);
+      }
+    }, [connection.email]);
+  }
+
   return (
     <>
       <div className="flex w-full flex-col items-center gap-4 align-middle md:flex-row md:justify-between">
         <div className="flex flex-col text-center">
           <label
             className="avatar btn btn-circle btn-ghost h-40 w-40"
-            onClick={() => editPhoto()}
+            onClick={() => !connection.isExisting && editPhoto()}
           >
             <AvatarImage src={connection.photoUrl} />
           </label>
-          <p
-            className="link cursor-pointer text-xs"
-            onClick={() => editPhoto()}
-          >
-            Edit Photo
-          </p>
+          {!connection.isExisting && (
+            <p
+              className="link cursor-pointer text-xs"
+              onClick={() => editPhoto()}
+            >
+              Edit Photo
+            </p>
+          )}
         </div>
         <div className="flex w-full flex-col items-center gap-2">
           <TextInput
@@ -47,9 +86,50 @@ function ConnectionDetailsInputs({
             value={connection.name}
             setValue={(v) => setConnection({ ...connection, name: v })}
             required={true}
+            readonly={connection.isExisting}
           />
           {debounceEmail ? (
-            <></>
+            <div className="w-full">
+              <TextInput
+                label="📧 Email"
+                placeholder="eg. example@company.com"
+                type="email"
+                value={connection.email}
+                setValue={(v) => setConnection({ ...connection, email: v })}
+                required={true}
+                readonly={connection.isExisting}
+              />
+              {isLoading ? (
+                <div className="mt-2 flex w-full items-center justify-end gap-2 text-right text-gray-500">
+                  <p className="m-0 inline p-0 text-xs">Checking email</p>
+                  <span className="loading loading-spinner loading-xs"></span>
+                </div>
+              ) : (
+                existingUser && (
+                  <div className="alert mt-2 w-full bg-secondary py-1 text-sm">
+                    <FaInfoCircle />
+                    <p className="m-0 flex items-center gap-2 p-0 text-sm">
+                      A user with this email already exists. Would you like to
+                      search for them?
+                    </p>
+                    <div>
+                      <button
+                        className="btn btn-sm"
+                        onClick={() => setExistingUser(null)}
+                      >
+                        No
+                      </button>
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => {}}
+                      >
+                        Yes
+                      </button>
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
           ) : (
             <TextInput
               label="📧 Email"
@@ -58,6 +138,7 @@ function ConnectionDetailsInputs({
               value={connection.email}
               setValue={(v) => setConnection({ ...connection, email: v })}
               required={true}
+              readonly={connection.isExisting}
             />
           )}
           <TextInput
@@ -65,6 +146,7 @@ function ConnectionDetailsInputs({
             placeholder="eg. 123-456-7890"
             value={connection.phone || ""}
             setValue={(v) => setConnection({ ...connection, phone: v })}
+            readonly={connection.isExisting}
           />
           <TextInput
             label="🏷️ Tags (press Enter to add)"
@@ -101,11 +183,29 @@ function ConnectionDetailsInputs({
           </div>
         </div>
       </div>
-      <TextAreaInput
-        label="✏️ Notes"
-        value={connection.notes || ""}
-        placeholder="eg. Met at a conference in 2019. We talked about the new React version..."
-      />
+      <div className="w-full">
+        <label className="label">
+          <span className="label-text">✏️ Notes</span>
+        </label>
+        <textarea
+          className="textarea textarea-bordered w-full"
+          placeholder="eg. Met at a conference in 2019. We talked about the new React version..."
+          value={connection.notes || ""}
+          onChange={(e) =>
+            setConnection({ ...connection, notes: e.target.value })
+          }
+        ></textarea>
+      </div>
+      {/* Users cannot edit information of a connection that has a PotatoCRM account. */}
+      {connection.isExisting && (
+        <div className="alert my-2 w-full bg-secondary">
+          <AiFillCheckCircle />
+          <p className="m-0 flex items-center gap-2 p-0 text-sm">
+            This connection has a PotatoCRM account. You cannot edit their
+            information (Name, Email and Phone Number).
+          </p>
+        </div>
+      )}
     </>
   );
 }

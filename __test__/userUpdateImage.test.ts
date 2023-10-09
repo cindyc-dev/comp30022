@@ -13,6 +13,8 @@ const old_user = {
   password: alphaNumericPW,
   image: old_image,
   contact: "+82 10-9482-0863",
+  restoreCode: "000000",
+  restoreExpiry: new Date("2023-01-01"),
 };
 const new_user = {
   id: "@1#",
@@ -22,6 +24,8 @@ const new_user = {
   password: alphaNumericPW,
   image: new_image,
   contact: "+82 10-9482-0863",
+  restoreCode: "000000",
+  restoreExpiry: new Date("2023-01-01"),
 };
 
 test("Should update user image", async() => {

@@ -50,6 +50,7 @@ export async function getUserDetails(id: string): Promise<UserI> {
     throw new Error("User not found");
   }
   const detail: UserI = {
+    id: user.id,
     name: user.name || "",
     contact: user.contact || "",
     email: user.email || "",
