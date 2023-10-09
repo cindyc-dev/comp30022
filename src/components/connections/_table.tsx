@@ -19,8 +19,6 @@ import { fuzzyFilter } from "~/components/utils/fuzzyFilter";
 import { fuzzySort } from "~/components/utils/fuzzySort";
 
 import { RankingInfo } from "@tanstack/match-sorter-utils";
-import { useModal } from "~/components/hooks/modalContext";
-import ConnectionDetailsModal from "./_connectionDetailsModal";
 import Link from "next/link";
 
 import { BiMailSend } from "react-icons/bi";
@@ -41,6 +39,7 @@ interface TableProps {
   tagColoursMap: Record<string, string>;
   rowSelection: RowSelectionState;
   setRowSelection: OnChangeFn<RowSelectionState>;
+  editConnection: (c: ConnectionI) => void;
 }
 
 function Table({
@@ -50,10 +49,9 @@ function Table({
   tagColoursMap,
   rowSelection,
   setRowSelection,
+  editConnection,
 }: TableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  const { openModal } = useModal();
 
   const columns = useMemo<ColumnDef<ConnectionI>[]>(
     () => [
@@ -94,17 +92,7 @@ function Table({
             <div className="ml-2">
               <div
                 className="link cursor-pointer text-primary"
-                onClick={() => {
-                  openModal({
-                    content: (
-                      <ConnectionDetailsModal
-                        connection={row.original}
-                        tagColoursMap={tagColoursMap}
-                      />
-                    ),
-                    id: "connection-details-modal",
-                  });
-                }}
+                onClick={() => editConnection(row.original)}
               >
                 {row.original.name}
               </div>

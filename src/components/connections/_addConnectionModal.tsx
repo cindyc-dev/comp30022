@@ -103,6 +103,7 @@ const SearchTab = ({
           );
           setAlreadyConnected(newAlreadyConnected);
           setSearchResults(data);
+          setSearchQuery("");
 
           setIsLoading(false);
         },

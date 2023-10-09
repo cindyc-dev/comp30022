@@ -16,6 +16,7 @@ import { BiMailSend } from "react-icons/bi";
 import Tag from "~/components/connections/_tag";
 import { api } from "~/utils/api";
 import Image from "next/image";
+import ConnectionDetailsModal from "~/components/connections/_connectionDetailsModal";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>([]);
@@ -38,7 +39,6 @@ export default function Connections() {
     error,
     refetch,
   } = api.connection.getAllConnections.useQuery();
-
   useEffect(() => {
     if (connections) {
       console.log({ connections: connections });
@@ -157,6 +157,20 @@ export default function Connections() {
         />
       ),
       id: "add-connection-modal",
+    });
+  };
+
+  // Open Edit Connection Modal
+  const editConnection = (c: ConnectionI) => {
+    openModal({
+      content: (
+        <ConnectionDetailsModal
+          connection={c}
+          tagColoursMap={tagColoursMap}
+          refresh={refetch}
+        />
+      ),
+      id: "connection-details-modal",
     });
   };
 
@@ -300,6 +314,7 @@ export default function Connections() {
           tagColoursMap={tagColoursMap}
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
+          editConnection={editConnection}
         />
         {isLoading && (
           <div className="flex w-full flex-grow items-center justify-center">
