@@ -3,13 +3,12 @@ import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { EventI } from "~/types/EventI";
 import "react-datepicker/dist/react-datepicker.css";
-import EventDetailsForm from "./_eventDetailsForm";
+import EventDetailsForm from "./eventDetailsForm";
 
 function AddEventModalContent({
   handleAddEvent,
 }: {
   handleAddEvent: (event: EventI) => void;
-  
 }) {
   const startDateTime = moment().add(30 - (moment().minute() % 30), "minutes");
   const [event, setEvent] = useState<EventI>({

@@ -1,5 +1,5 @@
 import { EventI } from "~/types/EventI";
-import EventDetailsForm from "./_eventDetailsForm";
+import EventDetailsForm from "./eventDetailsForm";
 import { useEffect, useState } from "react";
 import { FaSave, FaTrash } from "react-icons/fa";
 

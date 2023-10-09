@@ -3,7 +3,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import { FaAngleLeft, FaAngleRight, FaPlus } from "react-icons/fa";
 import {
   MdCalendarViewDay,
-  MdCalendarViewMonth,
+  // MdCalendarViewMonth,
   MdCalendarViewWeek,
   MdToday,
 } from "react-icons/md";
@@ -15,7 +15,7 @@ interface ToolbarProps {
   view: CalendarViewType;
   setView: Dispatch<SetStateAction<CalendarViewType | undefined>>;
   openEventModal: () => void;
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 interface ViewOptionI {
@@ -32,10 +32,10 @@ const VIEW_OPTIONS: ViewOptionI[] = [
     value: "week",
     icon: <MdCalendarViewWeek className="text-lg" />,
   },
-  {
-    value: "month",
-    icon: <MdCalendarViewMonth className="text-lg" />,
-  },
+  // {
+  //   value: "month",
+  //   icon: <MdCalendarViewMonth className="text-lg" />,
+  // },
 ];
 
 function Toolbar({
@@ -44,7 +44,7 @@ function Toolbar({
   view,
   setView,
   openEventModal,
-  isLoading,
+  isLoading = false,
 }: ToolbarProps) {
   const getHeaderDate = () => {
     switch (view) {

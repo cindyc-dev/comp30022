@@ -8,7 +8,11 @@ export const arrayRange = (start: number, stop: number, step: number = 1) =>
     (_, index) => start + index * step
   );
 
-export const getEventsInDay = (today: Moment, events: EventI[], getOverlaps = false) => {
+export const getEventsInDay = (
+  today: Moment,
+  events: EventI[],
+  getOverlaps = false
+) => {
   const start = today.clone().startOf("day");
   const end = today.clone().endOf("day");
   const dayEvents = events.filter((event) => {

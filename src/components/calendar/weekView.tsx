@@ -1,34 +1,58 @@
-import moment from "moment";
-import { Moment } from "moment";
-import { BG_COLOUR_MAP } from "~/types/Colours";
-import { EventI } from "~/types/EventI";
-import { handleScroll, arrayRange } from "./_utils";
+import moment, { Moment } from "moment";
 import { useEffect, useRef, useState } from "react";
+import { EventI } from "~/types/EventI";
+import { arrayRange, getEventsInWeek, handleScroll } from "./utils";
+import { BG_COLOUR_MAP } from "~/types/Colours";
 
 const TIME_WIDTH = "3em";
 const TIME_GAP = "10px";
 const ROW_HEIGHT = "1.2rem";
-const GRID_TEMPLATE_COLUMNS = `${TIME_WIDTH} ${TIME_GAP} repeat(1, minmax(3rem, 1fr))`;
+const GRID_TEMPLATE_COLUMNS = `${TIME_WIDTH} 10px repeat(7, minmax(3rem, 1fr))`;
 
-interface DayViewProps {
+interface WeekViewProps {
   today: Moment;
-  dayEvents: EventI[];
+  goToDay: (date: Moment) => void;
+  weekEvents: EventI[];
+  overNightAndMultiDayEvents: EventI[];
   handleEventClick: (event: EventI) => void;
 }
 
-function DayView({ today, dayEvents, handleEventClick }: DayViewProps) {
+export default function WeekView({
+  today,
+  goToDay,
+  weekEvents,
+  overNightAndMultiDayEvents,
+  handleEventClick,
+}: WeekViewProps) {
   const [currentTimeRow, setCurrentTimeRow] = useState<number>(-1);
+
+  console.log({
+    view: "Week",
+    weekEvents: weekEvents,
+    overNightAndMultiDayEvents: overNightAndMultiDayEvents,
+  });
+
+  // Update currentTimeRow every 2 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTimeRow(getCurrentTimeRow());
+    }, 2 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Make the Header and Body scroll together
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   // Calculate where is the current time to scroll to
-  const currentDay = 3;
+  const currentDay = moment().day() + 3;
   const getCurrentTimeRow = () => {
     const currentTime = moment();
-    const isCurrentTimeToday = currentTime.isSame(today, "day");
-    if (!isCurrentTimeToday) {
+    const isCurrentTimeInWeek = currentTime.isBetween(
+      today.clone().startOf("week"),
+      today.clone().endOf("week")
+    );
+    if (!isCurrentTimeInWeek) {
       return -1;
     }
     const currentTimeNearestHalfHour =
@@ -51,7 +75,7 @@ function DayView({ today, dayEvents, handleEventClick }: DayViewProps) {
         inline: "center",
       });
     }
-  }, [today]);
+  }, [weekEvents]);
 
   return (
     <div className="w-full">
@@ -82,23 +106,38 @@ function DayView({ today, dayEvents, handleEventClick }: DayViewProps) {
           style={{ gridRow: 1, minWidth: TIME_WIDTH }}
         ></div>
         <div className={`w-[${TIME_GAP}]`} style={{ gridRow: 1 }}></div>
-        {/* Day (Mon/Tue/..) and Date Number */}
-        <div
-          className="border-l-2 border-base-100 text-center"
-          style={{ gridRow: 1 }}
-        >
-          <p className="m-0">{today.clone().format("ddd").toUpperCase()}</p>
-          <button
-            className={`btn btn-circle btn-sm md:btn-md ${
-              moment().format("YYYY-MM-DD") === today.format("YYYY-MM-DD")
-                ? "btn-primary"
-                : "btn-ghost"
-            }`}
-            onClick={() => {}}
-          >
-            {today.format("D")}
-          </button>
-        </div>
+        {arrayRange(0, 6).map((day) => {
+          const currDate = today.startOf("week").clone().add(day, "day");
+          return (
+            <div
+              key={day}
+              className="border-l-2 border-base-100 text-center"
+              style={{ gridRow: 1 }}
+            >
+              <p className="m-0">
+                {today
+                  .startOf("week")
+                  .clone()
+                  .add(day, "day")
+                  .format("ddd")
+                  .toUpperCase()}
+              </p>
+              <button
+                className={`btn btn-circle btn-sm md:btn-md ${
+                  moment().format("YYYY-MM-DD") ===
+                  currDate.format("YYYY-MM-DD")
+                    ? "btn-primary"
+                    : "btn-ghost"
+                }`}
+                onClick={() => {
+                  goToDay(currDate);
+                }}
+              >
+                {currDate.format("D")}
+              </button>
+            </div>
+          );
+        })}
       </div>
       {/* Body */}
       <div
@@ -139,7 +178,7 @@ function DayView({ today, dayEvents, handleEventClick }: DayViewProps) {
           ></div>
         ))}
         {/* Fill rows with borders */}
-        {arrayRange(3, 4, 1).map((col) =>
+        {arrayRange(3, 9, 1).map((col) =>
           arrayRange(0, 48, 1).map((row) => {
             const isCurrentTime = row === currentTimeRow && col === currentDay;
             return (
@@ -174,13 +213,17 @@ function DayView({ today, dayEvents, handleEventClick }: DayViewProps) {
         )}
 
         {/* Events */}
-        {[...dayEvents].map((event, i) => {
+        {[
+          ...overNightAndMultiDayEvents,
+          ...getEventsInWeek(today.startOf("week"), weekEvents, false),
+        ].map((event, i) => {
           // Calculate the column and row for the event
           const col = event.startDateTime.getDay() + 3;
           let row = event.startDateTime.getHours() * 2 + 1;
           if (event.startDateTime.getMinutes() === 30) {
             row += 1;
           }
+
           // Calculate the duration of the event (to the nearest half hour)
           const duration =
             Math.round(
@@ -200,17 +243,17 @@ function DayView({ today, dayEvents, handleEventClick }: DayViewProps) {
                 gridRow: `${row}/span ${duration}`,
               }}
               onClick={() => {
-                // if (
-                //   overNightAndMultiDayEvents.filter((e) => e.id === event.id)
-                //     .length > 0
-                // ) {
-                //   const originalEvent = dayEvents.filter(
-                //     (e) => e.id === event.id
-                //   )[0];
-                //   handleEventClick(originalEvent);
-                // } else {
-                //   handleEventClick(event);
-                // }
+                if (
+                  overNightAndMultiDayEvents.filter((e) => e.id === event.id)
+                    .length > 0
+                ) {
+                  const originalEvent = weekEvents.filter(
+                    (e) => e.id === event.id
+                  )[0];
+                  handleEventClick(originalEvent);
+                } else {
+                  handleEventClick(event);
+                }
               }}
             >
               <div className="truncate text-sm">{event.title}</div>
@@ -221,5 +264,3 @@ function DayView({ today, dayEvents, handleEventClick }: DayViewProps) {
     </div>
   );
 }
-
-export default DayView;

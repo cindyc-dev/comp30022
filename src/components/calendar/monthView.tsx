@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { arrayRange, handleScroll } from "./_utils";
+import { arrayRange, handleScroll } from "./utils";
 import { useRef } from "react";
 import { EventI } from "~/types/EventI";
 import moment from "moment";
@@ -47,7 +47,7 @@ export default function MonthView({
     );
   });
 
-  console.log(eventsByDay);   // TODO remove
+  console.log(eventsByDay); // TODO remove
 
   return (
     <div className="h-full w-full">
