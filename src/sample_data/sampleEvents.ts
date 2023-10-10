@@ -11,6 +11,7 @@ export const sampleEvents: EventI[] = [
     notes: "John is a great guy",
     relatedConnections: [
       {
+        id: "1",
         name: "John Doe",
         photoUrl: "https://xsgames.co/randomusers/assets/avatars/male/23.jpg",
         email: "john.doe@example.com",
@@ -38,6 +39,7 @@ export const sampleEvents: EventI[] = [
     notes: "Jane is a great cook",
     relatedConnections: [
       {
+        id: "2",
         name: "Jane Doe",
         email: "jane@example.com",
         tags: [],

@@ -78,7 +78,7 @@ export default function WeekView({
     }
   }, [weekEvents]);
 
-  console.log({overNightAndMultiDayEvents})
+  console.log({ overNightAndMultiDayEvents });
 
   return (
     <div className="w-full">
@@ -180,7 +180,7 @@ export default function WeekView({
             }}
           ></div>
         ))}
-        
+
         {/* Fill rows with borders */}
         {arrayRange(3, 9, 1).map((col) =>
           arrayRange(0, 48, 1).map((row) => {
@@ -215,8 +215,7 @@ export default function WeekView({
             );
           })
         )}
-        
-        
+
         {/* Events */}
         {[
           ...overNightAndMultiDayEvents,
