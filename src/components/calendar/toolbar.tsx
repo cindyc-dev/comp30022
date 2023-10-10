@@ -3,7 +3,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import { FaAngleLeft, FaAngleRight, FaPlus } from "react-icons/fa";
 import {
   MdCalendarViewDay,
-  // MdCalendarViewMonth,
+  MdCalendarViewMonth,
   MdCalendarViewWeek,
   MdToday,
 } from "react-icons/md";
@@ -32,10 +32,10 @@ const VIEW_OPTIONS: ViewOptionI[] = [
     value: "week",
     icon: <MdCalendarViewWeek className="text-lg" />,
   },
-  // {
-  //   value: "month",
-  //   icon: <MdCalendarViewMonth className="text-lg" />,
-  // },
+  {
+    value: "month",
+    icon: <MdCalendarViewMonth className="text-lg" />,
+  },
 ];
 
 function Toolbar({
@@ -48,14 +48,14 @@ function Toolbar({
 }: ToolbarProps) {
   const getHeaderDate = () => {
     switch (view) {
-      case "month":
-        return today.format("MMMM YYYY");
-      case "week":
-        return `${today.startOf("week").format("MMM Do")} - ${today
-          .endOf("week")
-          .format("MMM Do")}`;
-      case "day":
-        return today.format("Do MMM YYYY");
+    case "month":
+      return today.format("MMMM YYYY");
+    case "week":
+      return `${today.startOf("week").format("MMM Do")} - ${today
+        .endOf("week")
+        .format("MMM Do")}`;
+    case "day":
+      return today.format("Do MMM YYYY");
     }
   };
   return (

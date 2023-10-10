@@ -39,6 +39,7 @@ function Event({
         left: left,
       }}
       onClick={() => {
+        // If the event is a multi-day event, then open the original event
         if (
           overNightAndMultiDayEvents.filter((e) => e.id === event.id).length > 0
         ) {
@@ -49,7 +50,9 @@ function Event({
         }
       }}
     >
-      <div className="truncate text-sm font-bold">{event.title}</div>
+      <div className="truncate text-xs font-semibold md:text-sm">
+        {event.title}
+      </div>
       <div className="truncate text-xs">
         {moment(event.startDateTime).format("HH:mm")} -{" "}
         {moment(event.endDateTime).format("HH:mm")}

@@ -216,7 +216,7 @@ export default function WeekView({
         {/* Events */}
         {[
           ...overNightAndMultiDayEvents,
-          ...getEventsInWeek(today.startOf("week"), weekEvents, false),
+          ...getEventsInWeek(today.clone().startOf("week"), weekEvents, false),
         ].map((event, i) => {
           // Calculate the column and row for the event
           const col = event.startDateTime.getDay() + 3;

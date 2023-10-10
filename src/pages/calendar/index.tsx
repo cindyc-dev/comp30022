@@ -10,6 +10,7 @@ import {
   getEventsInDay,
   getEventsInMonth,
   getEventsInWeek,
+  getOverWeekEvents,
   getOvernightAndMultiDayEvents,
 } from "~/components/calendar/utils";
 import MonthView from "~/components/calendar/monthView";
@@ -18,12 +19,13 @@ import { FaPlus } from "react-icons/fa";
 import EventDetailsModal from "~/components/calendar/eventDetailsModal";
 import { api } from "~/utils/api";
 import DayView from "~/components/calendar/dayView";
+import { sampleEvents } from "~/sample_data/sampleEvents";
 
 const DEFAULT_VIEW: CalendarViewType = "week";
 
 export default function Calendar() {
   const [events, setEvents] = useState<EventStateI>({
-    allEvents: [],
+    allEvents: sampleEvents,
     weekEvents: [],
     monthEvents: [],
     dayEvents: [],
@@ -191,10 +193,9 @@ export default function Calendar() {
     if (event.key === "w") {
       setView("week");
     }
-    // NOTE: disabling month view for now
-    // if (event.key === "m") {
-    //   setView("month");
-    // }
+    if (event.key === "m") {
+      setView("month");
+    }
     if (event.key === "t") {
       setToday(moment());
     }
@@ -232,7 +233,7 @@ export default function Calendar() {
       setEvents({
         allEvents: data,
         weekEvents: getEventsInWeek(today, data, true),
-        monthEvents: getEventsInMonth(today, data),
+        monthEvents: getEventsInMonth(today, data, true),
         dayEvents: getEventsInDay(today, data, true),
       });
     }
@@ -250,7 +251,7 @@ export default function Calendar() {
     setEvents((prev) => ({
       ...prev,
       weekEvents: getEventsInWeek(today.clone(), prev.allEvents, true),
-      monthEvents: getEventsInMonth(today.clone(), prev.allEvents),
+      monthEvents: getEventsInMonth(today.clone(), prev.allEvents, true),
       dayEvents: getEventsInDay(today.clone(), prev.allEvents, true),
     }));
   }, [events.allEvents, today]);
@@ -310,8 +311,9 @@ export default function Calendar() {
           <MonthView
             today={today.clone()}
             goToDay={goToDay}
-            monthEvents={[...events.monthEvents]}
+            monthEvents={events.monthEvents}
             handleEventClick={openEventDetailsModal}
+            overWeeksEvents={getOverWeekEvents(events.allEvents, today.clone())}
           />
         )}
         {view === "day" && (

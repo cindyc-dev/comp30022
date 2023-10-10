@@ -58,18 +58,84 @@ export const getEventsInWeek = (
   return weekEvents.sort(sortByDate);
 };
 
-export const getEventsInMonth = (today: Moment, events: EventI[]) => {
+export const getEventsInMonth = (
+  today: Moment,
+  events: EventI[],
+  getOverlaps = false
+) => {
   const start = today.clone().startOf("month");
   const end = today.clone().endOf("month");
+
   const monthEvents = events.filter((event) => {
     const eventStart = moment(event.startDateTime);
     const eventEnd = moment(event.endDateTime);
-    return (
-      eventStart.isBetween(start, end, "day", "[]") ||
-      eventEnd.isBetween(start, end, "day", "[]")
-    );
+    if (getOverlaps) {
+      // Check if there is any overlap between the event and the month
+      return (
+        start.isAfter(eventStart, "day") ? start : eventStart
+      ).isSameOrBefore(end.isBefore(eventEnd, "day") ? end : eventEnd, "day");
+    } else {
+      // Check if the event starts in the month
+      return eventStart.isBetween(start, end, "day", "[]");
+    }
   });
   return monthEvents.sort(sortByDate);
+};
+
+// Events that go over multiple weeks to be shown as extra events in UI
+// Check if event goes over multiple weeks, if so, create events for each week
+// Does not create first event (from the start date to the end of the week - that happens in monthView.tsx)
+export const getOverWeekEvents = (events: EventI[], today: Moment) => {
+  const overWeekEvents: EventI[] = [];
+  events.forEach((event) => {
+    const start = moment(event.startDateTime);
+    const end = moment(event.endDateTime);
+    const weeksDiff = end
+      .clone()
+      .startOf("week")
+      .diff(start.clone().startOf("week"), "weeks");
+    if (weeksDiff > 0) {
+      // Create events for each week
+      for (let i = 1; i <= weeksDiff; i++) {
+        // Calculate the start and end date of the event for the week
+        const startDateTime = start
+          .clone()
+          .add(i, "weeks")
+          .startOf("week")
+          .toDate();
+        const endDateTime =
+          i === weeksDiff
+            ? end.toDate()
+            : start.clone().add(i, "weeks").endOf("week").toDate();
+
+        // Only add events that are in the month
+        if (
+          !moment(startDateTime).isBetween(
+            today.clone().startOf("month").startOf("week"),
+            today.clone().endOf("month").endOf("week"),
+            "day",
+            "[]"
+          ) ||
+          !moment(endDateTime).isBetween(
+            today.clone().startOf("month").startOf("week"),
+            today.clone().endOf("month").endOf("week"),
+            "day",
+            "[]"
+          )
+        ) {
+          continue;
+        }
+
+        overWeekEvents.push({
+          ...event,
+          startDateTime: startDateTime,
+          endDateTime: endDateTime,
+        });
+      }
+    }
+  });
+
+  return overWeekEvents.sort(sortByDate);
 };
 
 // Used for scrolling the header and body together
@@ -116,7 +182,9 @@ export const getOvernightAndMultiDayEvents = (
         // Only add events that are in the range
         if (
           !moment(startDateTime).isBetween(startRange, endRange, "day", "[]") ||
-          !moment(endDateTime).isBetween(startRange, endRange, "day", "[]")
+          !moment(endDateTime).isBetween(startRange, endRange, "day", "[]") ||
+          // Event that ends at 00:00
+          moment(startDateTime).isSame(moment(endDateTime), "day")
         ) {
           continue;
         }

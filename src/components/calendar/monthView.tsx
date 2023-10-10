@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { arrayRange, handleScroll } from "./utils";
+import { arrayRange, getEventsInMonth, handleScroll } from "./utils";
 import { useRef } from "react";
 import { EventI } from "~/types/EventI";
 import moment from "moment";
@@ -10,6 +10,7 @@ interface MonthViewProps {
   goToDay: (date: Moment) => void;
   monthEvents: EventI[];
   handleEventClick: (event: EventI) => void;
+  overWeeksEvents: EventI[];
 }
 
 const GRID_TEMPLATE_COLUMNS = "repeat(7, minmax(3rem, 1fr))";
@@ -25,6 +26,7 @@ export default function MonthView({
   goToDay,
   monthEvents,
   handleEventClick,
+  overWeeksEvents,
 }: MonthViewProps) {
   // Make the Header and Body scroll together
   const headerRef = useRef<HTMLDivElement>(null);
@@ -32,9 +34,14 @@ export default function MonthView({
 
   const monthStart = today.clone().startOf("month");
 
+  const nonOverlapMonthEvents = getEventsInMonth(
+    today.clone().startOf("month"),
+    monthEvents,
+    false
+  );
   // Organise the events by day like day: [events] and sort them by start time
   const eventsByDay: { [key: string]: EventI[] } = {};
-  monthEvents.forEach((event) => {
+  [...overWeeksEvents, ...nonOverlapMonthEvents].forEach((event) => {
     const day = moment(event.startDateTime).format("YYYY-MM-DD");
     if (!eventsByDay[day]) {
       eventsByDay[day] = [];
@@ -64,7 +71,7 @@ export default function MonthView({
           const currDate = today.startOf("week").clone().add(day, "day");
           return (
             <div
-              key={day}
+              key={i}
               className={`${i > 0 && "border-l-2"} border-base-100 text-center`}
             >
               <p className="m-0">{currDate.format("ddd").toUpperCase()}</p>
@@ -72,12 +79,12 @@ export default function MonthView({
           );
         })}
       </div>
+      {/* Month grid */}
       <div
         className="hide-scrollbar mt-1 grid w-full overflow-x-scroll"
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
           gridTemplateRows: GRID_TEMPLATE_ROWS,
-          // backgroundColor: "#EAECF6",
         }}
         ref={bodyRef}
         onScroll={(e) => handleScroll({ e, otherRef: headerRef })}
@@ -93,7 +100,7 @@ export default function MonthView({
             const rowEnd = `${week * (BODY_ROWS + 1) + (BODY_ROWS + 1) + 1}`;
             return (
               <div
-                key={day}
+                key={i}
                 className={`flex flex-col items-center border-b-2 ${
                   i > 0 && "border-l-2"
                 } py-1 ${
@@ -127,13 +134,16 @@ export default function MonthView({
             );
           })
         )}
-        {monthEvents.map((event) => (
+        {/* Events */}
+        {[...overWeeksEvents, ...nonOverlapMonthEvents].map((event, i) => (
           <Event
-            key={event.id}
+            key={i}
             event={event}
             eventsByDay={eventsByDay}
             goToDay={goToDay}
             handleEventClick={handleEventClick}
+            overWeekEvents={overWeeksEvents}
+            monthEvents={monthEvents}
           />
         ))}
       </div>
@@ -146,29 +156,42 @@ function Event({
   eventsByDay,
   goToDay,
   handleEventClick,
+  overWeekEvents,
+  monthEvents,
 }: {
   event: EventI;
   eventsByDay: { [key: string]: EventI[] };
   goToDay: (date: Moment) => void;
   handleEventClick: (event: EventI) => void;
+  overWeekEvents: EventI[];
+  monthEvents: EventI[];
 }) {
   // Row based on week number of month
   const start = moment(event.startDateTime);
+  const end = moment(event.endDateTime);
 
   const startCol = `${start.clone().day() + 1}`;
-  const endCol = `${moment(event.endDateTime).clone().day() + 2}`;
+  // If the end is not in the same week, then end at the end of the week
+  let endCol = `${end.clone().day() + 2}`;
+  if (start.week() !== end.week()) {
+    endCol = `${start.clone().endOf("week").day() + 2}`;
+  }
   const week =
-    start.clone().startOf("week").diff(start.clone().startOf("month"), "week") *
+    start
+      .clone()
+      .startOf("week")
+      .diff(start.clone().startOf("month").startOf("week"), "week") *
       (BODY_ROWS + 1) +
-    (BODY_ROWS + 1) +
     1;
   const day = start.clone().format("YYYY-MM-DD");
   const eventNum = eventsByDay[day].indexOf(event);
 
   const startRow = week + eventNum * 2 + 1;
   const endRow = startRow + 2;
+
+  // Add a "x more" events box if there are more than 3 events in a day
   if (eventNum >= EVENTS_PER_ROW) {
-    // Add a "x more" event
+    // Render "x more" events box on the 4th row
     if (eventNum === EVENTS_PER_ROW) {
       return (
         <div
@@ -187,23 +210,32 @@ function Event({
         </div>
       );
     }
-
+    // Otherwise don't render events
     return null;
   }
+
   return (
     <div
       className={`${
         BG_COLOUR_MAP[event.colour]
-      } m-0 mx-1 mt-0.5 cursor-pointer overflow-hidden rounded px-1`}
+      } m-0 mx-1 mt-0.5 cursor-pointer overflow-hidden rounded border-[1px] border-solid border-base-200 px-1`}
       style={{
         gridColumnStart: startCol,
         gridColumnEnd: endCol,
         gridRowStart: startRow,
         gridRowEnd: endRow,
       }}
-      onClick={() => handleEventClick(event)}
+      onClick={() => {
+        // If the event is a multi-week event, then open the original event
+        if (overWeekEvents.filter((e) => e.id === event.id).length > 0) {
+          const originalEvent = monthEvents.filter((e) => e.id === event.id)[0];
+          handleEventClick(originalEvent);
+        } else {
+          handleEventClick(event);
+        }
+      }}
     >
-      <div className="-mt-0.5 truncate text-xs font-semibold md:text-sm">
+      <div className="-mt-0.5 truncate text-xs  font-semibold md:text-sm">
         {event.title}
       </div>
       <div className="overflow-clip whitespace-nowrap text-xs">
