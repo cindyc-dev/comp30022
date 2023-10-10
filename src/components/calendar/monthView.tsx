@@ -39,6 +39,13 @@ export default function MonthView({
     monthEvents,
     false
   );
+
+  console.log({
+    monthEvents: monthEvents,
+    nonOverlapMonthEvents: nonOverlapMonthEvents,
+    overWeeksEvents: overWeeksEvents,
+  });
+
   // Organise the events by day like day: [events] and sort them by start time
   const eventsByDay: { [key: string]: EventI[] } = {};
   [...overWeeksEvents, ...nonOverlapMonthEvents].forEach((event) => {
@@ -53,6 +60,8 @@ export default function MonthView({
       moment(a.startDateTime).isBefore(moment(b.startDateTime)) ? -1 : 1
     );
   });
+
+  console.log({ eventsByDay: eventsByDay });
 
   return (
     <div className="h-full w-full">
@@ -144,6 +153,7 @@ export default function MonthView({
             handleEventClick={handleEventClick}
             overWeekEvents={overWeeksEvents}
             monthEvents={monthEvents}
+            today={today}
           />
         ))}
       </div>
@@ -158,6 +168,7 @@ function Event({
   handleEventClick,
   overWeekEvents,
   monthEvents,
+  today,
 }: {
   event: EventI;
   eventsByDay: { [key: string]: EventI[] };
@@ -165,6 +176,7 @@ function Event({
   handleEventClick: (event: EventI) => void;
   overWeekEvents: EventI[];
   monthEvents: EventI[];
+  today: Moment;
 }) {
   // Row based on week number of month
   const start = moment(event.startDateTime);
@@ -180,7 +192,7 @@ function Event({
     start
       .clone()
       .startOf("week")
-      .diff(start.clone().startOf("month").startOf("week"), "week") *
+      .diff(today.clone().startOf("month").startOf("week"), "week") *
       (BODY_ROWS + 1) +
     1;
   const day = start.clone().format("YYYY-MM-DD");
@@ -235,6 +247,7 @@ function Event({
         }
       }}
     >
+      {}
       <div className="-mt-0.5 truncate text-xs  font-semibold md:text-sm">
         {event.title}
       </div>
