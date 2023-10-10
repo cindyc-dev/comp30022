@@ -183,8 +183,8 @@ export const getOvernightAndMultiDayEvents = (
         if (
           !moment(startDateTime).isBetween(startRange, endRange, "day", "[]") ||
           !moment(endDateTime).isBetween(startRange, endRange, "day", "[]") ||
-          // Event that ends at 00:00
-          moment(startDateTime).isSame(moment(endDateTime), "day")
+          // Event that ends at 00:00 on the next day is not considered overnight
+          moment(endDateTime).isSame(moment(endDateTime).startOf("day"))
         ) {
           continue;
         }
