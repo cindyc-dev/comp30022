@@ -11,9 +11,13 @@ import { TRPCError } from "@trpc/server";
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
-    .input(z.object(
-      { email: z.string().email(), password: z.string() }
-    ))
+    .input(
+      z.object({
+        email: z.string().email(),
+        password: z.string(),
+        name: z.string(),
+      })
+    )
     .mutation(async (opts) => {
       if (await accountExists(opts.input.email)) {
         throw new TRPCError({
@@ -21,13 +25,20 @@ export const authRouter = createTRPCRouter({
           message: "Account already exists",
         });
       }
-      await createAccount(opts.input.email, opts.input.password);
+      await createAccount(
+        opts.input.email,
+        opts.input.password,
+        opts.input.name
+      );
     }),
-  
+
   setPassword: protectedProcedure
-    .input(z.object({
-      currentPassword: z.string(), newPassword: z.string()
-    }))
+    .input(
+      z.object({
+        currentPassword: z.string(),
+        newPassword: z.string(),
+      })
+    )
     .mutation(async (opts) => {
       const session = opts.ctx.session;
       const userId = session.user.id;

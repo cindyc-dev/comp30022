@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   FaCheckCircle,
   FaExclamationTriangle,
@@ -21,18 +21,56 @@ interface ToastProps {
 }
 
 function Toast({ type, message, removeToast, i }: ToastProps) {
-  // Make toast disappear after 5 seconds
+  // State to track the timer and hover state
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Effect to start the timer when the component is mounted
   useEffect(() => {
-    const timer = setTimeout(() => {
-      removeToast(i);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
+    // Start the timer only if it's not already running and the user is not hovering
+    if (!timer && !isHovered) {
+      const newTimer = setTimeout(() => {
+        // Remove the toast
+        removeToast(i);
+      }, 5000);
+      setTimer(newTimer);
+    }
+
+    // Cleanup function to clear the timer when the component unmounts
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [timer, isHovered]); // Dependencies to watch for changes
+
+  // Event handlers for hover state
+  const handleMouseEnter = () => {
+    console.log("hovered");
+
+    // Clear the timer if the user hovers over the component
+    if (timer) {
+      clearTimeout(timer);
+      setTimer(null);
+    }
+
+    // Set the hover state to true
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    console.log("not hovered");
+
+    // Set the hover state to false
+    setIsHovered(false);
+  };
 
   return (
     <div
       className={`${alertStyleMap[type]} alert cursor-pointer`}
       onClick={() => removeToast(i)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {type === "info" && <FaInfoCircle />}
       {type === "success" && <FaCheckCircle />}

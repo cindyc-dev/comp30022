@@ -28,6 +28,15 @@ export const Footer = () => {
   return (
     <footer className="footer footer-center mt-2 w-full bg-primary py-2 text-primary-content">
       <div>
+        <p>
+          <Link href="/about/privacy" className="link cursor-pointer underline">
+            🔏 Privacy Policy
+          </Link>{" "}
+          |{" "}
+          <Link href="/about/terms" className="link cursor-pointer underline">
+            📜 Terms and Conditions
+          </Link>
+        </p>
         <div className="flex gap-4">
           <p>Made with Awesomeness 🤟 for COMP30022</p>
           <Link href="https://github.com/chuahxinyu/comp30022" target="_blank">
