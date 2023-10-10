@@ -3,8 +3,12 @@ import TextInput from "~/components/common/textInput";
 import { EventI } from "~/types/EventI";
 import DatePicker from "react-datepicker";
 import moment from "moment";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import ColourPicker from "~/components/common/colourPicker";
+import { ConnectionI } from "~/types/ConnectionI";
+import { useToast } from "../hooks/toastContext";
+import { api } from "~/utils/api";
+import Tag from "../connections/_tag";
 
 function EventDetailsForm({
   event,
@@ -13,6 +17,8 @@ function EventDetailsForm({
   event: EventI;
   setEvent: Dispatch<SetStateAction<EventI>>;
 }) {
+  const [allConnections, setAllConnections] = useState<ConnectionI[]>([]);
+
   // When start time changes, change end time to be previous duration later
   const handleStartTimeChange = (date: Date) => {
     const duration = moment(event.endDateTime).diff(
@@ -39,9 +45,33 @@ function EventDetailsForm({
     return `${hours} hours, ${minutes} minutes`;
   };
 
+  // Filter out times before the start time
   const filterTimeBeforeStart = (time: Date) => {
     return moment(time).isAfter(moment(event.startDateTime));
   };
+
+  const { addToast } = useToast();
+
+  const {
+    data: connections,
+    isLoading,
+    error,
+    refetch,
+  } = api.connection.getAllConnections.useQuery();
+  useEffect(() => {
+    if (connections) {
+      console.log({ connections: connections });
+      setAllConnections([...connections]);
+    }
+    if (error) {
+      console.error(error);
+      addToast({
+        type: "error",
+        message: `Error fetching connections. ${error}: ${error.message}`,
+      });
+    }
+  }, [connections, error]);
+
   return (
     <div className="flex w-full flex-col">
       <TextInput
@@ -100,14 +130,74 @@ function EventDetailsForm({
         setValue={(val) => setEvent({ ...event, notes: val })}
         placeholder={"eg. Bring the report"}
       />
-      {/* TODO related connections */}
-      <label>
-        <span className="label-text">🎨 Colour</span>
-      </label>
-      <ColourPicker
-        colour={event.colour}
-        setColour={(val) => setEvent({ ...event, colour: val })}
-      />
+      <div className="flex w-full justify-evenly gap-2">
+        {/* Related Connections */}
+        <div className="w-full">
+          <div className="w-full">
+            <label className="label p-0">
+              <span className="label-text">🧑‍🤝‍🧑 Related Connections</span>
+            </label>
+            <select
+              className="select select-bordered w-full"
+              onChange={(e) => {
+                setEvent({
+                  ...event,
+                  relatedConnections: [
+                    ...event.relatedConnections,
+                    allConnections.filter(
+                      (connection) => connection.name === e.target.value
+                    )[0],
+                  ],
+                });
+                // Reset the select to default
+                (e.target as HTMLSelectElement).selectedIndex = 0;
+              }}
+              defaultValue={"Choose Connection"}
+            >
+              <option disabled>Choose Connection</option>
+              {/* Only show connections that aren't already added to relatedConnections */}
+              {allConnections
+                .filter(
+                  (connection) => !event.relatedConnections.includes(connection)
+                )
+                .map((connection) => (
+                  <option key={connection.id} value={connection.name}>
+                    {connection.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+          {event.relatedConnections.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {event.relatedConnections.map((connection) => (
+                <Tag
+                  key={connection.id}
+                  tag={connection.name}
+                  isDeletable={true}
+                  onDelete={() => {
+                    setEvent({
+                      ...event,
+                      relatedConnections: event.relatedConnections.filter(
+                        (c) => c !== connection
+                      ),
+                    });
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        {/* Colour Picker */}
+        <div className="w-full">
+          <label>
+            <span className="label-text">🎨 Colour</span>
+          </label>
+          <ColourPicker
+            colour={event.colour}
+            setColour={(val) => setEvent({ ...event, colour: val })}
+          />
+        </div>
+      </div>
     </div>
   );
 }

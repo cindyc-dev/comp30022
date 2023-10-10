@@ -42,11 +42,12 @@ export const calendarRouter = createTRPCRouter({
         location: z.string().optional(),
         notes: z.string().optional(),
         colour: z.string(),
+        relatedExistingConnections: z.array(z.string()).optional(),
+        relatedCustomConnections: z.array(z.string().email()).optional(),
       })
     )
     .mutation(async (opts) => {
-      const { title, startDateTime, endDateTime, location, notes, colour } =
-        opts.input;
+      const { title, startDateTime, endDateTime, location, notes, colour } = opts.input;
 
       const session = opts.ctx.session;
       const userId = session.user.id;
@@ -60,24 +61,23 @@ export const calendarRouter = createTRPCRouter({
         colour,
         startDateTime: parsedStart,
         endDateTime: parsedEnd,
+        connections: relatedExistingConnections,
+        customConnections: relatedCustomConnections,
       });
     }),
 
   editEvent: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        title: z.string(),
-        startDateTime: z.string().datetime(),
-        endDateTime: z.string().datetime(),
-        location: z.string().optional(),
-        notes: z.string().optional(),
-        colour: z.string(),
-      })
-    )
+    .input(z.object({
+      id: z.string(),
+      title: z.string(),
+      startDateTime: z.string().datetime(),
+      endDateTime: z.string().datetime(),
+      location: z.string().optional(),
+      notes: z.string().optional(),
+      colour: z.string(),
+    }))
     .mutation(async (opts) => {
-      const { id, title, startDateTime, endDateTime, location, notes, colour } =
-        opts.input;
+      const { id, title, startDateTime, endDateTime, location, notes, colour } = opts.input;
 
       const session = opts.ctx.session;
       const userId = session.user.id;
@@ -91,6 +91,8 @@ export const calendarRouter = createTRPCRouter({
         colour,
         startDateTime: parsedStart,
         endDateTime: parsedEnd,
+        connections: relatedExistingConnections,
+        customConnections: relatedCustomConnections,
       });
     }),
 
