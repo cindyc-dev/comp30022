@@ -47,7 +47,10 @@ export const calendarRouter = createTRPCRouter({
       })
     )
     .mutation(async (opts) => {
-      const { title, startDateTime, endDateTime, location, notes, colour } = opts.input;
+      const { title, startDateTime, endDateTime, location, notes, colour } =
+        opts.input;
+      const { relatedExistingConnections = [], relatedCustomConnections = [] } =
+        opts.input;
 
       const session = opts.ctx.session;
       const userId = session.user.id;
@@ -67,17 +70,24 @@ export const calendarRouter = createTRPCRouter({
     }),
 
   editEvent: protectedProcedure
-    .input(z.object({
-      id: z.string(),
-      title: z.string(),
-      startDateTime: z.string().datetime(),
-      endDateTime: z.string().datetime(),
-      location: z.string().optional(),
-      notes: z.string().optional(),
-      colour: z.string(),
-    }))
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        startDateTime: z.string().datetime(),
+        endDateTime: z.string().datetime(),
+        location: z.string().optional(),
+        notes: z.string().optional(),
+        colour: z.string(),
+        relatedExistingConnections: z.array(z.string()).optional(),
+        relatedCustomConnections: z.array(z.string().email()).optional(),
+      })
+    )
     .mutation(async (opts) => {
-      const { id, title, startDateTime, endDateTime, location, notes, colour } = opts.input;
+      const { id, title, startDateTime, endDateTime, location, notes, colour } =
+        opts.input;
+      const { relatedExistingConnections = [], relatedCustomConnections = [] } =
+        opts.input;
 
       const session = opts.ctx.session;
       const userId = session.user.id;
