@@ -1,18 +1,30 @@
-import {EventI} from "~/types/EventI";
-import {EventPayload, getAllConnectedEvents, getAllDbEvents} from "~/server/Repositories/CalendarRepository";
+import { EventI } from "~/types/EventI";
+import {
+  EventPayload,
+  getAllConnectedEvents,
+  getAllDbEvents,
+} from "~/server/Repositories/CalendarRepository";
 
 export async function getAllEvents(userId: string): Promise<EventI[]> {
   const dbEvents = await getAllDbEvents(userId);
   const connectedEvents = await getAllConnectedEvents(userId);
 
-  return dbEvents.map(parseSelfDbEvent).concat(connectedEvents.map(parseConnectedDbEvent));
+  return dbEvents
+    .map(parseSelfDbEvent)
+    .concat(connectedEvents.map(parseConnectedDbEvent));
 }
 
-export async function getEventsInRange(userId: string, start: Date, end: Date): Promise<EventI[]> {
+export async function getEventsInRange(
+  userId: string,
+  start: Date,
+  end: Date
+): Promise<EventI[]> {
   const dbEvents = await getAllDbEvents(userId, start, end);
   const connectedEvents = await getAllConnectedEvents(userId);
 
-  return dbEvents.map(parseSelfDbEvent).concat(connectedEvents.map(parseConnectedDbEvent));
+  return dbEvents
+    .map(parseSelfDbEvent)
+    .concat(connectedEvents.map(parseConnectedDbEvent));
 }
 
 function parseSelfDbEvent(dbEvent: EventPayload): EventI {

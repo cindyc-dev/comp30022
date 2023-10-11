@@ -145,6 +145,12 @@ export default function Calendar() {
       location: event.location,
       notes: event.notes,
       colour: event.colour,
+      relatedExistingConnections: event.relatedConnections
+        .filter((c) => c.isExisting)
+        .map((c) => c.id),
+      relatedCustomConnections: event.relatedConnections
+        .filter((c) => !c.isExisting)
+        .map((c) => c.email),
     };
     editMutation.mutate(newEvent, {
       onSuccess: (data) => {
