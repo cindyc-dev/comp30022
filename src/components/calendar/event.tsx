@@ -28,7 +28,7 @@ function Event({
 }: EventProps) {
   return (
     <div
-      className={`mx-1 rounded px-1 ${
+      className={`rounded px-1 ${
         BG_COLOUR_MAP[event.colour]
       } cursor-pointer overflow-hidden border-[1px] border-solid border-base-200`}
       style={{

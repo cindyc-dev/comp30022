@@ -19,6 +19,7 @@ export const sampleEvents: EventI[] = [
       },
     ],
     colour: "blue",
+    isExternal: false,
   },
   {
     id: "2",
@@ -29,6 +30,7 @@ export const sampleEvents: EventI[] = [
     notes: "Get the milk tea with pearls",
     relatedConnections: [],
     colour: "red",
+    isExternal: true,
   },
   {
     id: "3",
@@ -46,6 +48,7 @@ export const sampleEvents: EventI[] = [
       },
     ],
     colour: "green",
+    isExternal: false,
   },
   {
     id: "4",
@@ -56,6 +59,7 @@ export const sampleEvents: EventI[] = [
     notes: "Bring sleeping bag",
     relatedConnections: [],
     colour: "purple",
+    isExternal: false,
   },
   {
     id: "5",
@@ -66,6 +70,7 @@ export const sampleEvents: EventI[] = [
     notes: "Bring sleeping bag",
     relatedConnections: [],
     colour: "orange",
+    isExternal: false,
   },
   {
     id: "6",
@@ -76,6 +81,7 @@ export const sampleEvents: EventI[] = [
     notes: "Bring laptop",
     relatedConnections: [],
     colour: "blue",
+    isExternal: false,
   },
   {
     id: "7",
@@ -86,6 +92,7 @@ export const sampleEvents: EventI[] = [
     notes: "Bring laptop",
     relatedConnections: [],
     colour: "blue",
+    isExternal: false,
   },
   {
     id: "8",
@@ -96,6 +103,7 @@ export const sampleEvents: EventI[] = [
     notes: "",
     relatedConnections: [],
     colour: "yellow",
+    isExternal: false,
   },
   {
     id: "9",
@@ -106,5 +114,6 @@ export const sampleEvents: EventI[] = [
     notes: "",
     relatedConnections: [],
     colour: "pink",
+    isExternal: false,
   },
 ];

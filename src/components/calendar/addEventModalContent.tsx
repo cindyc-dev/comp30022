@@ -20,6 +20,7 @@ function AddEventModalContent({
     notes: "",
     relatedConnections: [],
     colour: "red",
+    isExternal: false,
   });
   const [isValid, setIsValid] = useState<boolean>(false);
 

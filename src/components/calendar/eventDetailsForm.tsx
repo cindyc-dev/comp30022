@@ -8,7 +8,9 @@ import ColourPicker from "~/components/common/colourPicker";
 import { ConnectionI } from "~/types/ConnectionI";
 import { useToast } from "../hooks/toastContext";
 import { api } from "~/utils/api";
-import Tag from "../connections/_tag";
+import AvatarImage from "../common/avatarImage";
+import { DEFAULT_PROFILE_PIC } from "~/sample_data/sampleConnections";
+import { HiXMark } from "react-icons/hi2";
 
 function EventDetailsForm({
   event,
@@ -56,7 +58,6 @@ function EventDetailsForm({
     data: connections,
     isLoading,
     error,
-    refetch,
   } = api.connection.getAllConnections.useQuery();
   useEffect(() => {
     if (connections) {
@@ -132,61 +133,46 @@ function EventDetailsForm({
       />
       <div className="flex w-full justify-evenly gap-2">
         {/* Related Connections */}
-        <div className="w-full">
+        {isLoading && <span>Loading Related Connections</span>}
+        {!isLoading && (
           <div className="w-full">
-            <label className="label p-0">
-              <span className="label-text">🧑‍🤝‍🧑 Related Connections</span>
-            </label>
-            <select
-              className="select select-bordered w-full"
-              onChange={(e) => {
-                setEvent({
-                  ...event,
-                  relatedConnections: [
-                    ...event.relatedConnections,
-                    allConnections.filter(
-                      (connection) => connection.name === e.target.value
-                    )[0],
-                  ],
-                });
-                // Reset the select to default
-                (e.target as HTMLSelectElement).selectedIndex = 0;
-              }}
-              defaultValue={"Choose Connection"}
-            >
-              <option disabled>Choose Connection</option>
-              {/* Only show connections that aren't already added to relatedConnections */}
-              {allConnections
-                .filter(
-                  (connection) => !event.relatedConnections.includes(connection)
-                )
-                .map((connection) => (
-                  <option key={connection.id} value={connection.name}>
-                    {connection.name}
-                  </option>
-                ))}
-            </select>
-          </div>
-          {event.relatedConnections.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {event.relatedConnections.map((connection) => (
-                <Tag
-                  key={connection.id}
-                  tag={connection.name}
-                  isDeletable={true}
-                  onDelete={() => {
-                    setEvent({
-                      ...event,
-                      relatedConnections: event.relatedConnections.filter(
-                        (c) => c !== connection
-                      ),
-                    });
-                  }}
-                />
-              ))}
+            <div className="w-full">
+              <label className="label p-0">
+                <span className="label-text">🧑‍🤝‍🧑 Related Connections</span>
+              </label>
+              <select
+                className="select select-bordered w-full"
+                onChange={(e) => {
+                  setEvent({
+                    ...event,
+                    relatedConnections: [
+                      ...event.relatedConnections,
+                      allConnections.filter(
+                        (connection) => connection.name === e.target.value
+                      )[0],
+                    ],
+                  });
+                  // Reset the select to default
+                  (e.target as HTMLSelectElement).selectedIndex = 0;
+                }}
+                defaultValue={"Choose Connection"}
+              >
+                <option disabled>Choose Connection</option>
+                {/* Only show connections that aren't already added to relatedConnections */}
+                {allConnections
+                  .filter(
+                    (connection) =>
+                      !event.relatedConnections.includes(connection)
+                  )
+                  .map((connection) => (
+                    <option key={connection.id} value={connection.name}>
+                      {connection.name}
+                    </option>
+                  ))}
+              </select>
             </div>
-          )}
-        </div>
+          </div>
+        )}
         {/* Colour Picker */}
         <div className="w-full">
           <label>
@@ -198,8 +184,50 @@ function EventDetailsForm({
           />
         </div>
       </div>
+      {/* Added Related Connections */}
+      {event.relatedConnections.length > 0 && (
+        <div className="my-2 flex flex-wrap gap-2">
+          {event.relatedConnections.map((connection) => (
+            <RelatedConnection
+              key={connection.id}
+              connection={connection}
+              onDelete={() =>
+                setEvent({
+                  ...event,
+                  relatedConnections: event.relatedConnections.filter(
+                    (c) => c.id !== connection.id
+                  ),
+                })
+              }
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
 export default EventDetailsForm;
+
+function RelatedConnection({
+  connection,
+  onDelete,
+}: {
+  connection: ConnectionI;
+  onDelete: () => void;
+}) {
+  return (
+    <div className="badge py-5">
+      <label
+        className="avatar tooltip h-7 w-7 rounded-full border-2 border-solid"
+        data-tip={connection.name}
+      >
+        <AvatarImage
+          src={connection.photoUrl ? connection.photoUrl : DEFAULT_PROFILE_PIC}
+        />
+      </label>
+      <div className="px-1">{connection.name}</div>
+      <HiXMark className="ml-1 cursor-pointer" onClick={onDelete} />
+    </div>
+  );
+}
