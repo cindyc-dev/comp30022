@@ -11,7 +11,7 @@ export const AvatarImage = ({
   return (
     <div className="rounded-full">
       <Image
-        src={src}
+        src={src === "" ? DEFAULT_PROFILE_PIC : src}
         alt="profile picture"
         fill={true}
         className="m-0 rounded-full"
