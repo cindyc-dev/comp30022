@@ -243,7 +243,7 @@ export default function Calendar() {
       });
     }
     if (error) {
-      console.log({ error });
+      console.error({ error });
       // Show error toast
       addToast({
         type: "error",
