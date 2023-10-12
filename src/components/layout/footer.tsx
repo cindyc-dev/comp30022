@@ -26,7 +26,7 @@ const GROUP_MEMBERS = [
 
 export const Footer = () => {
   return (
-    <footer className="footer footer-center mt-2 w-full bg-primary py-2 text-primary-content">
+    <footer className="footer footer-center mt-2 w-full bg-primary py-2 text-xs text-primary-content">
       <div>
         <p>
           <Link href="/about/privacy" className="link cursor-pointer underline">
