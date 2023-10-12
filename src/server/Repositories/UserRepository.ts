@@ -1,6 +1,7 @@
 import { prisma } from "~/server/db";
 import { Prisma } from "@prisma/client";
 import { UserI } from "~/types/UserI";
+import { tryCatchWrapper } from "../utils/tryCatchWrapper";
 
 export async function createUser(
   email: string,
@@ -79,7 +80,7 @@ export async function UpdateUserPasswordWithId(
   userId: string,
   newPassword: string
 ): Promise<boolean> {
-  try {
+  return await tryCatchWrapper(async () => {
     await prisma.user.update({
       where: {
         id: userId,
@@ -89,16 +90,14 @@ export async function UpdateUserPasswordWithId(
       },
     });
     return true;
-  } catch (error) {
-    throw new Error(`Error updating user password. Error: ${error}`);
-  }
+  }, "Error updating user password.");
 }
 
 export async function updateUserImageWithId(
   userId: string,
   newImage: string
 ): Promise<boolean> {
-  try {
+  return await tryCatchWrapper(async () => {
     await prisma.user.update({
       where: {
         id: userId,
@@ -108,35 +107,36 @@ export async function updateUserImageWithId(
       },
     });
     return true;
-  } catch (error) {
-    throw new Error(`Error updating user image. Error: ${error}`);
-  }
+  }, "Error updating user image.");
 }
 
 export async function updateUserDetailsWithId(user: UserI): Promise<boolean> {
-  try {
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        name: user.name,
-        contact: user.contact,
-        email: user.email,
-      },
-    });
-    return true;
-  } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      // The .code property can be accessed in a type-safe manner
-      if (e.code === "P2002") {
-        throw new Error(
-          `Error updating user details. This email is already used on a different account. Error: ${e}`
-        );
+  return await tryCatchWrapper(
+    async () => {
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          name: user.name,
+          contact: user.contact,
+          email: user.email,
+        },
+      });
+      return true;
+    },
+    "Error updating user details.",
+    (error) => {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // The .code property can be accessed in a type-safe manner
+        if (error.code === "P2002") {
+          throw new Error(
+            `Error updating user details. This email is already used on a different account. Error: ${error}`
+          );
+        }
       }
     }
-    throw new Error(`Error updating user details. Error: ${e}`);
-  }
+  );
 }
 
 export async function saveRestoreToken(email: string, token: string): Promise<boolean> {
