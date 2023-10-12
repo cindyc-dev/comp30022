@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { useToast } from "../hooks/toastContext";
 import { DEFAULT_PROFILE_PIC } from "~/sample_data/sampleConnections";
+import Image from "next/image";
 
 const PAGES = [
   {
@@ -84,7 +85,17 @@ export const Navbar = () => {
           </ul>
         </div>
         {/* Logo */}
-        <Link className="px-2 text-xl font-bold normal-case" href="/dashboard">
+        <Link
+          className="flex gap-2 px-2 text-xl font-bold normal-case"
+          href="/dashboard"
+        >
+          <Image
+            src="/svg/favicon.svg"
+            alt="Potato Logo"
+            width={20}
+            height={0}
+            className="m-0 p-0"
+          />
           PotatoCRM
         </Link>
       </div>
