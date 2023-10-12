@@ -68,7 +68,7 @@ export const Board = () => {
 
   /* Update Task */
   const updateMutation = api.trello.updateTask.useMutation();
-  const onUpdateTask = (newTask: TaskI) => {
+  const onUpdateTask = (newTask: TaskI, setIsLoading: (b: boolean) => void) => {
     const updatedTask = {
       id: newTask.id,
       title: newTask.title,
@@ -84,6 +84,7 @@ export const Board = () => {
           type: "success",
         });
         refetch();
+        setIsLoading(false);
         closeModal("edit-task-modal");
       },
       onError: (error) => {
@@ -92,6 +93,7 @@ export const Board = () => {
           message: `Task "${updatedTask.title}" was not updated`,
           type: "error",
         });
+        setIsLoading(false);
       },
     });
   };
@@ -140,7 +142,7 @@ export const Board = () => {
     ) as TaskI;
     draggedTask.status = destination.droppableId;
 
-    onUpdateTask(draggedTask);
+    onUpdateTask(draggedTask, () => {});
 
     updatedDestinationItems.splice(destination.index, 0, draggedTask);
     const updatedDestinationColumn = {
