@@ -17,7 +17,7 @@ interface ConnectionDetailsInputsProps {
   tagColoursMap: Record<string, string>;
   editPhoto: () => void;
   debounceEmail?: boolean;
-  handleAddExisting: (
+  handleAddExisting?: (
     id: string,
     name: string,
     setSearchQuery: React.Dispatch<React.SetStateAction<string>>
@@ -128,6 +128,7 @@ function ConnectionDetailsInputs({
                       <button
                         className="btn btn-primary btn-sm"
                         onClick={() =>
+                          handleAddExisting &&
                           handleAddExisting(
                             existingUser.id,
                             existingUser.name,
