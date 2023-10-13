@@ -84,7 +84,7 @@ function DayView({
       )}
       {/* Sticky Header Day and Date */}
       <div
-        className={`hide-scrollbar sticky ${
+        className={`md:hide-scrollbar show-scrollbar sticky ${
           isDashboard ? "top-0" : "top-[4.5rem]"
         } z-40 grid overflow-x-scroll rounded bg-secondary py-2`}
         style={{
@@ -130,7 +130,7 @@ function DayView({
       </div>
       {/* Body */}
       <div
-        className="hide-scrollbar grid w-full overflow-x-scroll"
+        className="md:hide-scrollbar show-scrollbar grid w-full overflow-x-scroll"
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
           gridTemplateRows: `repeat(48, ${ROW_HEIGHT})`,
