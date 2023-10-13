@@ -6,9 +6,16 @@ interface TagProps {
   tagColoursMap?: Record<string, string>;
   isDeletable?: boolean;
   onDelete?: () => void;
+  xs?: boolean;
 }
 
-const Tag = ({ tag, tagColoursMap, isDeletable, onDelete }: TagProps) => {
+const Tag = ({
+  tag,
+  tagColoursMap,
+  isDeletable,
+  onDelete,
+  xs = false,
+}: TagProps) => {
   return (
     <>
       <div
@@ -16,7 +23,9 @@ const Tag = ({ tag, tagColoursMap, isDeletable, onDelete }: TagProps) => {
           tagColoursMap && tagColoursMap[tag]
             ? tagColoursMap[tag]
             : "badge-accent"
-        } badge py-3 text-sm font-normal text-base-100`}
+        } badge py-3 ${
+          xs ? "border-[1px] border-solid border-base-100 text-xs" : "text-sm"
+        } font-normal text-base-100`}
       >
         {capitalise(tag)}
         {isDeletable && (

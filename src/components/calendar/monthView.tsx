@@ -67,7 +67,7 @@ export default function MonthView({
     <div className="h-full w-full">
       {/* Sticky Header Days */}
       <div
-        className="hide-scrollbar sticky top-[4.5rem] z-40 grid overflow-x-scroll rounded bg-secondary py-2"
+        className="md:hide-scrollbar show-scrollbar sticky top-[4.5rem] z-40 grid overflow-x-scroll rounded bg-secondary py-2"
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
           boxShadow: "0px 15px 10px -15px #ececec",
@@ -90,7 +90,7 @@ export default function MonthView({
       </div>
       {/* Month grid */}
       <div
-        className="hide-scrollbar mt-1 grid w-full overflow-x-scroll"
+        className="md:hide-scrollbar show-scrollbar mt-1 grid w-full overflow-x-scroll"
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
           gridTemplateRows: GRID_TEMPLATE_ROWS,

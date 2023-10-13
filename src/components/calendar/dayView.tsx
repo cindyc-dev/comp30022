@@ -1,7 +1,12 @@
 import moment from "moment";
 import { Moment } from "moment";
 import { EventI } from "~/types/EventI";
-import { handleScroll, arrayRange, getEventsInDay, getOverlappingGroups } from "./utils";
+import {
+  handleScroll,
+  arrayRange,
+  getEventsInDay,
+  getOverlappingGroups,
+} from "./utils";
 import { useEffect, useRef, useState } from "react";
 import Event from "./event";
 
@@ -15,6 +20,8 @@ interface DayViewProps {
   dayEvents: EventI[];
   handleEventClick: (event: EventI) => void;
   overNightAndMultiDayEvents: EventI[];
+  scrollToTime?: boolean;
+  isDashboard?: boolean;
 }
 
 function DayView({
@@ -22,6 +29,8 @@ function DayView({
   dayEvents,
   handleEventClick,
   overNightAndMultiDayEvents,
+  scrollToTime = true,
+  isDashboard = false,
 }: DayViewProps) {
   const [currentTimeRow, setCurrentTimeRow] = useState<number>(-1);
 
@@ -44,31 +53,40 @@ function DayView({
   };
 
   // Scroll to current time
+
   useEffect(() => {
     // Set current time row on first render
     setCurrentTimeRow(getCurrentTimeRow());
-    // Scroll to current time
-    const currentHour = getCurrentTimeRow();
-    const currentRow = document.getElementById(`${currentHour}${currentDay}`);
-    if (currentRow) {
-      currentRow.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center",
-      });
+    if (scrollToTime) {
+      // Scroll to current time
+      const currentHour = getCurrentTimeRow();
+      const currentRow = document.getElementById(`${currentHour}${currentDay}`);
+      if (currentRow) {
+        currentRow.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
+        });
+      }
     }
   }, [today]);
 
-  const overlappingGroups = getOverlappingGroups([...overNightAndMultiDayEvents,
-    ...getEventsInDay(today.clone(), dayEvents, false)]);
+  const overlappingGroups = getOverlappingGroups([
+    ...overNightAndMultiDayEvents,
+    ...getEventsInDay(today.clone(), dayEvents, false),
+  ]);
 
   return (
     <div className="w-full">
       {/* White Part above Header */}
-      <div className="sticky top-16 z-30 h-2 bg-base-100"></div>
-      {/* Sticky Header Days and Dates from Sunday to Saturday */}
+      {!isDashboard && (
+        <div className="sticky top-16 z-30 h-2 bg-base-100"></div>
+      )}
+      {/* Sticky Header Day and Date */}
       <div
-        className="hide-scrollbar sticky top-[4.5rem] z-40 grid overflow-x-scroll rounded bg-secondary py-2"
+        className={`md:hide-scrollbar show-scrollbar sticky ${
+          isDashboard ? "top-0" : "top-[4.5rem]"
+        } z-40 grid overflow-x-scroll rounded bg-secondary py-2`}
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
           boxShadow: "0px 15px 10px -15px #ececec",
@@ -99,7 +117,8 @@ function DayView({
           <p className="m-0">{today.clone().format("ddd").toUpperCase()}</p>
           <button
             className={`btn btn-circle btn-sm md:btn-md ${
-              moment().format("YYYY-MM-DD") === today.clone().format("YYYY-MM-DD")
+              moment().format("YYYY-MM-DD") ===
+              today.clone().format("YYYY-MM-DD")
                 ? "btn-primary"
                 : "btn-ghost"
             }`}
@@ -111,7 +130,7 @@ function DayView({
       </div>
       {/* Body */}
       <div
-        className="hide-scrollbar grid w-full overflow-x-scroll"
+        className="md:hide-scrollbar show-scrollbar grid w-full overflow-x-scroll"
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
           gridTemplateRows: `repeat(48, ${ROW_HEIGHT})`,

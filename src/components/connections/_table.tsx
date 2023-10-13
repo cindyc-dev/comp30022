@@ -164,7 +164,7 @@ function Table({
   });
 
   return (
-    <div className="mt-0 w-full overflow-x-auto">
+    <div className="md:hide-scrollbar show-scrollbar mt-0 w-full overflow-x-auto">
       <table className="table mt-0">
         {/* Header */}
         <thead>
