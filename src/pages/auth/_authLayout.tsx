@@ -1,4 +1,4 @@
-import Image from "next/image";
+// import Image from "next/image";
 import ToastSection from "~/components/common/toastSection";
 import { useToast } from "~/components/hooks/toastContext";
 export default function AuthLayout({
@@ -9,16 +9,16 @@ export default function AuthLayout({
   const { toasts, removeToast } = useToast();
   return (
     <div className="hero min-h-screen bg-base-200">
-      <Image
+      {/* <Image
         src="/images/background.png"
         alt="background"
         quality={100}
         width={1920}
         height={1080}
         className="!fixed h-full w-full object-cover"
-      />
+      /> */}
       <div className="hero-content flex-col lg:flex-row">
-        <div className="p-10 text-center text-base-100 lg:text-left">
+        <div className="p-10 text-center text-primary lg:text-left">
           <h1 className="text-5xl font-bold">PotatoCRM</h1>
           <p className="py-6">
             Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda

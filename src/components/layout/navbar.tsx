@@ -104,7 +104,7 @@ export const Navbar = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <div className="dropdown-end dropdown">
+        <div className="dropdown dropdown-end">
           <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
             <div className="w-10">
               {profileImage && <AvatarImage src={profileImage} />}

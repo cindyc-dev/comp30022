@@ -23,7 +23,6 @@ const config = {
       "wallpapers.com",
       "images.unsplash.com",
       "res.cloudinary.com",
-      "cdn.pixabay.com",
       "xsgames.co",
       "i.pinimg.com",
       "avatars.githubusercontent.com",

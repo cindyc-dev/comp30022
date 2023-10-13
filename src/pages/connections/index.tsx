@@ -197,11 +197,6 @@ export default function Connections() {
       .filter((connection) => connection.isExisting)
       .map((connection) => connection.id);
 
-    console.log({
-      customEmails: customEmails,
-      existingIDs: existingIDs,
-    });
-
     // API call to delete connections
     deleteManyMutation.mutate(
       { customEmails: customEmails, existingIDs: existingIDs },

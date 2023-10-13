@@ -2,6 +2,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
 import {authRouter} from "~/server/api/routers/auth";
 import {connectionRouter} from "~/server/api/routers/connection";
 import { detailsRouter } from "./routers/userdetails";
+import {calendarRouter} from "~/server/api/routers/calendar";
 import { trelloRouter } from "./routers/trello";
 
 /**
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   user: authRouter,
   connection: connectionRouter,
   details: detailsRouter,
+  calendar: calendarRouter,
   trello: trelloRouter,
 });
 

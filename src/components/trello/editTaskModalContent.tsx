@@ -74,7 +74,7 @@ const EditTaskModalContent = ({
           </button>
           <button
             className={`btn btn-primary ${
-              isObjectsEqual(task, newTask) && "btn-disabled"
+              (isObjectsEqual(task, newTask) || !newTask.title) && "btn-disabled"
             }`}
             onClick={() => onUpdateTask(newTask)}
           >
