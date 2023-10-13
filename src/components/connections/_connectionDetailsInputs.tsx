@@ -17,6 +17,11 @@ interface ConnectionDetailsInputsProps {
   tagColoursMap: Record<string, string>;
   editPhoto: () => void;
   debounceEmail?: boolean;
+  handleAddExisting?: (
+    id: string,
+    name: string,
+    setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+  ) => void;
 }
 
 function ConnectionDetailsInputs({
@@ -25,6 +30,7 @@ function ConnectionDetailsInputs({
   tagColoursMap,
   editPhoto,
   debounceEmail = false,
+  handleAddExisting,
 }: ConnectionDetailsInputsProps) {
   const [tagInput, setTagInput] = useState<string>("");
 
@@ -112,7 +118,7 @@ function ConnectionDetailsInputs({
                       A user with this email already exists. Would you like to
                       search for them?
                     </p>
-                    <div>
+                    <div className="flex gap-2">
                       <button
                         className="btn btn-sm"
                         onClick={() => setExistingUser(null)}
@@ -121,7 +127,14 @@ function ConnectionDetailsInputs({
                       </button>
                       <button
                         className="btn btn-primary btn-sm"
-                        onClick={() => {}}
+                        onClick={() =>
+                          handleAddExisting &&
+                          handleAddExisting(
+                            existingUser.id,
+                            existingUser.name,
+                            () => {}
+                          )
+                        }
                       >
                         Yes
                       </button>

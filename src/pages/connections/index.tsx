@@ -117,7 +117,11 @@ export default function Connections() {
 
   /* Add Existing Connection */
   const existingMutation = api.connection.createExisting.useMutation();
-  const handleAddExisting = (id: string, name: string, setSearchQuery: React.Dispatch<React.SetStateAction<string>> ) => {
+  const handleAddExisting = (
+    id: string,
+    name: string,
+    setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+  ) => {
     // API call to add existing connection
     existingMutation.mutate(
       { connectionId: id },
@@ -135,14 +139,19 @@ export default function Connections() {
 
           // Reset search query
           setSearchQuery("");
+
+          closeModal("add-connection-modal");
         },
         onError: (error) => {
           console.error(error);
           // Show error toast
           addToast({
             type: "error",
-            message: `Error adding connection. ${error}: ${error.message}`,
+            message: `Error adding connection. Error: ${error.message}`,
           });
+
+          // Close modal
+          closeModal("add-connection-modal");
         },
       }
     );
@@ -339,13 +348,13 @@ export default function Connections() {
 
       {/* Multi-Row Selection Toolbar */}
       {Object.keys(rowSelection).length > 0 && (
-        <div className="navbar fixed bottom-2 flex w-9/12 justify-between gap-2 rounded bg-primary px-10 shadow-md">
-          <div className="text-l text-base-300">
+        <div className="navbar fixed bottom-2 flex w-9/12 justify-between gap-2 rounded bg-secondary px-10 shadow-md">
+          <div className="text-l">
             {Object.keys(rowSelection).length}/{data.length} Rows Selected
           </div>
           <div className="flex gap-2">
             <Link
-              className="btn btn-secondary"
+              className="btn btn-primary"
               href={`mailto:${getSelectedEmails()}`}
             >
               <BiMailSend />

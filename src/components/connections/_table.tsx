@@ -129,13 +129,15 @@ function Table({
       {
         header: "SEND EMAIL",
         cell: ({ row }) => (
-          <Link
-            className="btn btn-secondary btn-sm h-fit py-1"
-            href={`mailto: ${row.original.email}`}
-          >
-            <BiMailSend />
-            Send Email
-          </Link>
+          <div className="flex w-full justify-center">
+            <Link
+              className="btn btn-secondary btn-sm right-0 h-fit py-1"
+              href={`mailto: ${row.original.email}`}
+            >
+              <BiMailSend />
+              Send Email
+            </Link>
+          </div>
         ),
       },
     ],
