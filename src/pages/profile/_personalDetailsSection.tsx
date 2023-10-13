@@ -5,6 +5,7 @@ import { useModal } from "~/components/hooks/modalContext";
 import { useToast } from "~/components/hooks/toastContext";
 import { api } from "~/utils/api";
 import UploadImageModalContent from "~/components/common/uploadImageModalContent";
+// import { useUserDetails } from "~/components/hooks/userDetailsContext";
 
 export const PersonalDetailsSection = () => {
   const [name, setName] = useState<string>("");
@@ -15,7 +16,11 @@ export const PersonalDetailsSection = () => {
   const { openModal } = useModal();
   const { addToast } = useToast();
 
-  const { data: profileDetails, refetch } = api.details.profile.useQuery();
+  const {
+    data: profileDetails,
+    isLoading,
+    refetch,
+  } = api.details.profile.useQuery();
 
   // Set profile image in sessionStorage
   useEffect(() => {
@@ -90,6 +95,8 @@ export const PersonalDetailsSection = () => {
       id: "upload-image-modal",
     });
   };
+
+  if (isLoading) return <span className="loading loading-spinner"></span>;
 
   return (
     <>

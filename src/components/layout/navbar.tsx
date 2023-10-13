@@ -48,7 +48,7 @@ export const Navbar = () => {
       }
       setProfileImage(profileDetails.image);
     }
-  }, []);
+  }, [profileDetails]);
 
   return (
     <div className="navbar sticky top-0 z-50 bg-primary text-primary-content shadow">

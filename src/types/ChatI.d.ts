@@ -2,8 +2,9 @@ import { ConnectionI } from "./ConnectionI";
 
 export interface ChatI {
   id: string;
-  connection?: ConnectionI;
-  isMe: boolean;
+  senderId: string;
+  receiverId: string;
+  receiverConnection?: ConnectionI;
   message: string;
   time: Date;
 }

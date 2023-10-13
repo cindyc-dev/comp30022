@@ -32,6 +32,10 @@ export const env = createEnv({
     EMAIL_ACCOUNT: z.string().optional(),
     EMAIL_PASSWORD: z.string().optional(),
     EMAIL_PORT: z.number().optional(),
+    PUSHER_APP_ID: z.string().optional(),
+    PUSHER_APP_KEY: z.string().optional(),
+    PUSHER_APP_SECRET: z.string().optional(),
+    PUSHER_APP_CLUSTER: z.string().optional(),
   },
 
   /**
@@ -61,7 +65,11 @@ export const env = createEnv({
     EMAIL_SERVER: process.env.EMAIL_SERVER,
     EMAIL_ACCOUNT: process.env.EMAIL_ACCOUNT,
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
-    EMAIL_PORT: Number(process.env.EMAIL_PORT ?? 0)
+    EMAIL_PORT: Number(process.env.EMAIL_PORT ?? 0),
+    PUSHER_APP_ID: process.env.PUSHER_APP_ID,
+    PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
+    PUSHER_APP_SECRET: process.env.PUSHER_APP_SECRET,
+    PUSHER_APP_CLUSTER: process.env.PUSHER_APP_CLUSTER,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
