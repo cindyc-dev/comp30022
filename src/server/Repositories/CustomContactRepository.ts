@@ -96,6 +96,7 @@ export async function getCustomConnection(id: string): Promise<ConnectionI[]> {
       phone: user.contact || undefined,
       photoUrl: user.image || undefined,
       tags: tags,
+      notes: user.notes || undefined,
     };
     return connection;
   });
@@ -114,8 +115,10 @@ export async function deleteCustomConnection(userId: string, email: string) {
   return deleted;
 }
 
-export async function deleteManyCustomConnection(userId: string, emails: string[]) {
-
+export async function deleteManyCustomConnection(
+  userId: string,
+  emails: string[]
+) {
   const deleted = await prisma.customContact.deleteMany({
     where: {
       userId: userId,
@@ -128,9 +131,12 @@ export async function deleteManyCustomConnection(userId: string, emails: string[
   return deleted;
 }
 
-export async function editCustomContact(userId: string, connectionEmail:string, connection: ConnectionI) {
+export async function editCustomContact(
+  userId: string,
+  connectionEmail: string,
+  connection: ConnectionI
+) {
   if (connectionEmail == undefined) return null;
-  
 
   const BEConnection = await convertToBEConnection(connection);
 
@@ -145,7 +151,7 @@ export async function editCustomContact(userId: string, connectionEmail:string, 
       image: BEConnection.photoUrl,
       tags: BEConnection.tags,
       notes: BEConnection.notes,
-    } 
+    },
   });
   return updateContact;
 }

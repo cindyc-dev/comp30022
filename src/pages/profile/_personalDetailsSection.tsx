@@ -5,31 +5,29 @@ import { useModal } from "~/components/hooks/modalContext";
 import { useToast } from "~/components/hooks/toastContext";
 import { api } from "~/utils/api";
 import UploadImageModalContent from "~/components/common/uploadImageModalContent";
+import { DEFAULT_PROFILE_PIC } from "~/sample_data/sampleConnections";
 
 export const PersonalDetailsSection = () => {
   const [name, setName] = useState<string>("");
   const [contact, setContact] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [profileImage, setProfileImage] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<string>(DEFAULT_PROFILE_PIC);
 
   const { openModal } = useModal();
   const { addToast } = useToast();
 
   const { data: profileDetails, refetch } = api.details.profile.useQuery();
 
-  // Set profile image in sessionStorage
-  useEffect(() => {
-    if (profileImage) {
-      sessionStorage.setItem("profileImage", profileImage);
-    }
-  }, [profileImage]);
-
   useEffect(() => {
     if (profileDetails) {
       setName(profileDetails.name);
       profileDetails.contact && setContact(profileDetails.contact);
       setEmail(profileDetails.email);
-      setProfileImage(profileDetails.image);
+      if (profileDetails.image) {
+        setProfileImage(profileDetails.image);
+      } else {
+        setProfileImage(DEFAULT_PROFILE_PIC);
+      }
     }
   }, [profileDetails]);
 
@@ -117,7 +115,7 @@ export const PersonalDetailsSection = () => {
             className="avatar btn btn-circle btn-ghost h-40 w-40"
             onClick={() => editPhoto()}
           >
-            {profileImage && <AvatarImage src={profileImage} />}
+            <AvatarImage src={profileImage} />
           </label>
           <p
             className="link cursor-pointer text-xs"

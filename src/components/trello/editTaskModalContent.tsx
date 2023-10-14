@@ -10,7 +10,7 @@ import { isObjectsEqual } from "../utils/isObjectEqual";
 interface EditTaskModalContentProps {
   task: TaskI;
   refetch: () => void;
-  onUpdateTask: (t: TaskI) => void;
+  onUpdateTask: (t: TaskI, setIsLoading: (b: boolean) => void) => void;
 }
 
 const EditTaskModalContent = ({
@@ -27,11 +27,13 @@ const EditTaskModalContent = ({
     dueDate: task.dueDate,
   });
   const [hasDueDate, setHasDueDate] = useState(task.dueDate ? true : false);
+  const [isLoading, setIsLoading] = useState(false);
   const { addToast } = useToast();
 
   const mutation = api.trello.deleteTask.useMutation();
   // change for task ID
   const deleteTask = (deletedTask: TaskI) => {
+    setIsLoading(true);
     mutation.mutate(
       { id: deletedTask.id },
       {
@@ -42,6 +44,7 @@ const EditTaskModalContent = ({
           });
           refetch();
           closeModal("edit-task-modal");
+          setIsLoading(false);
         },
         onError: (error) => {
           console.log(error);
@@ -49,6 +52,7 @@ const EditTaskModalContent = ({
             message: `Task "${deletedTask.title}" was not deleted`,
             type: "error",
           });
+          setIsLoading(false);
         },
       }
     );
@@ -68,17 +72,32 @@ const EditTaskModalContent = ({
           }}
         />
         <div className="flex w-full justify-end gap-4">
-          <button className="btn btn-error" onClick={() => deleteTask(task)}>
-            <FaTrash />
+          <button
+            className={`btn btn-error ${isLoading && "btn-disabled"}`}
+            onClick={() => deleteTask(task)}
+          >
+            {isLoading ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              <FaTrash />
+            )}
             Delete
           </button>
           <button
             className={`btn btn-primary ${
-              (isObjectsEqual(task, newTask) || !newTask.title) && "btn-disabled"
+              (isObjectsEqual(task, newTask) || !newTask.title || isLoading) &&
+              "btn-disabled"
             }`}
-            onClick={() => onUpdateTask(newTask)}
+            onClick={() => {
+              setIsLoading(true);
+              onUpdateTask(newTask, setIsLoading);
+            }}
           >
-            <FaSave />
+            {isLoading ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              <FaSave />
+            )}
             Save
           </button>
         </div>

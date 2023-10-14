@@ -59,6 +59,7 @@ const AddConnectionModal = ({
           <CustomTab
             handleCreateCustom={handleCreateCustom}
             tagColoursMap={tagColoursMap}
+            handleAddExisting={handleAddExisting}
           />
         )}
       </div>
@@ -174,12 +175,18 @@ const SearchTab = ({
 const CustomTab = ({
   tagColoursMap,
   handleCreateCustom,
+  handleAddExisting,
 }: {
   tagColoursMap: Record<string, string>;
   handleCreateCustom: ({
     newConnection,
     setConnection,
   }: handleAddConnectionProps) => void;
+  handleAddExisting: (
+    id: string,
+    name: string,
+    setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+  ) => void;
 }) => {
   const [connection, setConnection] = useState<ConnectionI>(NEW_CONNECTION);
   const { openModal } = useModal();
@@ -205,6 +212,7 @@ const CustomTab = ({
         tagColoursMap={tagColoursMap}
         editPhoto={editPhoto}
         debounceEmail={true}
+        handleAddExisting={handleAddExisting}
       />
       <button
         className={`btn btn-primary btn-wide ${
