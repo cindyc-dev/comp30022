@@ -15,6 +15,7 @@ function Chat({ connection }: { connection: ConnectionI | undefined }) {
   const [userProfile, setUserProfile] = useState<ConnectionI>(NEW_CONNECTION);
   const [message, setMessage] = useState<string>("");
   const [chatHistory, setChatHistory] = useState<ChatI[]>([]);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
 
   const { addToast } = useToast();
 
@@ -75,13 +76,9 @@ function Chat({ connection }: { connection: ConnectionI | undefined }) {
       getChannelId(userProfile.id, connection.id)
     );
 
-    console.log(
-      "Subscribed to channel: ",
-      getChannelId(userProfile.id, connection.id)
-    );
-
     channel.bind("pusher:subscription_succeeded", () => {
       console.log("Subscribed to channel successfully.");
+      setIsConnected(true);
     });
 
     channel.bind("chat", (message: ChatI) => {
@@ -91,8 +88,13 @@ function Chat({ connection }: { connection: ConnectionI | undefined }) {
 
     return () => {
       pusherClient.unsubscribe(getChannelId(userProfile.id, connection.id));
+
+      console.log(
+        "Unsubscribed from channel: ",
+        getChannelId(userProfile.id, connection.id)
+      );
     };
-  }, [userProfile, connection]);
+  }, [connection]);
 
   return (
     <div className="flex h-full w-full flex-grow flex-col justify-end">

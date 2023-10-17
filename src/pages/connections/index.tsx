@@ -17,6 +17,9 @@ import Tag from "~/components/connections/_tag";
 import { api } from "~/utils/api";
 import Image from "next/image";
 import ConnectionDetailsModal from "~/components/connections/_connectionDetailsModal";
+import Chat from "~/components/connections/chat/chat";
+import { AiOutlineClose } from "react-icons/ai";
+import { BsChatDotsFill } from "react-icons/bs";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>([]);
@@ -25,6 +28,8 @@ export default function Connections() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
+  const [isChatMini, setIsChatMini] = useState<boolean>(true);
+  const [selectedConnection, setSelectedConnection] = useState<ConnectionI>();
 
   const tagColoursMap: Record<string, string> = sampleTags;
 
@@ -366,7 +371,55 @@ export default function Connections() {
         </div>
       )}
 
-      
+      {/* Chatbox at bottom right */}
+      {!isChatMini && (
+        <div className="fixed bottom-2 right-2 rounded-lg border-2 bg-base-100 p-2">
+          <div className="flex flex-col shadow-sm">
+            <div className="flex w-full justify-between px-2">
+              <span className="font-semibold">Chat</span>
+              <button
+                className="btn btn-ghost btn-xs"
+                onClick={() => setIsChatMini(true)}
+              >
+                <AiOutlineClose />
+              </button>
+            </div>
+            <select
+              value={selectedConnection?.id}
+              className="select select-bordered select-sm w-full"
+              defaultValue="Select Connection"
+              onChange={(e) => {
+                const selected = data.find(
+                  (c) => c.id === e.target.value
+                );
+                if (selected) {
+                  setSelectedConnection(selected);
+                }
+              }}
+            >
+              <option disabled>Select Connection</option>
+              {data.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="h-[30vh]">
+            <Chat connection={selectedConnection} />
+          </div>
+        </div>
+      )}
+      {isChatMini && (
+        <div className="fixed bottom-2 right-2 rounded-lg p-2">
+          <button
+            className="btn btn-circle btn-secondary btn-lg border-2"
+            onClick={() => setIsChatMini(false)}
+          >
+            <BsChatDotsFill />
+          </button>
+        </div>
+      )}
     </Layout>
   );
 }
