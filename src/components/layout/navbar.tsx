@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { useToast } from "../hooks/toastContext";
 import { DEFAULT_PROFILE_PIC } from "~/sample_data/sampleConnections";
+import Image from "next/image";
 
 const PAGES = [
   {
@@ -37,7 +38,7 @@ export const Navbar = () => {
 
   const { addToast } = useToast();
 
-  // Get profileImage from sessionStorage
+  // Get profile image from API and set it
   useEffect(() => {
     if (profileDetails) {
       if (!profileDetails?.email) {
@@ -46,7 +47,11 @@ export const Navbar = () => {
           type: "error",
         });
       }
-      setProfileImage(profileDetails.image);
+      if (profileDetails?.image) {
+        setProfileImage(profileDetails.image);
+      } else {
+        setProfileImage(DEFAULT_PROFILE_PIC);
+      }
     }
   }, [profileDetails]);
 
@@ -80,7 +85,17 @@ export const Navbar = () => {
           </ul>
         </div>
         {/* Logo */}
-        <Link className="px-2 text-xl font-bold normal-case" href="/dashboard">
+        <Link
+          className="flex gap-2 px-2 text-xl font-bold normal-case"
+          href="/dashboard"
+        >
+          <Image
+            src="/svg/favicon.svg"
+            alt="Potato Logo"
+            width={20}
+            height={0}
+            className="m-0 p-0"
+          />
           PotatoCRM
         </Link>
       </div>
@@ -104,7 +119,7 @@ export const Navbar = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <div className="dropdown dropdown-end">
+        <div className="dropdown-end dropdown">
           <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
             <div className="w-10">
               {profileImage && <AvatarImage src={profileImage} />}
@@ -127,7 +142,9 @@ export const Navbar = () => {
               </Link>
             </li>
             <li>
-              <a onClick={() => signOut()}>Logout</a>
+              <a onClick={() => signOut()} className="!text-primary-content ">
+                Logout
+              </a>
             </li>
           </ul>
         </div>

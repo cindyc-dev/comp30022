@@ -86,7 +86,7 @@ export default function WeekView({
       <div className="sticky top-16 z-30 h-2 bg-base-100"></div>
       {/* Sticky Header Days and Dates from Sunday to Saturday */}
       <div
-        className="hide-scrollbar sticky top-[4.5rem] z-40 grid overflow-x-scroll rounded bg-secondary py-2"
+        className="md:hide-scrollbar show-scrollbar sticky top-[4.5rem] z-40 grid overflow-x-scroll rounded bg-secondary py-2"
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
           boxShadow: "0px 15px 10px -15px #ececec",
@@ -144,7 +144,7 @@ export default function WeekView({
       </div>
       {/* Body */}
       <div
-        className="hide-scrollbar grid w-full overflow-x-scroll"
+        className="md:hide-scrollbar show-scrollbar grid w-full overflow-x-scroll"
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
           gridTemplateRows: `repeat(48, ${ROW_HEIGHT})`,

@@ -21,11 +21,13 @@ export const AddTaskModalContent = ({
     status: status,
   });
   const [hasDueDate, setHasDueDate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { addToast } = useToast();
   const { closeModal } = useModal();
 
   const mutation = api.trello.addTask.useMutation();
   const handleAddTask = () => {
+    setIsLoading(true);
     if (!newTask.title) {
       // Show error toast if task name or status is empty
       addToast({
@@ -56,12 +58,14 @@ export const AddTaskModalContent = ({
           status: status,
         });
         closeModal(`add-task-modal-${status}`);
+        setIsLoading(false);
       },
       onError: (error) => {
         addToast({
           type: "error",
           message: `Error adding task. Error:${error.message}`,
         });
+        setIsLoading(false);
       },
     });
   };
@@ -81,12 +85,16 @@ export const AddTaskModalContent = ({
         />
         <button
           className={`btn btn-primary btn-wide ${
-            ((hasDueDate && !newTask.dueDate) || !newTask.title) &&
+            ((hasDueDate && !newTask.dueDate) || !newTask.title || isLoading) &&
             "btn-disabled"
           }`}
           onClick={handleAddTask}
         >
-          Add Task
+          {isLoading ? (
+            <span className="loading-spiner loading"></span>
+          ) : (
+            "Add Task"
+          )}
         </button>
       </div>
     </>
