@@ -20,12 +20,12 @@ import { sampleTags } from "~/sample_data/sampleConnections";
 import Image from "next/image";
 
 export default function Dashboard() {
-  const { data: session } = useSession();
+  const { data: user } = api.details.profile.useQuery();
 
   return (
     <Layout>
       <div className="my-4 flex w-full flex-col">
-        <h1 className="text-center">Welcome, {session?.user.name}</h1>
+        <h1 className="text-center">Welcome, {user?.name} 👋</h1>
         <div className="flex w-full flex-col gap-7 md:flex-row">
           {/* Calendar */}
           <div className="w-full max-w-md">
