@@ -8,10 +8,24 @@ import { ConnectionI } from "~/types/ConnectionI";
 import moment from "moment";
 import { api } from "~/utils/api";
 import { useToast } from "~/components/hooks/toastContext";
-import { getChannelId } from "~/utils/getChennelId";
 import { pusherClient } from "~/utils/pusherClient";
+import { AiOutlineClose } from "react-icons/ai";
 
-function Chat({ connection }: { connection: ConnectionI | undefined }) {
+interface ChatProps {
+  connection: ConnectionI | undefined;
+  setSelectedConnection: React.Dispatch<
+    React.SetStateAction<ConnectionI | undefined>
+  >;
+  data: ConnectionI[];
+  setIsChatMini: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function Chat({
+  connection,
+  setSelectedConnection,
+  data,
+  setIsChatMini,
+}: ChatProps) {
   const [userProfile, setUserProfile] = useState<ConnectionI>(NEW_CONNECTION);
   const [message, setMessage] = useState<string>("");
   const [chatHistory, setChatHistory] = useState<ChatI[]>([]);
@@ -38,21 +52,24 @@ function Chat({ connection }: { connection: ConnectionI | undefined }) {
       receiverId: connection.id,
       receiverName: connection.name,
     });
+
+    // Clear message
+    setMessage("");
   };
 
   // Get user profile from API
   const {
-    data,
+    data: userData,
     isLoading: isProfileLoading,
     error,
   } = api.details.profile.useQuery();
   useEffect(() => {
-    if (data) {
+    if (userData) {
       setUserProfile({
-        id: data.id,
-        name: data.name,
-        photoUrl: data.image,
-        email: data.email,
+        id: userData.id,
+        name: userData.name,
+        photoUrl: userData.image,
+        email: userData.email,
         tags: [],
       });
     }
@@ -63,67 +80,196 @@ function Chat({ connection }: { connection: ConnectionI | undefined }) {
         message: `Failed to load user profile. Error: ${error.message}`,
       });
     }
-  }, [data, error]);
+  }, [userData, error]);
+
+  // Get all chat history
+  const {
+    data: chatHistoryData,
+    isLoading: isChatHistoryLoading,
+    error: chatHistoryError,
+  } = api.chat.getChatMessages.useQuery({ userId: userProfile.id });
+  useEffect(() => {
+    if (chatHistoryData) {
+      const newChatHistory = chatHistoryData
+        .map((c) => ({
+          ...c,
+        }))
+        .sort((a, b) => moment(a.createdAt).diff(moment(b.createdAt)));
+      console.log({ newChatHistory: newChatHistory });
+      setChatHistory([...newChatHistory]);
+    }
+  }, [chatHistoryData, chatHistoryError]);
 
   // Subscribe to pusher channel
   useEffect(() => {
-    if (!userProfile.id || !connection) {
+    if (!userProfile.id) {
       console.log(`userProfile.id: ${userProfile.id}`);
-      console.log(`connection: ${connection}`);
       return;
     }
     const channel = pusherClient.subscribe(
-      getChannelId(userProfile.id, connection.id)
+      // getChannelId(userProfile.id, connection.id)
+      userProfile.id
     );
 
     channel.bind("pusher:subscription_succeeded", () => {
-      console.log("Subscribed to channel successfully.");
+      console.log("Subscribed to channel: ", userProfile.id);
       setIsConnected(true);
     });
 
+    // When a new message is received
     channel.bind("chat", (message: ChatI) => {
-      console.log("Received message: ", message);
-      setChatHistory((prev) => [...prev, message]);
+      console.log({ ReceivedMessage: message });
+      // If the message is for and/or from the current connection
+      setChatHistory((prev) =>
+        [...prev, message].sort((a, b) =>
+          moment(a.createdAt).diff(moment(b.createdAt))
+        )
+      );
     });
 
     return () => {
-      pusherClient.unsubscribe(getChannelId(userProfile.id, connection.id));
+      // pusherClient.unsubscribe(getChannelId(userProfile.id, connection.id));
+      pusherClient.unsubscribe(userProfile.id);
 
-      console.log(
-        "Unsubscribed from channel: ",
-        getChannelId(userProfile.id, connection.id)
-      );
+      console.log("Unsubscribed from channel: ", userProfile.id);
     };
   }, [connection]);
 
+  // Scroll to bottom when new message is received or when connection is changed
+  useEffect(() => {
+    const element = document.getElementById("scroll-to-view");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatHistory, connection]);
+
   return (
-    <div className="flex h-full w-full flex-grow flex-col justify-end">
-      {/* Chat History */}
-      {!isProfileLoading && (
-        <div className="flex h-full flex-col gap-2 overflow-y-auto">
-          {chatHistory.map((m) => {
-            return <ChatBubble key={m.id} m={m} userId={userProfile.id} />;
-          })}
+    <div className="fixed bottom-2 right-2 rounded-lg border-2 bg-base-100 p-2">
+      <div className="flex w-full flex-col">
+        <div className="flex w-full justify-between px-2">
+          <div className="flex items-center gap-2">
+            <div className="font-semibold">Chat</div>
+            {isConnected ? (
+              <div className="badge badge-success">Connected</div>
+            ) : (
+              <div className="badge badge-error">Disconnected</div>
+            )}
+          </div>
+          <button
+            className="btn btn-ghost btn-xs"
+            onClick={() => setIsChatMini(true)}
+          >
+            <AiOutlineClose />
+          </button>
         </div>
-      )}
-      {isProfileLoading && <span className="loading loading-spinner"></span>}
-      {/* Text Input */}
-      <div className="flex w-full place-items-end gap-2 py-2">
-        <TextInput
-          label={""}
-          value={message}
-          setValue={(v) => setMessage(v)}
-          placeholder={"Type a message..."}
-          props={{
-            className: "input input-bordered input-sm w-full",
-          }}
-        />
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => sendMessage(message)}
-        >
-          <BsSendFill />
-        </button>
+        <div className="flex justify-center gap-2 pb-2 align-middle">
+          {connection?.photoUrl && (
+            <label className="avatar h-[2rem] w-[2rem] rounded-full">
+              <AvatarImage src={connection?.photoUrl} />
+            </label>
+          )}
+          <select
+            value={connection?.id}
+            className="select select-bordered select-sm w-full"
+            defaultValue="Select Connection"
+            onChange={(e) => {
+              const selected = data.find((c) => c.id === e.target.value);
+              if (selected) {
+                setSelectedConnection(selected);
+              }
+            }}
+          >
+            <option disabled>Select Connection</option>
+            {data.map(
+              (c) =>
+                c.isExisting && (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                )
+            )}
+          </select>
+        </div>
+      </div>
+      <div className="h-[40vh] min-h-[10rem] max-w-[50vw]">
+        {isChatHistoryLoading ? (
+          <div className="loading loading-spinner"></div>
+        ) : (
+          <div className="flex h-full w-full flex-grow flex-col justify-end">
+            {/* Chat History */}
+            {!isProfileLoading && (
+              <div className="show-scrollbar flex h-full flex-col gap-2 overflow-y-auto">
+                {chatHistory.map((m) => {
+                  if (
+                    (m.senderId === userProfile.id &&
+                      m.receiverId === connection?.id) ||
+                    (m.senderId === connection?.id &&
+                      m.receiverId === userProfile.id)
+                  ) {
+                    return (
+                      <ChatBubble
+                        key={m.id}
+                        m={m}
+                        userId={userProfile.id}
+                        photoUrl={
+                          m.senderId === userProfile.id
+                            ? userProfile.photoUrl
+                            : connection.photoUrl
+                        }
+                      />
+                    );
+                  } else {
+                    return null;
+                  }
+                })}
+                <span id="scroll-to-view"></span>
+                {connection &&
+                  chatHistory.filter(
+                    (m) =>
+                      (m.senderId === userProfile.id &&
+                        m.receiverId === connection?.id) ||
+                      (m.senderId === connection?.id &&
+                        m.receiverId === userProfile.id)
+                  ).length === 0 && (
+                    <div className="text-center">
+                      You have not started a conversation with this connection
+                      yet. Be the first to say hi! 👋
+                    </div>
+                  )}
+                {!connection && (
+                  <div className="text-center">
+                    Select a connection to start chatting!
+                  </div>
+                )}
+              </div>
+            )}
+            {isProfileLoading && (
+              <span className="loading loading-spinner"></span>
+            )}
+            {/* Text Input */}
+            <div className="flex w-full place-items-end gap-2 py-2">
+              <TextInput
+                label={""}
+                value={message}
+                setValue={(v) => setMessage(v)}
+                placeholder={"Type a message..."}
+                props={{
+                  className: `input input-bordered input-sm w-full ${
+                    (!connection || !userProfile) && "input-disabled"
+                  }`,
+                }}
+              />
+              <button
+                className={`btn btn-primary btn-sm ${
+                  (!connection || !userProfile) && "btn-disabled"
+                }`}
+                onClick={() => sendMessage(message)}
+              >
+                <BsSendFill />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -131,19 +277,27 @@ function Chat({ connection }: { connection: ConnectionI | undefined }) {
 
 export default Chat;
 
-function ChatBubble({ m, userId }: { m: ChatI; userId: string }) {
+function ChatBubble({
+  m,
+  userId,
+  photoUrl,
+}: {
+  m: ChatI;
+  userId: string;
+  photoUrl?: string;
+}) {
   const isMe = m.senderId === userId;
   return (
     <div className={`chat ${isMe ? "chat-end" : "chat-start"} w-full`}>
       <div className="avatar chat-image">
         <div className="w-10 rounded-full">
-          <AvatarImage src={m.receiverConnection?.photoUrl} />
+          <AvatarImage src={photoUrl} />
         </div>
       </div>
       <div className="chat-header text-xs">
         <span className="font-semibold">{m.receiverConnection?.name}</span>
         <time className="pl-2 text-xs opacity-50">
-          {moment(m.time).format("HH:MM")}
+          {moment(m.createdAt).clone().format("HH:mm")}
         </time>
       </div>
       <div className={`chat-bubble text-sm ${isMe && "chat-bubble-secondary"}`}>

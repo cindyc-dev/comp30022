@@ -6,5 +6,6 @@ export interface ChatI {
   receiverId: string;
   receiverConnection?: ConnectionI;
   message: string;
-  time: Date;
+  createdAt: Date;
+  isRead: boolean;
 }

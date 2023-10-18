@@ -386,50 +386,12 @@ export default function Connections() {
 
       {/* Chatbox at bottom right */}
       {!isChatMini && (
-        <div className="fixed bottom-2 right-2 rounded-lg border-2 bg-base-100 p-2">
-          <div className="flex w-full flex-col">
-            <div className="flex w-full justify-between px-2">
-              <span className="font-semibold">Chat</span>
-              <button
-                className="btn btn-ghost btn-xs"
-                onClick={() => setIsChatMini(true)}
-              >
-                <AiOutlineClose />
-              </button>
-            </div>
-            <div className="flex justify-center gap-2 align-middle">
-              {selectedConnection?.photoUrl && (
-                <label className="avatar h-[2rem] w-[2rem] rounded-full">
-                  <AvatarImage src={selectedConnection?.photoUrl} />
-                </label>
-              )}
-              <select
-                value={selectedConnection?.id}
-                className="select select-bordered select-sm w-full"
-                defaultValue="Select Connection"
-                onChange={(e) => {
-                  const selected = data.find((c) => c.id === e.target.value);
-                  if (selected) {
-                    setSelectedConnection(selected);
-                  }
-                }}
-              >
-                <option disabled>Select Connection</option>
-                {data.map(
-                  (c) =>
-                    c.isExisting && (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    )
-                )}
-              </select>
-            </div>
-          </div>
-          <div className="h-[30vh]">
-            <Chat connection={selectedConnection} />
-          </div>
-        </div>
+        <Chat
+          setIsChatMini={setIsChatMini}
+          connection={selectedConnection}
+          setSelectedConnection={setSelectedConnection}
+          data={data}
+        />
       )}
       {isChatMini && (
         <div className="fixed bottom-2 right-2 rounded-lg p-2">
