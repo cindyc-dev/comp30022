@@ -13,7 +13,7 @@ interface ToolbarProps {
   today: Moment;
   setToday: Dispatch<SetStateAction<Moment>>;
   view: CalendarViewType;
-  setView: Dispatch<SetStateAction<CalendarViewType | undefined>>;
+  setView: Dispatch<SetStateAction<CalendarViewType>>;
   openEventModal: () => void;
   isLoading?: boolean;
 }

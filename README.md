@@ -66,17 +66,21 @@
    ```shell
    npm install
    ```
-4. Set up environment variables. Copy the [`.env.example`](/.env.example) file to `.env` and fill in the values. Please contact the team for the dev/production environment variable values.
+4. Set up environment variables. Copy the [`.env.example`](/.env.example) file to `.env` and fill in the values. Please contact Xin Yu ([chuahx@student.unimelb.edu.au](mailto:chuahx@student.unimelb.edu.au)) for the dev/production environment variable values.
    ```shell
    cp .env.example .env
    ```
    - > ❗ **Do not commit the `.env` file to git.** ❗
    - If you would like to set up a local database, please refer to the [Setting up a local database](#setting-up-a-local-database) section.
-5. Run the dev server
+5. Push the prisma schema to the MySQL database
+   ```shell
+   npx prisma db push
+   ```
+6. Run the dev server
    ```shell
    npm run dev
    ```
-6. The dev server should be up on [http://localhost:3000](http://localhost:3000)
+7. The dev server should be up on [http://localhost:3000](http://localhost:3000)
 
 ### Setting up a local database
 
