@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BsSendFill } from "react-icons/bs";
 import AvatarImage from "~/components/common/avatarImage";
 import TextInput from "~/components/common/textInput";
@@ -145,6 +145,13 @@ function Chat({
     }
   }, [chatHistory, connection]);
 
+  // Press enter to send message
+  const handleKeyPress = useCallback((event: KeyboardEvent) => {
+    if (event.key === "Enter") {
+      sendMessage(message);
+    }
+  });
+
   return (
     <div className="fixed bottom-2 right-2 rounded-lg border-2 bg-base-100 p-2">
       <div className="flex w-full flex-col">
@@ -241,11 +248,11 @@ function Chat({
                       (m.senderId === connection?.id &&
                         m.receiverId === userProfile.id)
                   ).length === 0 && (
-                  <div className="text-center">
+                    <div className="text-center">
                       You have not started a conversation with this connection
                       yet. Be the first to say hi! 👋
-                  </div>
-                )}
+                    </div>
+                  )}
                 {!connection && (
                   <div className="text-center">
                     Select a connection to start chatting!
@@ -267,6 +274,7 @@ function Chat({
                   className: `input input-bordered input-sm w-full ${
                     (!connection || !userProfile) && "input-disabled"
                   }`,
+                  onKeyDown: handleKeyPress,
                 }}
               />
               <button
