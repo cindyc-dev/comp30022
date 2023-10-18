@@ -1,5 +1,4 @@
 import moment from "moment";
-import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import DayView from "~/components/calendar/dayView";
 import {
@@ -20,12 +19,12 @@ import { sampleTags } from "~/sample_data/sampleConnections";
 import Image from "next/image";
 
 export default function Dashboard() {
-  const { data: session } = useSession();
+  const { data: user } = api.details.profile.useQuery();
 
   return (
     <Layout>
       <div className="my-4 flex w-full flex-col">
-        <h1 className="text-center">Welcome, {session?.user.name}</h1>
+        <h1 className="text-center">Welcome, {user?.name} 👋</h1>
         <div className="flex w-full flex-col gap-7 md:flex-row">
           {/* Calendar */}
           <div className="w-full max-w-md">
@@ -134,7 +133,10 @@ function TrelloTasks() {
   return (
     <div className="mt-2 flex gap-2">
       {tasks.map((task) => (
-        <div className="flex h-[8rem] w-[15rem] flex-col justify-between overflow-clip rounded-xl bg-primary p-3 text-base-100">
+        <div
+          className="flex h-[8rem] w-[15rem] flex-col justify-between overflow-clip rounded-xl bg-primary p-3 text-base-100"
+          key={task.id}
+        >
           <div>
             <div className="truncate font-semibold text-base-100">
               {task.title}
@@ -199,8 +201,11 @@ function KeepInTouch() {
 
   return (
     <div className="mt-2 flex gap-2">
-      {connections.map((connection) => (
-        <div className="flex h-[13rem] w-[15rem] flex-col justify-between overflow-clip rounded-xl bg-[#282B40] p-3 text-base-100">
+      {connections.map((connection, i) => (
+        <div
+          className="flex h-[13rem] w-[15rem] flex-col justify-between overflow-clip rounded-xl bg-[#282B40] p-3 text-base-100"
+          key={i}
+        >
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <label className="avatar h-[3.5rem] w-[3.5rem] rounded-full border-2 border-solid">

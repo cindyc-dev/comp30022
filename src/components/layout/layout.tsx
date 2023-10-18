@@ -17,6 +17,8 @@ export const Layout = ({
 }) => {
   const { modals, closeModal } = useModal();
   const { toasts, removeToast } = useToast();
+  
+
   return (
     <div className="flex min-h-screen flex-col" {...props}>
       {!onlyChildren && <Navbar />}
@@ -30,6 +32,7 @@ export const Layout = ({
         </Modal>
       ))}
       <ToastSection toasts={toasts} removeToast={removeToast} />
+      
     </div>
   );
 };

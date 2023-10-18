@@ -29,6 +29,11 @@ const config = {
       "lh3.googleusercontent.com",
     ],
   },
+  publicRuntimeConfig: {
+    // Exposing pusher env variables to the client
+    PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
+    PUSHER_APP_CLUSTER: process.env.PUSHER_APP_CLUSTER,
+  },
 };
 
 export default config;

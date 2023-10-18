@@ -22,6 +22,7 @@ import Link from "next/link";
 
 import { BiMailSend } from "react-icons/bi";
 import Tag from "./_tag";
+import { BsChatDotsFill } from "react-icons/bs";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -40,6 +41,7 @@ interface TableProps {
   rowSelection: RowSelectionState;
   setRowSelection: OnChangeFn<RowSelectionState>;
   editConnection: (c: ConnectionI) => void;
+  handleChat: (c: ConnectionI) => void;
 }
 
 function Table({
@@ -50,6 +52,7 @@ function Table({
   rowSelection,
   setRowSelection,
   editConnection,
+  handleChat,
 }: TableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -127,9 +130,9 @@ function Table({
         ),
       },
       {
-        header: "SEND EMAIL",
+        header: "CONNECT",
         cell: ({ row }) => (
-          <div className="flex w-full justify-center">
+          <div className="flex w-full flex-col justify-center gap-2 md:flex-row">
             <Link
               className="btn btn-secondary btn-sm right-0 h-fit py-1"
               href={`mailto: ${row.original.email}`}
@@ -137,6 +140,17 @@ function Table({
               <BiMailSend />
               Send Email
             </Link>
+            {row.original.isExisting && (
+              <div
+                className="btn btn-secondary btn-sm right-0 h-fit py-1"
+                onClick={() => {
+                  handleChat(row.original);
+                }}
+              >
+                <BsChatDotsFill />
+                Chat
+              </div>
+            )}
           </div>
         ),
       },

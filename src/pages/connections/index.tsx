@@ -17,6 +17,8 @@ import Tag from "~/components/connections/_tag";
 import { api } from "~/utils/api";
 import Image from "next/image";
 import ConnectionDetailsModal from "~/components/connections/_connectionDetailsModal";
+import Chat from "~/components/connections/chat/chat";
+import { BsChatDotsFill } from "react-icons/bs";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>([]);
@@ -24,6 +26,9 @@ export default function Connections() {
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  const [isChatMini, setIsChatMini] = useState<boolean>(true);
+  const [selectedConnection, setSelectedConnection] = useState<ConnectionI>();
 
   const tagColoursMap: Record<string, string> = sampleTags;
 
@@ -186,6 +191,12 @@ export default function Connections() {
     });
   };
 
+  // Open Chatbox
+  const handleChat = (c: ConnectionI) => {
+    setSelectedConnection(c);
+    setIsChatMini(false);
+  };
+
   /* Multiple-row operation: Delete */
   const deleteManyMutation = api.connection.deleteMany.useMutation();
   const handleDeleteMultipleConnections = () => {
@@ -279,7 +290,7 @@ export default function Connections() {
             placeholder="🔎 Search Connection"
             className="input input-sm"
           />
-          <div className="dropdown-end dropdown">
+          <div className="dropdown dropdown-end">
             <label
               tabIndex={0}
               className="btn btn-primary btn-sm flex flex-nowrap"
@@ -322,6 +333,7 @@ export default function Connections() {
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
           editConnection={editConnection}
+          handleChat={handleChat}
         />
         {isLoading && (
           <div className="flex w-full flex-grow items-center justify-center">
@@ -367,6 +379,26 @@ export default function Connections() {
               <FaTrash /> Delete
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Chatbox at bottom right */}
+      {!isChatMini && (
+        <Chat
+          setIsChatMini={setIsChatMini}
+          connection={selectedConnection}
+          setSelectedConnection={setSelectedConnection}
+          data={data}
+        />
+      )}
+      {isChatMini && (
+        <div className="fixed bottom-2 right-2 rounded-lg p-2">
+          <button
+            className="btn btn-circle btn-secondary btn-lg border-2"
+            onClick={() => setIsChatMini(false)}
+          >
+            <BsChatDotsFill />
+          </button>
         </div>
       )}
     </Layout>

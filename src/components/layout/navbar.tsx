@@ -53,7 +53,7 @@ export const Navbar = () => {
         setProfileImage(DEFAULT_PROFILE_PIC);
       }
     }
-  }, []);
+  }, [profileDetails]);
 
   return (
     <div className="navbar sticky top-0 z-50 bg-primary text-primary-content shadow">
@@ -90,7 +90,7 @@ export const Navbar = () => {
           href="/dashboard"
         >
           <Image
-            src="/svg/favicon.svg"
+            src="/svg/Logo-white.svg"
             alt="Potato Logo"
             width={20}
             height={0}
@@ -119,7 +119,7 @@ export const Navbar = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <div className="dropdown-end dropdown">
+        <div className="dropdown dropdown-end">
           <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
             <div className="w-10">
               {profileImage && <AvatarImage src={profileImage} />}

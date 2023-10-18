@@ -97,7 +97,8 @@ export const PersonalDetailsSection = () => {
         <div>
           <h2 className="m-0">Personal details</h2>
           <p className="m-0 text-sm">
-            Personal details will appear as public on your account page.
+            Personal details will appear as public on your account page. You may
+            have to refresh the page to see the changes.
           </p>
         </div>
         <div className="hidden flex-row gap-2 md:flex">

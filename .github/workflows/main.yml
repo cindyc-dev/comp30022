@@ -36,6 +36,10 @@ jobs:
           echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env.local
           echo GITHUB_CLIENT_ID=${{ secrets.GH_CLIENT_ID }} >> .env.local
           echo GITHUB_CLIENT_SECRET=${{ secrets.GH_CLIENT_SECRET }} >> .env.local
+          echo PUSHER_APP_ID=${{ secrets.PUSHER_APP_ID }} >> .env.local
+          echo PUSHER_APP_KEY=${{ secrets.PUSHER_APP_KEY }} >> .env.local
+          echo PUSHER_APP_SECRET=${{ secrets.PUSHER_APP_SECRET }} >> .env.local
+          echo PUSHER_APP_CLUSTER=${{ secrets.PUSHER_APP_CLUSTER }} >> .env.local
       - name: Build app
         run: npm run build
   preview:

@@ -37,23 +37,25 @@ model Session {
 }
 
 model User {
-  id            String           @id @default(cuid())
-  name          String?
-  email         String?          @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  contact       String?
-  restoreCode   String?
-  restoreExpiry DateTime?
-  accounts      Account[]
-  sessions      Session[]
-  tasks         Task[]
-  CustomContact CustomContact[]
-  connector     UserConnection[] @relation("connector")
-  connected     UserConnection[] @relation("connected")
-  events        CalendarEvent[]  @relation("ownedEvents")
-  invitedEvents CalendarEvent[]  @relation("invitedEvents")
+  id               String           @id @default(cuid())
+  name             String?
+  email            String?          @unique
+  emailVerified    DateTime?
+  password         String?
+  image            String?
+  contact          String?
+  restoreCode      String?
+  restoreExpiry    DateTime?
+  accounts         Account[]
+  sessions         Session[]
+  tasks            Task[]
+  CustomContact    CustomContact[]
+  connector        UserConnection[] @relation("connector")
+  connected        UserConnection[] @relation("connected")
+  events           CalendarEvent[]  @relation("ownedEvents")
+  invitedEvents    CalendarEvent[]  @relation("invitedEvents")
+  sentMessages     ChatMessage[]    @relation("sentMessages")
+  receivedMessages ChatMessage[]    @relation("receivedMessages")
 }
 
 model CustomContact {
@@ -113,4 +115,15 @@ model Task {
   createdById String
   status      String
   // connections User[]
+}
+
+model ChatMessage {
+  id         String   @id @default(cuid())
+  message    String
+  createdAt  DateTime @default(now())
+  senderId   String
+  sender     User     @relation("sentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   User     @relation("receivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  isRead     Boolean  @default(false)
 }
