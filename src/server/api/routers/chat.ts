@@ -6,7 +6,6 @@ import {
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { ChatI } from "~/types/ChatI";
-import { getChannelId } from "~/utils/getChennelId";
 import { pusherServer } from "~/utils/pusherServer";
 
 export const chatRouter = createTRPCRouter({
@@ -34,10 +33,6 @@ export const chatRouter = createTRPCRouter({
         createdAt: date,
         isRead: false,
       };
-
-      console.log(
-        `Sending message ${message} to ${getChannelId(senderId, receiverId)}`
-      );
 
       // Send to sender
       pusherServer.trigger(receiverId, "chat", chatMessage);

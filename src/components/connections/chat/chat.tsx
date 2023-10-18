@@ -130,6 +130,7 @@ function Chat({
     return () => {
       // pusherClient.unsubscribe(getChannelId(userProfile.id, connection.id));
       pusherClient.unsubscribe(userProfile.id);
+      pusherClient.disconnect();
       setIsConnected(false);
 
       console.log("Unsubscribed from channel: ", userProfile.id);
@@ -157,6 +158,7 @@ function Chat({
                 className="badge badge-error cursor-pointer"
                 onClick={() => {
                   pusherClient.connect();
+                  setIsConnected(true);
                 }}
               >
                 Disconnected
@@ -239,11 +241,11 @@ function Chat({
                       (m.senderId === connection?.id &&
                         m.receiverId === userProfile.id)
                   ).length === 0 && (
-                    <div className="text-center">
+                  <div className="text-center">
                       You have not started a conversation with this connection
                       yet. Be the first to say hi! 👋
-                    </div>
-                  )}
+                  </div>
+                )}
                 {!connection && (
                   <div className="text-center">
                     Select a connection to start chatting!
