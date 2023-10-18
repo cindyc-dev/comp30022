@@ -20,6 +20,7 @@ import ConnectionDetailsModal from "~/components/connections/_connectionDetailsM
 import Chat from "~/components/connections/chat/chat";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsChatDotsFill } from "react-icons/bs";
+import AvatarImage from "~/components/common/avatarImage";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>([]);
@@ -192,6 +193,12 @@ export default function Connections() {
     });
   };
 
+  // Open Chatbox
+  const handleChat = (c: ConnectionI) => {
+    setSelectedConnection(c);
+    setIsChatMini(false);
+  };
+
   /* Multiple-row operation: Delete */
   const deleteManyMutation = api.connection.deleteMany.useMutation();
   const handleDeleteMultipleConnections = () => {
@@ -285,7 +292,7 @@ export default function Connections() {
             placeholder="🔎 Search Connection"
             className="input input-sm"
           />
-          <div className="dropdown-end dropdown">
+          <div className="dropdown dropdown-end">
             <label
               tabIndex={0}
               className="btn btn-primary btn-sm flex flex-nowrap"
@@ -328,6 +335,7 @@ export default function Connections() {
           rowSelection={rowSelection}
           setRowSelection={setRowSelection}
           editConnection={editConnection}
+          handleChat={handleChat}
         />
         {isLoading && (
           <div className="flex w-full flex-grow items-center justify-center">
@@ -379,7 +387,7 @@ export default function Connections() {
       {/* Chatbox at bottom right */}
       {!isChatMini && (
         <div className="fixed bottom-2 right-2 rounded-lg border-2 bg-base-100 p-2">
-          <div className="flex flex-col shadow-sm">
+          <div className="flex w-full flex-col">
             <div className="flex w-full justify-between px-2">
               <span className="font-semibold">Chat</span>
               <button
@@ -389,26 +397,34 @@ export default function Connections() {
                 <AiOutlineClose />
               </button>
             </div>
-            <select
-              value={selectedConnection?.id}
-              className="select select-bordered select-sm w-full"
-              defaultValue="Select Connection"
-              onChange={(e) => {
-                const selected = data.find(
-                  (c) => c.id === e.target.value
-                );
-                if (selected) {
-                  setSelectedConnection(selected);
-                }
-              }}
-            >
-              <option disabled>Select Connection</option>
-              {data.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            <div className="flex justify-center gap-2 align-middle">
+              {selectedConnection?.photoUrl && (
+                <label className="avatar h-[2rem] w-[2rem] rounded-full">
+                  <AvatarImage src={selectedConnection?.photoUrl} />
+                </label>
+              )}
+              <select
+                value={selectedConnection?.id}
+                className="select select-bordered select-sm w-full"
+                defaultValue="Select Connection"
+                onChange={(e) => {
+                  const selected = data.find((c) => c.id === e.target.value);
+                  if (selected) {
+                    setSelectedConnection(selected);
+                  }
+                }}
+              >
+                <option disabled>Select Connection</option>
+                {data.map(
+                  (c) =>
+                    c.isExisting && (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    )
+                )}
+              </select>
+            </div>
           </div>
           <div className="h-[30vh]">
             <Chat connection={selectedConnection} />
