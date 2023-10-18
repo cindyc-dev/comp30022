@@ -102,8 +102,8 @@ function Chat({
 
   // Subscribe to pusher channel
   useEffect(() => {
-    if (!userProfile.id) {
-      console.log(`userProfile.id: ${userProfile.id}`);
+    if (!userProfile.id || isConnected) {
+      console.log(`No userProfile.id: ${userProfile.id}`);
       return;
     }
     const channel = pusherClient.subscribe(
@@ -130,10 +130,11 @@ function Chat({
     return () => {
       // pusherClient.unsubscribe(getChannelId(userProfile.id, connection.id));
       pusherClient.unsubscribe(userProfile.id);
+      setIsConnected(false);
 
       console.log("Unsubscribed from channel: ", userProfile.id);
     };
-  }, [connection]);
+  }, [userProfile]);
 
   // Scroll to bottom when new message is received or when connection is changed
   useEffect(() => {
@@ -152,7 +153,14 @@ function Chat({
             {isConnected ? (
               <div className="badge badge-success">Connected</div>
             ) : (
-              <div className="badge badge-error">Disconnected</div>
+              <div
+                className="badge badge-error cursor-pointer"
+                onClick={() => {
+                  pusherClient.connect();
+                }}
+              >
+                Disconnected
+              </div>
             )}
           </div>
           <button

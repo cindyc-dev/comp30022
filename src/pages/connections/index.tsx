@@ -18,9 +18,7 @@ import { api } from "~/utils/api";
 import Image from "next/image";
 import ConnectionDetailsModal from "~/components/connections/_connectionDetailsModal";
 import Chat from "~/components/connections/chat/chat";
-import { AiOutlineClose } from "react-icons/ai";
 import { BsChatDotsFill } from "react-icons/bs";
-import AvatarImage from "~/components/common/avatarImage";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>([]);
