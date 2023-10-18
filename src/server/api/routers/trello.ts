@@ -8,7 +8,7 @@ export const trelloRouter = createTRPCRouter({
   addTask: protectedProcedure
     .input(
       z.object({
-        title: z.string(),
+        title: z.string().max(200),
         description: z.string(),
         dueDate: z.string(),
         status: z.string(),
@@ -42,7 +42,7 @@ export const trelloRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        title: z.string(),
+        title: z.string().max(200),
         description: z.string(),
         dueDate: z.string(),
         status: z.string()

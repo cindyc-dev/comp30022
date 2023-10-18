@@ -4,6 +4,7 @@ import {
   getAllConnectedEvents,
   getAllDbEvents,
 } from "~/server/Repositories/CalendarRepository";
+import {ConnectionI} from "~/types/ConnectionI";
 
 export async function getAllEvents(userId: string): Promise<EventI[]> {
   const dbEvents = await getAllDbEvents(userId);
@@ -28,6 +29,24 @@ export async function getEventsInRange(
 }
 
 function parseSelfDbEvent(dbEvent: EventPayload): EventI {
+  let invitees: ConnectionI[] = dbEvent.invitees.map((invitee) => ({
+    id: invitee.id,
+    name: invitee.name ?? "",
+    email: invitee.email ?? "",
+    photoUrl: invitee.image ?? undefined,
+    tags: [],
+    isExisting: true,
+  }));
+
+  invitees = invitees.concat(dbEvent.customInvitees.map(invitee => ({
+    id: invitee.id,
+    name: invitee.name ?? "",
+    email: invitee.email ?? "",
+    photoUrl: invitee.image ?? undefined,
+    tags: [],
+    isExisting: false,
+  })));
+
   return {
     id: dbEvent.id,
     title: dbEvent.title,
@@ -36,7 +55,7 @@ function parseSelfDbEvent(dbEvent: EventPayload): EventI {
     location: dbEvent.location ?? undefined,
     notes: dbEvent.notes ?? undefined,
     colour: dbEvent.colour,
-    relatedConnections: [],
+    relatedConnections: invitees,
     isExternal: false,
   };
 }

@@ -10,6 +10,22 @@ const eventSelect = {
   location: true,
   notes: true,
   colour: true,
+  invitees: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+    }
+  },
+  customInvitees: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+    },
+  }
 } satisfies Prisma.CalendarEventSelect;
 
 export type EventPayload = Prisma.CalendarEventGetPayload<{ select: typeof eventSelect }>;
@@ -105,6 +121,22 @@ export async function editEvent(userId: string, eventId: string, input: EventInp
       const id = await getCustomConnectionId(userId, email);
       customConnections.push(id);
     }
+
+    // Reset connections in case connections are removed
+    await prisma.calendarEvent.update({
+      where: {
+        id: eventId,
+        ownerId: userId,
+      },
+      data: {
+        invitees: {
+          set: [],
+        },
+        customInvitees: {
+          set: [],
+        },
+      },
+    });
 
     await prisma.calendarEvent.update({
       where: {
