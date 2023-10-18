@@ -122,6 +122,7 @@ export async function editEvent(userId: string, eventId: string, input: EventInp
       customConnections.push(id);
     }
 
+    // Reset connections in case connections are removed
     await prisma.calendarEvent.update({
       where: {
         id: eventId,
