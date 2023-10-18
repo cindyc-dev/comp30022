@@ -137,7 +137,6 @@ export default function Calendar() {
   /* Edit Event */
   const editMutation = api.calendar.editEvent.useMutation();
   const handleEditEvent = (event: EventI) => {
-    console.log(event);
     const newEvent = {
       id: event.id,
       title: event.title,
