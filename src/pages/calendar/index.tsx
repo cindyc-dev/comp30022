@@ -29,7 +29,7 @@ export default function Calendar() {
     monthEvents: [],
     dayEvents: [],
   });
-  const [view, setView] = useState<CalendarViewType>();
+  const [view, setView] = useState<CalendarViewType>("week");
   const [today, setToday] = useState<Moment>(moment());
   const prevTodayRef = useRef<Moment>(moment());
 
