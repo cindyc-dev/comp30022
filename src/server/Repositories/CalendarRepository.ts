@@ -108,6 +108,23 @@ export async function addEvent(userId: string, input: EventInput): Promise<strin
 export async function editEvent(userId: string, eventId: string, input: EventInput) {
 
   try {
+
+    // Reset connections in case connections are removed
+    await prisma.calendarEvent.update({
+      where: {
+        id: eventId,
+        ownerId: userId,
+      },
+      data: {
+        invitees: {
+          set: [],
+        },
+        customInvitees: {
+          set: [],
+        },
+      },
+    });
+
     await prisma.calendarEvent.update({
       where: {
         id: eventId,
