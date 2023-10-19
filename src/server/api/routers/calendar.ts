@@ -36,14 +36,14 @@ export const calendarRouter = createTRPCRouter({
   addEvent: protectedProcedure
     .input(
       z.object({
-        title: z.string(),
+        title: z.string().max(200),
         startDateTime: z.string().datetime(),
         endDateTime: z.string().datetime(),
         location: z.string().optional(),
         notes: z.string().optional(),
         colour: z.string(),
         relatedExistingConnections: z.array(z.string()).optional(),
-        relatedCustomConnections: z.array(z.string().email()).optional(),
+        relatedCustomConnections: z.array(z.string()).optional(),
       })
     )
     .mutation(async (opts) => {
@@ -73,14 +73,14 @@ export const calendarRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        title: z.string(),
+        title: z.string().max(200),
         startDateTime: z.string().datetime(),
         endDateTime: z.string().datetime(),
         location: z.string().optional(),
         notes: z.string().optional(),
         colour: z.string(),
         relatedExistingConnections: z.array(z.string()).optional(),
-        relatedCustomConnections: z.array(z.string().email()).optional(),
+        relatedCustomConnections: z.array(z.string()).optional(),
       })
     )
     .mutation(async (opts) => {

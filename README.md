@@ -2,6 +2,27 @@
 
 ![](/readme-images/Logo-purple-background.PNG)
 
+## Table of Contents
+
+- [Potato CRM](#potato-crm)
+  - [Table of Contents](#table-of-contents)
+  - [Team](#team)
+  - [Features](#features)
+    - [Account Management: Sign Up/Sign In/Profile Settings/Forgot Password](#account-management-sign-upsign-inprofile-settingsforgot-password)
+    - [Dashboard](#dashboard)
+    - [Connections](#connections)
+    - [Chat](#chat)
+    - [Trello Board](#trello-board)
+    - [Calendar](#calendar)
+  - [Tech Stack](#tech-stack)
+  - [Development Setup](#development-setup)
+    - [Generating your own environment variables](#generating-your-own-environment-variables)
+      - [`DATABASE_URL` (required for `npm run dev`)](#database_url-required-for-npm-run-dev)
+      - [`NEXTAUTH_SECRET` (required for `npm run dev`)](#nextauth_secret-required-for-npm-run-dev)
+      - [`NEXTAUTH_URL` (required for `npm run dev`)](#nextauth_url-required-for-npm-run-dev)
+      - [Discord, Github, Google, Email and Pusher (not required for `npm run dev`)](#discord-github-google-email-and-pusher-not-required-for-npm-run-dev)
+    - [Setting up a local database](#setting-up-a-local-database)
+
 ## Team
 
 - [Ashley Teoh](https://github.com/ashleyteoh)
@@ -12,21 +33,29 @@
 
 ## Features
 
-### Sign Up/Sign In
+### Account Management: Sign Up/Sign In/Profile Settings/Forgot Password
+
+![Group 1](https://github.com/chuahxinyu/comp30022/assets/66938425/e156cd6b-ed2d-4ae5-8a2b-70291c613060)
 
 ### Dashboard
 
+![image](https://github.com/chuahxinyu/comp30022/assets/66938425/9e059c80-a950-4b0f-9156-531387ccffbd)
+
 ### Connections
+
+![image](https://github.com/chuahxinyu/comp30022/assets/66938425/9c0c3833-a8f0-415c-9ab6-b38943ac9640)
 
 ### Chat
 
+![chat123](https://github.com/chuahxinyu/comp30022/assets/66938425/62c6e55e-5dca-41bd-8b67-66c9dc605e91)
+
 ### Trello Board
+
+![image](https://github.com/chuahxinyu/comp30022/assets/66938425/81b3a4d5-c3dd-4a91-b6e8-edaaa7edae95)
 
 ### Calendar
 
-### Settings
-
-## Documentation
+![image](https://github.com/chuahxinyu/comp30022/assets/66938425/a26540a4-0b8e-457c-bb63-3a0dfe73abe0)
 
 ## Tech Stack
 
@@ -66,17 +95,72 @@
    ```shell
    npm install
    ```
-4. Set up environment variables. Copy the [`.env.example`](/.env.example) file to `.env` and fill in the values. Please contact the team for the dev/production environment variable values.
+   - Make sure you are in the correct directory when doing this, you might have to `cd comp30022` depending on how you've cloned the repository
+     ```shell
+     cd comp30022
+     ```
+4. Set up environment variables. Copy the [`.env.example`](/.env.example) file to `.env` and fill in the values. Please contact Xin Yu ([chuahx@student.unimelb.edu.au](mailto:chuahx@student.unimelb.edu.au)) for the dev/production environment variable values.
    ```shell
    cp .env.example .env
    ```
-   - > ❗ **Do not commit the `.env` file to git.** ❗
-   - If you would like to set up a local database, please refer to the [Setting up a local database](#setting-up-a-local-database) section.
-5. Run the dev server
+   - If you are a supervisor/tutor/lecturer running the app, we recommend contacting the team for the environment variables to be shared.
+   - If you are not developing for this application and would like to clone and create a new database and have full control over the third-party services, please refer to the [Generating your own environment variables](#generating-your-own-environment-variables) section.
+   - If you are developing on the backend and would like to set up a local database, please refer to the [Setting up a local database](#setting-up-a-local-database) section. Note that this only gives you instructions for the `DATABASE_URL`.
+   - The following environment variables are required to be able to do `npm run dev` (step 6):
+     - `DATABASE_URL`, `NEXTAUTH_SECRET` and `NEXTAUTH_URL`
+   - The other environment variables are not required to `npm run dev` but are required if you would like to use:
+     - third-party authentication (`DISCORD_...`, `GITHUB_...` and `GOOGLE_...`)
+     - forgot password feature (`EMAIL_...`)
+     - chatting with connections (`PUSHER_...`)
+5. Push the prisma schema to the MySQL database
+   ```shell
+   npx prisma db push
+   ```
+6. Run the dev server
    ```shell
    npm run dev
    ```
-6. The dev server should be up on [http://localhost:3000](http://localhost:3000)
+7. The dev server should be up on [http://localhost:3000](http://localhost:3000)
+
+### Generating your own environment variables
+
+#### `DATABASE_URL` (required for `npm run dev`)
+
+1. Go to [https://planetscale.com/](https://planetscale.com/), create an account or log in.
+2. Create a new datbase and select the desired AWS region for your database and your plan.
+   ![image](https://github.com/chuahxinyu/comp30022/assets/66938425/87ae5c73-7b5e-48c9-bc07-b4d7f33c44ac)
+   - we named our's `ps-database` and are using the Hobby plan with our region in `ap-southeast-2`
+   - note: you might have to create a organisation before you are able to create a new database.
+3. Once your database has been initialized, click on `Connect`. Generate a new password with whatever name you'd like, the branch as `main` and role as `Admin`.
+   - ![image](https://github.com/chuahxinyu/comp30022/assets/66938425/372bbc6e-a68f-4ffa-912a-15774b15fb32)
+   - select `Prisma` for the "Connect with" option and copy the `.env` given and paste it into your .env file. Make sure to remove any existing empty value for that variable (ie. delete `DATABASE_URL=""` if it is there so it doesn't read the wrong value).
+   - ![image](https://github.com/chuahxinyu/comp30022/assets/66938425/97e3a640-f4ac-40dd-9002-f7bf1b32c77d)
+
+#### `NEXTAUTH_SECRET` (required for `npm run dev`)
+
+- Feel free to just replace this value with any non-empty string (eg. "a-super-long-secret").
+- You can also generate a secret using the following command in the terminal:
+  ```shell
+  openssl rand -base64 32
+  ```
+  - this will generate a string that you can copy and use as your NEXTAUTH_SECRET
+  - If you are getting an error: you might have to use the Bash termninal. [Here](https://stackoverflow.com/questions/75000633/where-to-generate-next-auth-secret-for-next-auth) is a resource that might help.
+
+#### `NEXTAUTH_URL` (required for `npm run dev`)
+
+- For development, you can use `NEXTAUTH_URL="http://localhost:3000"`
+
+#### Discord, Github, Google, Email and Pusher (not required for `npm run dev`)
+
+Here are some links to guides on how to generated the secrets for each of the following
+
+- Discord: [HOW TO GET DISCORD CLIENT ID AND SECRET?](https://support.heateor.com/discord-client-id-discord-client-secret/)
+- GitHub: [How to get GitHub Client ID and Client Secret API details?](https://www.knowband.com/blog/user-manual/get-github-client-id-client-secret-api-details/)
+- Google: [Get your Google API client ID (Go to the Google Cloud Platform Configurations section)](https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid)
+- Email: [How to Use Nodemailer to Send Emails from Your Node.js Server](https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/)
+- Pusher: [Pusher JavaScript quick start](https://pusher.com/docs/channels/getting_started/javascript/#get-your-free-api-keys)
+
+Feel free to contact the development team if you are running into any issues with the above. I will note again that if you are a supervisor/tutor/lecturer running the app, we recommend contacting the team for the environment variables to be shared.
 
 ### Setting up a local database
 
@@ -104,3 +188,4 @@
      ```
      mysql://root:password@localhost:3306/potato_crm
      ```
+4. If you run into any issues while setting this up, please contact Daniel Chin (wengjaec@student.unimelb.edu.au).

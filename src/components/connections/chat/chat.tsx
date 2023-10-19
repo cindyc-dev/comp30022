@@ -145,6 +145,13 @@ function Chat({
     }
   }, [chatHistory, connection]);
 
+  // Press enter to send message
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (event.key === "Enter") {
+      sendMessage(message);
+    }
+  };
+
   return (
     <div className="fixed bottom-2 right-2 rounded-lg border-2 bg-base-100 p-2">
       <div className="flex w-full flex-col">
@@ -267,6 +274,7 @@ function Chat({
                   className: `input input-bordered input-sm w-full ${
                     (!connection || !userProfile) && "input-disabled"
                   }`,
+                  onKeyDown: handleKeyPress,
                 }}
               />
               <button

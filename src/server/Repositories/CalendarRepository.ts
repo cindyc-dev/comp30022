@@ -10,6 +10,22 @@ const eventSelect = {
   location: true,
   notes: true,
   colour: true,
+  invitees: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+    }
+  },
+  customInvitees: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+    },
+  }
 } satisfies Prisma.CalendarEventSelect;
 
 export type EventPayload = Prisma.CalendarEventGetPayload<{ select: typeof eventSelect }>;
@@ -57,13 +73,6 @@ interface EventInput {
 }
 
 export async function addEvent(userId: string, input: EventInput): Promise<string> {
-  const customConnections: string[] = [];
-
-  for (const email of input.customConnections) {
-    const id = await getCustomConnectionId(userId, email);
-    customConnections.push(id);
-  }
-
   const res = await prisma.calendarEvent.create({
     data: {
       title: input.title,
@@ -81,7 +90,7 @@ export async function addEvent(userId: string, input: EventInput): Promise<strin
         }),
       },
       customInvitees: {
-        connect: customConnections.map((id) => {
+        connect: input.customConnections.map((id) => {
           return {
             id
           };
@@ -99,12 +108,22 @@ export async function addEvent(userId: string, input: EventInput): Promise<strin
 export async function editEvent(userId: string, eventId: string, input: EventInput) {
 
   try {
-    const customConnections: string[] = [];
 
-    for (const email of input.customConnections) {
-      const id = await getCustomConnectionId(userId, email);
-      customConnections.push(id);
-    }
+    // Reset connections in case connections are removed
+    await prisma.calendarEvent.update({
+      where: {
+        id: eventId,
+        ownerId: userId,
+      },
+      data: {
+        invitees: {
+          set: [],
+        },
+        customInvitees: {
+          set: [],
+        },
+      },
+    });
 
     await prisma.calendarEvent.update({
       where: {
@@ -126,7 +145,7 @@ export async function editEvent(userId: string, eventId: string, input: EventInp
           }),
         },
         customInvitees: {
-          connect: customConnections.map((id) => {
+          connect: input.customConnections.map((id) => {
             return {
               id
             };
@@ -167,27 +186,6 @@ export async function deleteEvent(id: string, userId: string) {
     }
     throw e;
   }
-}
-
-async function getCustomConnectionId(id: string, email: string): Promise<string> {
-  const res = await prisma.customContact.findUnique({
-    where: {
-      email: email,
-      id: id,
-    },
-    select: {
-      id: true,
-    }
-  });
-
-  if (!res) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: "Custom connection with email " + email + " not found.",
-    });
-  }
-
-  return res.id;
 }
 
 function getDbEventsInRange(userId: string, start: Date, end: Date): Promise<EventPayload[]> {
