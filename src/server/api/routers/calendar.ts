@@ -43,7 +43,7 @@ export const calendarRouter = createTRPCRouter({
         notes: z.string().optional(),
         colour: z.string(),
         relatedExistingConnections: z.array(z.string()).optional(),
-        relatedCustomConnections: z.array(z.string().email()).optional(),
+        relatedCustomConnections: z.array(z.string()).optional(),
       })
     )
     .mutation(async (opts) => {
@@ -80,7 +80,7 @@ export const calendarRouter = createTRPCRouter({
         notes: z.string().optional(),
         colour: z.string(),
         relatedExistingConnections: z.array(z.string()).optional(),
-        relatedCustomConnections: z.array(z.string().email()).optional(),
+        relatedCustomConnections: z.array(z.string()).optional(),
       })
     )
     .mutation(async (opts) => {

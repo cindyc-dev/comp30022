@@ -73,6 +73,8 @@ function EventDetailsForm({
     }
   }, [connections, error]);
 
+  console.log({ event: event });
+
   return (
     <div className="flex w-full flex-col">
       <TextInput
@@ -162,7 +164,9 @@ function EventDetailsForm({
                 {allConnections
                   .filter(
                     (connection) =>
-                      !event.relatedConnections.includes(connection)
+                      !event.relatedConnections
+                        .map((c) => c.id)
+                        .includes(connection.id)
                   )
                   .map((connection) => (
                     <option key={connection.id} value={connection.name}>
