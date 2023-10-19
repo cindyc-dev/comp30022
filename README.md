@@ -66,6 +66,10 @@
    ```shell
    npm install
    ```
+   - Make sure you are in the correct directory when doing this, you might have to `cd comp30022` depending on how you've cloned the repository
+     ```shell
+     cd comp30022
+     ```
 4. Set up environment variables. Copy the [`.env.example`](/.env.example) file to `.env` and fill in the values. Please contact Xin Yu ([chuahx@student.unimelb.edu.au](mailto:chuahx@student.unimelb.edu.au)) for the dev/production environment variable values.
    ```shell
    cp .env.example .env
