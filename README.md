@@ -8,7 +8,7 @@
   - [Table of Contents](#table-of-contents)
   - [Team](#team)
   - [Features](#features)
-    - [Account Management: Sign Up/Sign In/Profile Settings/Forgot Password](#account-management-sign-upsign-inprofile-settingsforgot-password)
+    - [Account Management](#account-management)
     - [Dashboard](#dashboard)
     - [Connections](#connections)
     - [Chat](#chat)
@@ -33,27 +33,27 @@
 
 ## Features
 
-### Account Management: Sign Up/Sign In/Profile Settings/Forgot Password
+### [Account Management](/docs/auth.md)
 
 ![](/readme-images/auth.png)
 
-### Dashboard
+### [Dashboard](/docs/dashboard.md)
 
 ![image](/readme-images/dashboard.png)
 
-### Connections
+### [Connections](/docs/connections.md)
 
 ![image](/readme-images/connections.png)
 
-### Chat
+### [Chat](/docs/connections.md)
 
 ![chat123](/readme-images/chat.png)
 
-### Trello Board
+### [Trello Board](/docs/trello.md)
 
 ![image](/readme-images/trello.png)
 
-### Calendar
+### [Calendar](/docs/calendar.md)
 
 ![image](/readme-images/calendar.png)
 
