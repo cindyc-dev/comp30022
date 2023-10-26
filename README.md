@@ -35,15 +35,13 @@
 
 ### Account Management: Sign Up/Sign In/Profile Settings/Forgot Password
 
-![Group 1](https://github.com/chuahxinyu/comp30022/assets/66938425/e156cd6b-ed2d-4ae5-8a2b-70291c613060)
-
 ### Dashboard
 
-![image](https://github.com/chuahxinyu/comp30022/assets/66938425/9e059c80-a950-4b0f-9156-531387ccffbd)
+![image](/readme-images/dashboard.png)
 
 ### Connections
 
-![image](https://github.com/chuahxinyu/comp30022/assets/66938425/9c0c3833-a8f0-415c-9ab6-b38943ac9640)
+![image](/readme-images/connections.png)
 
 ### Chat
 
@@ -51,11 +49,11 @@
 
 ### Trello Board
 
-![image](https://github.com/chuahxinyu/comp30022/assets/66938425/81b3a4d5-c3dd-4a91-b6e8-edaaa7edae95)
+![image](/readme-images/trello.png)
 
 ### Calendar
 
-![image](https://github.com/chuahxinyu/comp30022/assets/66938425/a26540a4-0b8e-457c-bb63-3a0dfe73abe0)
+![image](/readme-images/calendar.png)
 
 ## Tech Stack
 
