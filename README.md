@@ -126,15 +126,19 @@
 
 #### `DATABASE_URL` (required for `npm run dev`)
 
+![](/readme-images/planetscale-setup.gif)
+
+> gif of creating a database on PlanetScale and obtaining the DATABASE_URL. Note: passwords in this gif have now been changed.
+
 1. Go to [https://planetscale.com/](https://planetscale.com/), create an account or log in.
-2. Create a new datbase and select the desired AWS region for your database and your plan.
-   ![image](https://github.com/chuahxinyu/comp30022/assets/66938425/87ae5c73-7b5e-48c9-bc07-b4d7f33c44ac)
+2. Create a new database and select the desired AWS region for your database and your plan.
+   ![image](/readme-images/planetscale.png)
    - we named our's `ps-database` and are using the Hobby plan with our region in `ap-southeast-2`
    - note: you might have to create a organisation before you are able to create a new database.
 3. Once your database has been initialized, click on `Connect`. Generate a new password with whatever name you'd like, the branch as `main` and role as `Admin`.
-   - ![image](https://github.com/chuahxinyu/comp30022/assets/66938425/372bbc6e-a68f-4ffa-912a-15774b15fb32)
+   - ![image](/readme-images/planetscale-create-password.PNG)
+   - ![image](/readme-images/planetscale-connect.PNG)
    - select `Prisma` for the "Connect with" option and copy the `.env` given and paste it into your .env file. Make sure to remove any existing empty value for that variable (ie. delete `DATABASE_URL=""` if it is there so it doesn't read the wrong value).
-   - ![image](https://github.com/chuahxinyu/comp30022/assets/66938425/97e3a640-f4ac-40dd-9002-f7bf1b32c77d)
 
 #### `NEXTAUTH_SECRET` (required for `npm run dev`)
 
