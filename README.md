@@ -61,17 +61,16 @@
 
 ![](readme-images/techstack.png)
 
-- [Next.js](https://nextjs.org/)
-- [git](https://git-scm.com/)
-- [npm](https://www.npmjs.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [MySQL](https://www.mysql.com/)
-- [Prisma](https://www.prisma.io/)
-- [React](https://reactjs.org/)
-- [DaisyUI](https://daisyui.com/)
-- [NextAuth.js](https://next-auth.js.org/)
-- [Pusher](https://pusher.com/)
-- [Node.js](https://nodejs.org/en/)
+|Tool|Description|
+|--|--|
+|[Next.js](https://nextjs.org/)|NextJS is a framework built on top of [React](https://reactjs.org/) and leverages [Node.js](https://nodejs.org/en/) on the Backend.|
+|[Prisma](https://www.prisma.io/)|ORM (Object-Relational Mapping) tool that makes it easier to work with databases in Typescript|
+|[MySQL](https://www.mysql.com/)|Relational DBMS (Database Management System)|
+|[DaisyUI](https://daisyui.com/) and [Tailwind CSS](https://tailwindcss.com/)|Provides a set of low-level utility classes to easily style web components.|
+|[NextAuth.js](https://next-auth.js.org/)|Simplifies and unifies authentication methods.|
+|[Pusher](https://pusher.com/)|Enables instant, bidirectional communication between clients and the server via websockets. Required for real-time chat feature.|
+|[git](https://git-scm.com/)|version control|
+|[npm](https://www.npmjs.com/)|package manager|
 
 ## Development Setup
 
