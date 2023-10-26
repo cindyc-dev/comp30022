@@ -7,7 +7,7 @@
 - Not to worry dear user, you have not broken our Sign Up page. Some browsers have extra features that give suggestions for password creation and password management.
   - ![Alt text](/readme-images/chrome_popup.png)
 - For instance, Chrome's default password generator does not satisfy our password requirements as it does not include special characters.
-  - ![Alt text](/readme-images/for_the_dummies.png)
+  - ![Alt text](/readme-images/password_requirements.png)
 - To fix this, just add a special character (or whatever other characters necessary) to the password to satisfy all requirements.
 - Although there is conflicting research on the effectiveness of imposing password requirements, we have decided to implement them as a security measure.
   - Note that even Google has password strength requirements for their accounts that suggest a password length of at least 8 characters and they also recommend a mix of letters, numbers and symbols.
