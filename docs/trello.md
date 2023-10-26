@@ -1,6 +1,5 @@
 ## Introduction to Trello Board
-![Trello Logo](readme-images/Trello.png)
-
+![](/readme-images/Trello.png)
 The Trello Board in PotatoCRM is your platform for managing personal relationships efficiently. This guide will help you make the most of this feature.
 
 ### Accessing the Trello Board
