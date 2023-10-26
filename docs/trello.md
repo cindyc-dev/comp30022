@@ -15,6 +15,7 @@ The Trello Board in PotatoCRM is your platform for managing personal relationshi
 ## Creating and Managing Tasks
 
 ### Adding a Task
+![](readme-images/adding_task.gif)
 1. Click on any of the "Create Task" buttons located at the bottom of each column.
    - Click on the "Create Task" button under "To-Do" if you wish to create a task in the "To-Do" column, and so on.
 3. Enter the relevant task details, including:
@@ -24,12 +25,19 @@ The Trello Board in PotatoCRM is your platform for managing personal relationshi
 4. Click on the "Add Task" button at the bottom right of the pop-up.
 
 ### Editing Tasks
+![](readme-images/editing_task.gif)
 1. Click on the task card you wish to edit.
 2. Modify the desired task details.
 3. Click on the "Save" button at the bottom right of the pop-up.
 
 ### Moving Tasks
+![](readme-images/moving_task.gif)
 - Utilize drag-and-drop functionality to move tasks across columns: "To-Do," "In Progress," and "Done."
+
+### Deleting Tasks
+![](readme-images/delete_task.gif)
+1. Click on the task card you intend to delete.
+2. Click on the "Delete" button at the bottom right of the pop-up to remove the task.
 
 ## Task Count Display
 
