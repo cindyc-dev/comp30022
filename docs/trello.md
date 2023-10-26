@@ -15,7 +15,7 @@ The Trello Board in PotatoCRM is your platform for managing personal relationshi
 ## Creating and Managing Tasks
 
 ### Adding a Task
-![](readme-images/adding_task.gif)
+![](/readme-images/adding_task.gif)
 1. Click on any of the "Create Task" buttons located at the bottom of each column.
    - Click on the "Create Task" button under "To-Do" if you wish to create a task in the "To-Do" column, and so on.
 3. Enter the relevant task details, including:
