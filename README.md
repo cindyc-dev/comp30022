@@ -35,6 +35,8 @@
 
 ### Account Management: Sign Up/Sign In/Profile Settings/Forgot Password
 
+![](/readme-images/auth.png)
+
 ### Dashboard
 
 ![image](/readme-images/dashboard.png)
@@ -45,7 +47,7 @@
 
 ### Chat
 
-![chat123](https://github.com/chuahxinyu/comp30022/assets/66938425/62c6e55e-5dca-41bd-8b67-66c9dc605e91)
+![chat123](/readme-images/chat.png)
 
 ### Trello Board
 
