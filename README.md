@@ -2,6 +2,14 @@
 
 ![](/readme-images/Logo-purple-background.PNG)
 
+[Live Demo](https://comp30022.vercel.app/)
+
+Demo Credentials (please do not change the passwords so that other people can try it out too)
+- Email: aurelia.iskndr@gmail.com
+- Password: ABAB123!
+
+Note: The provided credentials only works on the [Live Demo](https://comp30022.vercel.app/). If you're using any other instance, please create a new account for yourself.
+
 ## Table of Contents
 
 - [Potato CRM](#potato-crm)
@@ -73,6 +81,8 @@
 |[npm](https://www.npmjs.com/)|package manager|
 
 ## Development Setup
+
+This guide is written for the `bash` terminal, on MacOS / Linux. If you're using Windows or any other terminals, some commands might not work. Please consult your platform's documentation to find the equivalent commands. If there are missing packages on your platform, you will need to install them as well.
 
 1. Make sure you have [node](https://nodejs.org/en/download), [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [git](https://git-scm.com/downloads) installed before proceeding.
    - We also recommend using VSCode as your IDE. You can download it [here](https://code.visualstudio.com/download).
