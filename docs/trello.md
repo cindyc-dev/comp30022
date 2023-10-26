@@ -35,7 +35,7 @@ The Trello Board in PotatoCRM is your platform for managing personal relationshi
 - Utilize drag-and-drop functionality to move tasks across columns: "To-Do," "In Progress," and "Done."
 
 ### Deleting Tasks
-![](readme-images/delete_task.gif)
+![DeleteTaskGif](readme-images/delete_task.gif)
 1. Click on the task card you intend to delete.
 2. Click on the "Delete" button at the bottom right of the pop-up to remove the task.
 
