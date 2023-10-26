@@ -20,6 +20,7 @@ export const SignUpForm = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [passwordValid, setPasswordValid] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const mutation = api.user.register.useMutation();
 
@@ -38,6 +39,8 @@ export const SignUpForm = () => {
       return;
     }
 
+    setIsLoading(true);
+
     const user = {
       name: name,
       email: email,
@@ -55,6 +58,8 @@ export const SignUpForm = () => {
           redirect: true,
           callbackUrl: "/dashboard",
         });
+
+        setIsLoading(false);
       },
       onError: (error) => {
         // Show error toast
@@ -62,6 +67,8 @@ export const SignUpForm = () => {
           type: "error",
           message: `${error}. Please try again.`,
         });
+        
+        setIsLoading(false);
       },
     });
   };
@@ -144,11 +151,11 @@ export const SignUpForm = () => {
         <div className="form-control mt-3">
           <button
             className={`btn btn-primary ${
-              (!name || !passwordValid || !checked) && "btn-disabled"
+              (!name || !passwordValid || !checked || isLoading) && "btn-disabled"
             }`}
             type="submit"
           >
-            Sign Up
+            {isLoading ? <span className="loading loading-spinner"></span> : "Sign Up"}
           </button>
         </div>
       </form>
