@@ -12,7 +12,7 @@
 - Although there is conflicting research on the effectiveness of imposing password requirements, we have decided to implement them as a security measure.
   - Note that even Google has password strength requirements for their accounts that suggest a password length of at least 8 characters and they also recommend a mix of letters, numbers and symbols.
     - ![Alt text](/readme-images/google.png)
-  - So if you have any further issues with our password requirements, please take it up with Google or you can request for an apology letter from the team [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs).
+  - So if you have any further issues with our password requirements, please take it up with Google or you can request for an apology letter from the team [here](mailto:potatocrm7@gmail.com).
 
 ## I forgot my password, how do I reset it?
 
