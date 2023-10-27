@@ -10,10 +10,13 @@ Demo Credentials (please do not change the passwords so that other people can tr
 
 Note: The provided credentials only works on the [Live Demo](https://comp30022.vercel.app/). If you're using any other instance, please create a new account for yourself.
 
+## [User Guide](/docs/)
+
 ## Table of Contents
 
 - [Potato CRM](#potato-crm)
   - [Live Demo](#live-demo)
+  - [User Guide](#user-guide)
   - [Table of Contents](#table-of-contents)
   - [Team](#team)
   - [Features](#features)

@@ -41,6 +41,14 @@
 - Just click on the `Disconnected` button and it will reconnect you to the chat server.
 - You can also try to refresh the page to reconnect to the chat server.
 
+## I get a popup when trying to send an email!
+
+![](/readme-images/mail_popup.png)
+
+- This popup is a security feature of your browser. It is to prevent malicious websites from opening applications on your computer without your permission.
+- Just click on the "Open Mail" button and it will open your mail app with a draft email to your connection(s).
+- If you would like to not see this popup every time you want to send an email, check the "Always allow github.com to open links of this type in the associated app" checkbox and then click on "Open Mail".
+
 ## Other Issues
 
 - To report any other issues, please create an issue on our [GitHub repository](https://github.com/chuahxinyu/comp30022/issues) with as much detail as possible.
