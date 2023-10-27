@@ -5,8 +5,8 @@
 ## [Live Demo](https://comp30022.vercel.app/)
 
 Demo Credentials (please do not change the passwords so that other people can try it out too)
-- Email: `aurelia.iskndr@gmail.com``
-- Password: `ABAB123!`
+- Email: aurelia.iskndr@gmail.com
+- Password: ABAB123!
 
 Note: The provided credentials only works on the [Live Demo](https://comp30022.vercel.app/). If you're using any other instance, please create a new account for yourself.
 
