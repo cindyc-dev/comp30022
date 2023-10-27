@@ -2,13 +2,22 @@
 
 ![](/readme-images/Logo-purple-background.PNG)
 
+## [Live Demo](https://comp30022.vercel.app/)
+
+Demo Credentials (please do not change the passwords so that other people can try it out too)
+- Email: `aurelia.iskndr@gmail.com``
+- Password: `ABAB123!`
+
+Note: The provided credentials only works on the [Live Demo](https://comp30022.vercel.app/). If you're using any other instance, please create a new account for yourself.
+
 ## Table of Contents
 
 - [Potato CRM](#potato-crm)
+  - [Live Demo](#live-demo)
   - [Table of Contents](#table-of-contents)
   - [Team](#team)
   - [Features](#features)
-    - [Account Management: Sign Up/Sign In/Profile Settings/Forgot Password](#account-management-sign-upsign-inprofile-settingsforgot-password)
+    - [Account Management](#account-management)
     - [Dashboard](#dashboard)
     - [Connections](#connections)
     - [Chat](#chat)
@@ -33,47 +42,50 @@
 
 ## Features
 
-### Account Management: Sign Up/Sign In/Profile Settings/Forgot Password
+> Learn more about our features in our [User Guide](/docs/)
 
-![Group 1](https://github.com/chuahxinyu/comp30022/assets/66938425/e156cd6b-ed2d-4ae5-8a2b-70291c613060)
+### [Account Management](/docs/auth.md)
 
-### Dashboard
+[![](/readme-images/auth.png)](/docs/auth.md)
 
-![image](https://github.com/chuahxinyu/comp30022/assets/66938425/9e059c80-a950-4b0f-9156-531387ccffbd)
+### [Dashboard](/docs/dashboard.md)
 
-### Connections
+[![image](/readme-images/dashboard.png)](/docs/dashboard.md)
 
-![image](https://github.com/chuahxinyu/comp30022/assets/66938425/9c0c3833-a8f0-415c-9ab6-b38943ac9640)
+### [Connections](/docs/connections.md)
 
-### Chat
+[![image](/readme-images/connections.png)](/docs/connections.md)
 
-![chat123](https://github.com/chuahxinyu/comp30022/assets/66938425/62c6e55e-5dca-41bd-8b67-66c9dc605e91)
+### [Chat](/docs/connections.md)
 
-### Trello Board
+[![chat123](/readme-images/chat.png)](/docs/connections.md)
 
-![image](https://github.com/chuahxinyu/comp30022/assets/66938425/81b3a4d5-c3dd-4a91-b6e8-edaaa7edae95)
+### [Trello Board](/docs/trello.md)
 
-### Calendar
+[![image](/readme-images/trello.png)](/docs/trello.md)
 
-![image](https://github.com/chuahxinyu/comp30022/assets/66938425/a26540a4-0b8e-457c-bb63-3a0dfe73abe0)
+### [Calendar](/docs/calendar.md)
+
+[![image](/readme-images/calendar.png)](/docs/calendar.md)
 
 ## Tech Stack
 
 ![](readme-images/techstack.png)
 
-- [Next.js](https://nextjs.org/)
-- [git](https://git-scm.com/)
-- [npm](https://www.npmjs.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [MySQL](https://www.mysql.com/)
-- [Prisma](https://www.prisma.io/)
-- [React](https://reactjs.org/)
-- [DaisyUI](https://daisyui.com/)
-- [NextAuth.js](https://next-auth.js.org/)
-- [Pusher](https://pusher.com/)
-- [Node.js](https://nodejs.org/en/)
+|Tool|Description|
+|--|--|
+|[Next.js](https://nextjs.org/)|NextJS is a framework built on top of [React](https://reactjs.org/) and leverages [Node.js](https://nodejs.org/en/) on the Backend.|
+|[Prisma](https://www.prisma.io/)|ORM (Object-Relational Mapping) tool that makes it easier to work with databases in Typescript|
+|[MySQL](https://www.mysql.com/)|Relational DBMS (Database Management System)|
+|[DaisyUI](https://daisyui.com/) and [Tailwind CSS](https://tailwindcss.com/)|Provides a set of low-level utility classes to easily style web components.|
+|[NextAuth.js](https://next-auth.js.org/)|Simplifies and unifies authentication methods.|
+|[Pusher](https://pusher.com/)|Enables instant, bidirectional communication between clients and the server via websockets. Required for real-time chat feature.|
+|[git](https://git-scm.com/)|version control|
+|[npm](https://www.npmjs.com/)|package manager|
 
 ## Development Setup
+
+This guide is written for the `bash` terminal, on MacOS / Linux. If you're using Windows or any other terminals, some commands might not work. Please consult your platform's documentation to find the equivalent commands. If there are missing packages on your platform, you will need to install them as well.
 
 1. Make sure you have [node](https://nodejs.org/en/download), [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [git](https://git-scm.com/downloads) installed before proceeding.
    - We also recommend using VSCode as your IDE. You can download it [here](https://code.visualstudio.com/download).
@@ -126,15 +138,19 @@
 
 #### `DATABASE_URL` (required for `npm run dev`)
 
+![](/readme-images/planetscale-setup.gif)
+
+> gif of creating a database on PlanetScale and obtaining the DATABASE_URL. Note: passwords in this gif have now been changed.
+
 1. Go to [https://planetscale.com/](https://planetscale.com/), create an account or log in.
-2. Create a new datbase and select the desired AWS region for your database and your plan.
-   ![image](https://github.com/chuahxinyu/comp30022/assets/66938425/87ae5c73-7b5e-48c9-bc07-b4d7f33c44ac)
+2. Create a new database and select the desired AWS region for your database and your plan.
+   ![image](/readme-images/planetscale.png)
    - we named our's `ps-database` and are using the Hobby plan with our region in `ap-southeast-2`
    - note: you might have to create a organisation before you are able to create a new database.
 3. Once your database has been initialized, click on `Connect`. Generate a new password with whatever name you'd like, the branch as `main` and role as `Admin`.
-   - ![image](https://github.com/chuahxinyu/comp30022/assets/66938425/372bbc6e-a68f-4ffa-912a-15774b15fb32)
+   - ![image](/readme-images/planetscale-create-password.PNG)
+   - ![image](/readme-images/planetscale-connect.PNG)
    - select `Prisma` for the "Connect with" option and copy the `.env` given and paste it into your .env file. Make sure to remove any existing empty value for that variable (ie. delete `DATABASE_URL=""` if it is there so it doesn't read the wrong value).
-   - ![image](https://github.com/chuahxinyu/comp30022/assets/66938425/97e3a640-f4ac-40dd-9002-f7bf1b32c77d)
 
 #### `NEXTAUTH_SECRET` (required for `npm run dev`)
 
