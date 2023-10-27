@@ -1,6 +1,8 @@
 # Calendar
 
-> ❓ For FAQ, please refer to [FAQ](/docs/faq.md#calendar)
+> [Back to User Guide](/docs/)
+>
+> ❓ For FAQ, please refer to [FAQ](/docs/faq.md)
 
 ## Creating an Event
 
@@ -8,12 +10,12 @@
 
 1. Click on the "Create Event" botton on the top right of the screen
 2. Enter the relevant details
-    - Event Name (mandatory)
-    - Start Date/Time & End Date/Time (recommended)
-    - Location
-    - Notes
-    - Connections
-    - Event Colour
+   - Event Name (mandatory)
+   - Start Date/Time & End Date/Time (recommended)
+   - Location
+   - Notes
+   - Connections
+   - Event Colour
 3. Click on the "Add Event" button at the bottom right of the pop-up
 
 ## Editing an Event

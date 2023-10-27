@@ -1,8 +1,8 @@
 # Frequently Asked Questions
 
-## Authentication:
+> [Back to User Guide](/docs/)
 
-### Oh No! I get a pop-up suggesting a strong password but it doesn't satisfy the password requirements!
+## Oh No! I get a pop-up suggesting a strong password but it doesn't satisfy the password requirements!
 
 - Not to worry dear user, you have not broken our Sign Up page. Some browsers have extra features that give suggestions for password creation and password management.
   - ![Alt text](/readme-images/chrome_popup.png)
@@ -14,7 +14,7 @@
     - ![Alt text](/readme-images/google.png)
   - So if you have any further issues with our password requirements, please take it up with Google or you can request for an apology letter from the team [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs).
 
-### I forgot my password, how do I reset it?
+## I forgot my password, how do I reset it?
 
 - There are two ways to change your password,
   1. If you are already logged in and would like to change your password, please refer to the following document: [Forgot Password](auth.md#forgot-password)
@@ -22,4 +22,4 @@
 
 ## Other Issues
 
-* To report any other issues, please create an issue on our [GitHub repository](https://github.com/chuahxinyu/comp30022/issues) with as much detail as possible.
+- To report any other issues, please create an issue on our [GitHub repository](https://github.com/chuahxinyu/comp30022/issues) with as much detail as possible.

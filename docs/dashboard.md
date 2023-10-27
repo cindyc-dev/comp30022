@@ -1,6 +1,8 @@
 # Dashboard
 
-> ❓ For FAQ, please refer to [FAQ](/docs/faq.md#authentication)
+> [Back to User Guide](/docs/)
+> 
+> ❓ For FAQ, please refer to [FAQ](/docs/faq.md)
 
 ![Dashboard image](/readme-images/dashboard.png)
 
