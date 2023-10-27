@@ -61,7 +61,6 @@
 ### Through Email
 
 > Email is available for all connections
-
 1. Click on the "Send Email" button in the connection's row
    - ![](/readme-images/email_row.png)
 2. This will [prompt to open the mail app](faq.md#i-get-a-popup-when-trying-to-send-an-email) with you connection as a recipient
@@ -92,3 +91,4 @@
    - ![](../readme-images/send_multiple_email.png)
 3. This will [prompt to open the mail app](faq.md#i-get-a-popup-when-trying-to-send-an-email) with to all your selected connections as recipients
    - ![](../readme-images/email_multiple.png)
+

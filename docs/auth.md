@@ -1,7 +1,7 @@
 # Authentication
 
 > [Back to User Guide](/docs/)
->
+> 
 > ❓ For FAQ, please refer to [FAQ](/docs/faq.md)
 
 ## Creating an Account
