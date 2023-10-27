@@ -65,7 +65,7 @@ Note: The provided credentials only works on the [Live Demo](https://comp30022.v
 
 ### [Trello Board](/docs/trello.md)
 
-[![image](/readme-images/trello.png)](/docs/trello.md)
+[![image](/readme-images/Trello.png)](/docs/trello.md)
 
 ### [Calendar](/docs/calendar.md)
 
