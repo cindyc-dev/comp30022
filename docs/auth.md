@@ -1,7 +1,7 @@
 # Authentication
 
 > [Back to User Guide](/docs/)
-> 
+>
 > ❓ For FAQ, please refer to [FAQ](/docs/faq.md)
 
 ## Creating an Account
@@ -24,6 +24,7 @@
 ## Logging Out
 
 1. Click on your profile picture in the top right corner of the screen
+   - ![](../readme-images/sign_out.png)
 2. Click on "Sign Out"
 
 ## Forgot Password
@@ -44,6 +45,7 @@
 
 1. Click on your profile picture in the top right corner of the screen
 2. Click on "Profile". This will redirect you to the profile page.
+   - ![](../readme-images/profile.png)
 3. Under the "Change Password" section, you can enter your current password and your new password.
    - ![Alt text](/readme-images/change_password.png)
 4. If your passwords are valid, you can click "Change Password" to change your password.

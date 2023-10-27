@@ -42,8 +42,7 @@
 
 ## Deleting a Connection
 
-![](/readme-images/delete_connection.gif)
-![](../readme-images/delete_single.png)
+![](/readme-images/delete_single.png)
 
 1. Click on the name of the connection you intend to delete
 2. Click on the "Delete" button at the bottom right of the pop-up
@@ -62,16 +61,15 @@
 ### Through Email
 
 > Email is available for all connections
-> ![](/readme-images/email_connect.gif)
 
 1. Click on the "Send Email" button in the connection's row
-   - ![](../readme-images/email_row.png)
-2. This will open the mail app with a draft email your connection
+   - ![](/readme-images/email_row.png)
+2. This will [prompt to open the mail app](faq.md#i-get-a-popup-when-trying-to-send-an-email) with you connection as a recipient
+   - ![](/readme-images/email_single.png)
 
 ### Through the Chat Function
 
 > Chat is only available for connections that have signed up for an account on the platform
-> ![](/readme-images/chat_connect.gif)
 
 1. Click on the "Chat" button in the connection's row
    - ![](/readme-images/chat_row.png)
@@ -89,8 +87,8 @@
 
 ### Send Multiple Emails
 
-![](../readme-images/send_multiple_email.png)
-
 1. Click on the checkbox of the connections you intend to send emails to
 2. Click on the "Send Email" button on the bottom right of the screen
-3. This will open the mail app with to all your selected connections as recipients
+   - ![](../readme-images/send_multiple_email.png)
+3. This will [prompt to open the mail app](faq.md#i-get-a-popup-when-trying-to-send-an-email) with to all your selected connections as recipients
+   - ![](../readme-images/email_multiple.png)
