@@ -4,9 +4,10 @@
 >
 > ❓ For FAQ, please refer to [FAQ](/docs/faq.md)
 
-## Creating an Event
+## Overview
+![](/readme-images/calendar_overview.gif)
 
-![](/readme-images/event_creation.gif)
+## Creating an Event
 
 1. Click on the "Create Event" botton on the top right of the screen
    - ![](/readme-images/create_event_btn.png)
@@ -24,8 +25,6 @@
 
 ## Editing an Event
 
-![](/readme-images/event_editing.gif)
-
 1. Click on the event you intend to edit
 2. Change the fields you with to edit
    - ![](../readme-images/edit_event.png)
@@ -38,8 +37,6 @@
 2. Click on the "Delete" button at the bottom right of the pop-up
 
 ## Changing Visual Mode (Day/Week/Month)
-
-![](/readme-images/event_visual_mode.gif)
 
 - Click on the relevant buttons on the top-left of the screen
   - ![](/readme-images/day_week_month.png)

@@ -27,7 +27,7 @@ If you are just getting started, it is recommended to [Create an Account](/docs/
 
 ## [Trello Board](/docs/trello.md)
 
-[![image](/readme-images/trello.png)](/docs/trello.md)
+[![image](/readme-images/Trello.png)](/docs/trello.md)
 
 ## [Calendar](/docs/calendar.md)
 

@@ -5,8 +5,9 @@
 ## [Live Demo](https://comp30022.vercel.app/)
 
 Demo Credentials (please do not change the passwords so that other people can try it out too)
-- Email: `aurelia.iskndr@gmail.com``
-- Password: `ABAB123!`
+
+- Email: aurelia.iskndr@gmail.com
+- Password: ABAB123!
 
 Note: The provided credentials only works on the [Live Demo](https://comp30022.vercel.app/). If you're using any other instance, please create a new account for yourself.
 
@@ -61,11 +62,11 @@ Note: The provided credentials only works on the [Live Demo](https://comp30022.v
 
 ### [Chat](/docs/connections.md)
 
-[![chat123](/readme-images/chat.png)](/docs/connections.md)
+[![chat123](/readme-images/chatGif.gif)](/docs/connections.md)
 
 ### [Trello Board](/docs/trello.md)
 
-[![image](/readme-images/trello.png)](/docs/trello.md)
+[![image](/readme-images/Trello.png)](/docs/trello.md)
 
 ### [Calendar](/docs/calendar.md)
 
@@ -75,16 +76,16 @@ Note: The provided credentials only works on the [Live Demo](https://comp30022.v
 
 ![](readme-images/techstack.png)
 
-|Tool|Description|
-|--|--|
-|[Next.js](https://nextjs.org/)|NextJS is a framework built on top of [React](https://reactjs.org/) and leverages [Node.js](https://nodejs.org/en/) on the Backend.|
-|[Prisma](https://www.prisma.io/)|ORM (Object-Relational Mapping) tool that makes it easier to work with databases in Typescript|
-|[MySQL](https://www.mysql.com/)|Relational DBMS (Database Management System)|
-|[DaisyUI](https://daisyui.com/) and [Tailwind CSS](https://tailwindcss.com/)|Provides a set of low-level utility classes to easily style web components.|
-|[NextAuth.js](https://next-auth.js.org/)|Simplifies and unifies authentication methods.|
-|[Pusher](https://pusher.com/)|Enables instant, bidirectional communication between clients and the server via websockets. Required for real-time chat feature.|
-|[git](https://git-scm.com/)|version control|
-|[npm](https://www.npmjs.com/)|package manager|
+| Tool                                                                         | Description                                                                                                                         |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| [Next.js](https://nextjs.org/)                                               | NextJS is a framework built on top of [React](https://reactjs.org/) and leverages [Node.js](https://nodejs.org/en/) on the Backend. |
+| [Prisma](https://www.prisma.io/)                                             | ORM (Object-Relational Mapping) tool that makes it easier to work with databases in Typescript                                      |
+| [MySQL](https://www.mysql.com/)                                              | Relational DBMS (Database Management System)                                                                                        |
+| [DaisyUI](https://daisyui.com/) and [Tailwind CSS](https://tailwindcss.com/) | Provides a set of low-level utility classes to easily style web components.                                                         |
+| [NextAuth.js](https://next-auth.js.org/)                                     | Simplifies and unifies authentication methods.                                                                                      |
+| [Pusher](https://pusher.com/)                                                | Enables instant, bidirectional communication between clients and the server via websockets. Required for real-time chat feature.    |
+| [git](https://git-scm.com/)                                                  | version control                                                                                                                     |
+| [npm](https://www.npmjs.com/)                                                | package manager                                                                                                                     |
 
 ## Development Setup
 
