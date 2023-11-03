@@ -276,14 +276,14 @@ export default function Connections() {
         <div className="my-5 flex w-full flex-row items-center justify-between">
           <h1 className="mb-0 mt-4">{data.length} Contacts</h1>
           <button
-            className="btn btn-primary text-base-100"
+            className="text-content btn btn-primary"
             onClick={() => addConnection()}
           >
             <FaPlus /> New Connection
           </button>
         </div>
         {/* Search Bar and Filter Button */}
-        <div className="flex w-full flex-row justify-between rounded bg-[#EAECF6] p-3">
+        <div className="flex w-full flex-row justify-between rounded bg-secondary p-3">
           <DebouncedInput
             value={globalFilter ?? ""}
             onChange={(value) => setGlobalFilter(String(value))}

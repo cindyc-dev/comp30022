@@ -134,11 +134,11 @@ function TrelloTasks() {
     <div className="mt-2 flex gap-2">
       {tasks.map((task) => (
         <div
-          className="flex h-[8rem] w-[15rem] flex-col justify-between overflow-clip rounded-xl bg-primary p-3 text-base-100"
+          className="flex h-[8rem] w-[15rem] flex-col justify-between overflow-clip rounded-xl bg-primary p-3 text-accent-content"
           key={task.id}
         >
           <div>
-            <div className="truncate font-semibold text-base-100">
+            <div className="truncate font-semibold text-accent-content">
               {task.title}
             </div>
             {task.description && (
@@ -151,7 +151,7 @@ function TrelloTasks() {
             )}
           </div>
           <Link className="cursor-pointer" href="/trello">
-            <div className="flex w-full justify-end text-base-100">
+            <div className="flex w-full justify-end text-accent-content">
               <FaArrowRight />
             </div>
           </Link>
@@ -203,7 +203,7 @@ function KeepInTouch() {
     <div className="mt-2 flex gap-2">
       {connections.map((connection, i) => (
         <div
-          className="flex h-[13rem] w-[15rem] flex-col justify-between overflow-clip rounded-xl bg-[#282B40] p-3 text-base-100"
+          className="flex h-[13rem] w-[15rem] flex-col justify-between overflow-clip rounded-xl bg-accent p-3 text-accent-content"
           key={i}
         >
           <div className="flex flex-col gap-2">
@@ -236,7 +236,10 @@ function KeepInTouch() {
           </div>
 
           <div className="flex w-full justify-end">
-            <Link href="/connections" className="cursor-pointer text-base-100">
+            <Link
+              href="/connections"
+              className="cursor-pointer text-accent-content"
+            >
               <FaArrowRight />
             </Link>
           </div>

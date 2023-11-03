@@ -111,7 +111,7 @@ function DayView({
         <div className={`w-[${TIME_GAP}]`} style={{ gridRow: 1 }}></div>
         {/* Day (Mon/Tue/..) and Date Number */}
         <div
-          className="border-l-2 border-base-100 text-center"
+          className="border-content border-l-2 text-center"
           style={{ gridRow: 1 }}
         >
           <p className="m-0">{today.clone().format("ddd").toUpperCase()}</p>
@@ -157,7 +157,7 @@ function DayView({
         {arrayRange(0, 24).map((hour) => (
           <div
             key={hour}
-            className="row-span-2 border-b-2 border-base-200"
+            className="border-content row-span-2 border-b-2"
             style={{
               gridColumnStart: 2,
               gridColumnEnd: 3,
@@ -178,7 +178,7 @@ function DayView({
                 className={`border-l-2 ${
                   isCurrentTime
                     ? "z-10 border-b-[3px] border-b-primary"
-                    : "border-base-200"
+                    : "border-content"
                 } ${
                   row % 2 && !isCurrentTime ? "border-b-[1px]" : "border-b-2"
                 }`}

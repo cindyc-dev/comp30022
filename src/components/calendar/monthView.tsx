@@ -77,7 +77,7 @@ export default function MonthView({
       >
         {/* Days Sunday to Saturday */}
         {arrayRange(0, 6).map((day, i) => {
-          const currDate = today.startOf("week").clone().add(day, "day");
+          const currDate = today.clone().startOf("week").add(day, "day");
           return (
             <div
               key={i}
@@ -114,8 +114,8 @@ export default function MonthView({
                   i > 0 && "border-l-2"
                 } py-1 ${
                   !currDate.isSame(today, "month")
-                    ? "hash-background border-base-100"
-                    : "border-base-200"
+                    ? "hash-background border-content"
+                    : "border-content"
                 }`}
                 style={{
                   gridRowStart: rowStart,
