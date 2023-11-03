@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Layout } from "~/components/layout/layout";
 import { ConnectionI } from "~/types/ConnectionI";
-import { NEW_CONNECTION, sampleTags } from "~/sample_data/sampleConnections";
+import { NEW_CONNECTION } from "~/sample_data/sampleConnections";
 import { FaFilter, FaPlus, FaTrash } from "react-icons/fa";
 import { useModal } from "~/components/hooks/modalContext";
 import AddConnectionModal, {
@@ -19,6 +19,7 @@ import Image from "next/image";
 import ConnectionDetailsModal from "~/components/connections/_connectionDetailsModal";
 import Chat from "~/components/connections/chat/chat";
 import { BsChatDotsFill } from "react-icons/bs";
+import { useTheme } from "~/components/hooks/themeContext";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>([]);
@@ -30,12 +31,55 @@ export default function Connections() {
   const [isChatMini, setIsChatMini] = useState<boolean>(true);
   const [selectedConnection, setSelectedConnection] = useState<ConnectionI>();
 
-  const tagColoursMap: Record<string, string> = sampleTags;
+  const { tagColoursMap, setTagColoursMap } = useTheme();
 
   const { openModal, closeModal } = useModal();
   const { addToast } = useToast();
 
-  // TODO fetch data and tagColoursMap from API
+  const getAllTags = () => {
+    // Gets all unique tags from filtered data
+    const tags = new Set<string>();
+    filteredData.forEach((connection) => {
+      connection.tags.forEach((tag) => tags.add(tag));
+    });
+    return Array.from(tags);
+  };
+
+  // Add new tags into the tagColoursMap
+  const addNewTags = (newConnections: ConnectionI[]) => {
+    console.log("addNewTags");
+    // Get a random colour for each tag
+    const COLOURS = [
+      "badge-primary",
+      "badge-secondary",
+      "badge-accent",
+      "badge-info",
+      "badge-success",
+      "badge-warning",
+      "badge-error",
+      "badge-neutral",
+    ];
+    // Get new tags
+    const tags = new Set<string>();
+    newConnections.forEach((connection) => {
+      connection.tags.forEach((tag) => tags.add(tag));
+    });
+
+    const newTagColoursMap: Record<string, string> = { ...tagColoursMap };
+
+    tags.forEach((tag) => {
+      if (!newTagColoursMap[tag]) {
+        console.log("new tag", tag);
+        const randomColour =
+          COLOURS[Math.floor(Math.random() * COLOURS.length)];
+        newTagColoursMap[tag] = randomColour;
+      }
+    });
+
+    // Update tagColoursMap
+    setTagColoursMap(newTagColoursMap);
+    console.log({ tagColoursMap: tagColoursMap });
+  };
 
   /* Get data from API */
   const {
@@ -47,6 +91,7 @@ export default function Connections() {
   useEffect(() => {
     if (connections) {
       console.log({ connections: connections });
+      addNewTags(connections);
       setData([...connections]);
     }
     if (error) {
@@ -249,15 +294,6 @@ export default function Connections() {
       .join(",");
   };
 
-  const getAllTags = () => {
-    // Gets all unique tags from filtered data
-    const tags = new Set<string>();
-    filteredData.forEach((connection) => {
-      connection.tags.forEach((tag) => tags.add(tag));
-    });
-    return Array.from(tags);
-  };
-
   // Filter data based on tags
   useEffect(() => {
     if (selectedTags.length > 0) {
@@ -276,14 +312,14 @@ export default function Connections() {
         <div className="my-5 flex w-full flex-row items-center justify-between">
           <h1 className="mb-0 mt-4">{data.length} Contacts</h1>
           <button
-            className="btn btn-primary text-base-100"
+            className="text-content btn btn-primary"
             onClick={() => addConnection()}
           >
             <FaPlus /> New Connection
           </button>
         </div>
         {/* Search Bar and Filter Button */}
-        <div className="flex w-full flex-row justify-between rounded bg-[#EAECF6] p-3">
+        <div className="flex w-full flex-row justify-between rounded bg-secondary p-3">
           <DebouncedInput
             value={globalFilter ?? ""}
             onChange={(value) => setGlobalFilter(String(value))}

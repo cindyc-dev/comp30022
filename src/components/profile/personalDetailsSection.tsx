@@ -91,8 +91,6 @@ export const PersonalDetailsSection = () => {
 
   return (
     <>
-      <h1 className="my-2">Profile Settings</h1>
-      <hr className="mb-2 mt-0" />
       <div className="flex flex-col justify-between align-middle md:flex-row md:gap-5">
         <div>
           <h2 className="m-0">Personal details</h2>

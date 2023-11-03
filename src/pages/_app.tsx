@@ -33,7 +33,6 @@ const MyApp = ({
         </Head>
         <Providers>
           <Script src="https://upload-widget.cloudinary.com/global/all.js" />
-          {/* <Script src="https://js.pusher.com/8.2.0/pusher.min.js" /> */}
           {Component.auth ? (
             <Auth>
               <Component {...pageProps} />
