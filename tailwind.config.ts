@@ -63,6 +63,9 @@ export default {
       "aqua",
       "lofi",
       "pastel",
+      "wireframe",
+      "bumblebee",
+      "coffee"
     ],
   },
   plugins: [require("@tailwindcss/typography"), require("daisyui")],

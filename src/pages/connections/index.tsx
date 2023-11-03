@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Layout } from "~/components/layout/layout";
 import { ConnectionI } from "~/types/ConnectionI";
-import { NEW_CONNECTION, sampleTags } from "~/sample_data/sampleConnections";
+import { NEW_CONNECTION } from "~/sample_data/sampleConnections";
 import { FaFilter, FaPlus, FaTrash } from "react-icons/fa";
 import { useModal } from "~/components/hooks/modalContext";
 import AddConnectionModal, {
@@ -19,7 +19,6 @@ import Image from "next/image";
 import ConnectionDetailsModal from "~/components/connections/_connectionDetailsModal";
 import Chat from "~/components/connections/chat/chat";
 import { BsChatDotsFill } from "react-icons/bs";
-import { isObjectsEqual } from "~/components/utils/isObjectEqual";
 import { useTheme } from "~/components/hooks/themeContext";
 
 export default function Connections() {

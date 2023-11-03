@@ -163,6 +163,9 @@ export const Navbar = () => {
                 <option value="cyberpunk">Cyberpunk</option>
                 <option value="aqua">Aqua</option>
                 <option value="pastel">Pastel</option>
+                <option value="wireframe">Wireframe</option>
+                <option value="bumblebee">Bumblebee</option>
+                <option value="coffee">Coffee</option>
               </select>
             </li>
           </ul>
