@@ -16,6 +16,8 @@ export type ThemeT =
 
 interface ThemeContextType {
   theme: ThemeT;
+  tagColoursMap: Record<string, string>;
+  setTagColoursMap: (newMap: Record<string, string>) => void;
   changeTheme: (newTheme: ThemeT) => void;
 }
 
@@ -35,10 +37,28 @@ interface ThemeProviderProps {
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<ThemeT>("light");
+  const [tagColoursMap, setTagColoursMap] = useState<Record<string, string>>(
+    {}
+  );
 
   const changeTheme = (newTheme: ThemeT) => {
     setTheme(newTheme);
   };
+
+  // Store the tag colours map in local storage
+  useEffect(() => {
+    if (Object.keys(tagColoursMap).length > 0) {
+      localStorage.setItem("tagColoursMap", JSON.stringify(tagColoursMap));
+    }
+  }, [tagColoursMap]);
+
+  // Load the tag colours map from local storage
+  useEffect(() => {
+    const localTagColoursMap = localStorage.getItem("tagColoursMap");
+    if (localTagColoursMap) {
+      setTagColoursMap(JSON.parse(localTagColoursMap));
+    }
+  }, []);
 
   // Store the theme in local storage
   useEffect(() => {
@@ -58,6 +78,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const themeContextValue: ThemeContextType = {
     theme,
     changeTheme,
+    tagColoursMap,
+    setTagColoursMap,
   };
 
   return (

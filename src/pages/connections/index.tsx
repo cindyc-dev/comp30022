@@ -19,6 +19,8 @@ import Image from "next/image";
 import ConnectionDetailsModal from "~/components/connections/_connectionDetailsModal";
 import Chat from "~/components/connections/chat/chat";
 import { BsChatDotsFill } from "react-icons/bs";
+import { isObjectsEqual } from "~/components/utils/isObjectEqual";
+import { useTheme } from "~/components/hooks/themeContext";
 
 export default function Connections() {
   const [data, setData] = useState<ConnectionI[]>([]);
@@ -30,12 +32,55 @@ export default function Connections() {
   const [isChatMini, setIsChatMini] = useState<boolean>(true);
   const [selectedConnection, setSelectedConnection] = useState<ConnectionI>();
 
-  const tagColoursMap: Record<string, string> = sampleTags;
+  const { tagColoursMap, setTagColoursMap } = useTheme();
 
   const { openModal, closeModal } = useModal();
   const { addToast } = useToast();
 
-  // TODO fetch data and tagColoursMap from API
+  const getAllTags = () => {
+    // Gets all unique tags from filtered data
+    const tags = new Set<string>();
+    filteredData.forEach((connection) => {
+      connection.tags.forEach((tag) => tags.add(tag));
+    });
+    return Array.from(tags);
+  };
+
+  // Add new tags into the tagColoursMap
+  const addNewTags = (newConnections: ConnectionI[]) => {
+    console.log("addNewTags");
+    // Get a random colour for each tag
+    const COLOURS = [
+      "badge-primary",
+      "badge-secondary",
+      "badge-accent",
+      "badge-info",
+      "badge-success",
+      "badge-warning",
+      "badge-error",
+      "badge-neutral",
+    ];
+    // Get new tags
+    const tags = new Set<string>();
+    newConnections.forEach((connection) => {
+      connection.tags.forEach((tag) => tags.add(tag));
+    });
+
+    const newTagColoursMap: Record<string, string> = { ...tagColoursMap };
+
+    tags.forEach((tag) => {
+      if (!newTagColoursMap[tag]) {
+        console.log("new tag", tag);
+        const randomColour =
+          COLOURS[Math.floor(Math.random() * COLOURS.length)];
+        newTagColoursMap[tag] = randomColour;
+      }
+    });
+
+    // Update tagColoursMap
+    setTagColoursMap(newTagColoursMap);
+    console.log({ tagColoursMap: tagColoursMap });
+  };
 
   /* Get data from API */
   const {
@@ -47,6 +92,7 @@ export default function Connections() {
   useEffect(() => {
     if (connections) {
       console.log({ connections: connections });
+      addNewTags(connections);
       setData([...connections]);
     }
     if (error) {
@@ -247,15 +293,6 @@ export default function Connections() {
     return Object.keys(rowSelection)
       .map((id) => data[Number(id)].email)
       .join(",");
-  };
-
-  const getAllTags = () => {
-    // Gets all unique tags from filtered data
-    const tags = new Set<string>();
-    filteredData.forEach((connection) => {
-      connection.tags.forEach((tag) => tags.add(tag));
-    });
-    return Array.from(tags);
   };
 
   // Filter data based on tags
