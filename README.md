@@ -4,6 +4,9 @@
 
 ## [Live Demo](https://comp30022.vercel.app/)
 
+> ❗ NOTE: the live demo might not work - we are using a Planetscale instance that's on a free tier so it might fall asleep after some time of inactivity which will cause any database calls to give errors TT
+> (I'll probably try to code a demo/guest account that doesn't require any database calls when I have the time :P)
+
 Demo Credentials (please do not change the passwords so that other people can try it out too)
 
 - Email: aurelia.iskndr@gmail.com
